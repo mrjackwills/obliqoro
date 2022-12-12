@@ -20,10 +20,10 @@
 
 <p align="center">
  <a href="https://raw.githubusercontent.com/mrjackwills/obliqoro/main/.github/screenshot_01.png" target='_blank' rel='noopener noreferrer'>
-  <img src='./.github/screenshot_01.png' width='45%'/>
- </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src='./.github/screenshot_01.png' width='48%'/>
+ </a>&nbsp;
  <a href="https://raw.githubusercontent.com/mrjackwills/obliqoro/main/.github/screenshot_02.png" target='_blank' rel='noopener noreferrer'>
-  <img src='./.github/screenshot_02.png' width='45%'/>
+  <img src='./.github/screenshot_02.png' width='48%'/>
  </a>
 </p>
 <hr>
