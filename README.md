@@ -9,7 +9,8 @@
 
 <p align="center">
  Built in <a href='https://www.rust-lang.org/' target='_blank' rel='noopener noreferrer'>Rust</a>,
- and <a href='https://vuejs.org' target='_blank' rel='noopener noreferrer'>Vue3</a>,
+ <a href='https://vuejs.org' target='_blank' rel='noopener noreferrer'>Vue3</a>,
+ and <a href='https://www.typescriptlang.org/' target='_blank' rel='noopener noreferrer'>Typescript</a>,
  using <a href='https://www.tauri.app/' target='_blank' rel='noopener noreferrer'>Tauri</a>,
  and <a href='https://www.sqlite.org/' target='_blank' rel='noopener noreferrer'>SQLite</a>
 </p>
@@ -20,10 +21,10 @@
 
 <p align="center">
  <a href="https://raw.githubusercontent.com/mrjackwills/obliqoro/main/.github/screenshot_01.png" target='_blank' rel='noopener noreferrer'>
-  <img src='./.github/screenshot_01.png' width='45%'/>
- </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src='./.github/screenshot_01.png' width='48%'/>
+ </a>&nbsp;
  <a href="https://raw.githubusercontent.com/mrjackwills/obliqoro/main/.github/screenshot_02.png" target='_blank' rel='noopener noreferrer'>
-  <img src='./.github/screenshot_02.png' width='45%'/>
+  <img src='./.github/screenshot_02.png' width='48%'/>
  </a>
 </p>
 <hr>
