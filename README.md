@@ -9,7 +9,8 @@
 
 <p align="center">
  Built in <a href='https://www.rust-lang.org/' target='_blank' rel='noopener noreferrer'>Rust</a>,
- and <a href='https://vuejs.org' target='_blank' rel='noopener noreferrer'>Vue3</a>,
+ <a href='https://vuejs.org' target='_blank' rel='noopener noreferrer'>Vue3</a>,
+ and <a href='https://www.typescriptlang.org/' target='_blank' rel='noopener noreferrer'>Typescript</a>,
  using <a href='https://www.tauri.app/' target='_blank' rel='noopener noreferrer'>Tauri</a>,
  and <a href='https://www.sqlite.org/' target='_blank' rel='noopener noreferrer'>SQLite</a>
 </p>
