@@ -1,0 +1,8 @@
+html,
+body {
+	overflow-y: hidden !important;
+}
+
+#app {
+	overflow-y: hidden !important;
+}
