@@ -25,9 +25,9 @@ struct PackageInfo {
 }
 impl Default for PackageInfo {
     fn default() -> Self {
+		let (homepage,  _) = env!("CARGO_PKG_REPOSITORY").split_once(env!("CARGO_PKG_NAME")).unwrap_or_default();
         Self {
-            // split at obliqoro, and take first split
-            homepage: env!("CARGO_PKG_REPOSITORY").to_owned(),
+            homepage: homepage.to_owned(),
             version: env!("CARGO_PKG_VERSION").to_owned(),
             build_date: env!("BUILD_DATE").to_owned(),
         }
@@ -394,6 +394,7 @@ fn handle_emitter(app: &AppHandle, emitter: Emitter, state: &Arc<Mutex<Applicati
             .unwrap_or(());
         }
         Emitter::PackageInfo => {
+			// TODO use once_cell to make a laxy packageifo
             app.emit_to(
                 ObliqoroWindow::Main.as_str(),
                 EmitMessages::PackageInfo.as_str(),
