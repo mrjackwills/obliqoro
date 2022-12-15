@@ -3,7 +3,7 @@ use sqlx::{FromRow, Pool, Sqlite};
 
 use crate::app_error::AppError;
 
-const ONE_MINUTE: i64 = 60;
+const ONE_MINUTE_AS_SEC: i64 = 60;
 
 #[derive(FromRow, Debug, Clone, Copy, Hash, PartialEq, Eq, PartialOrd, Serialize, Deserialize)]
 pub struct ModelSettings {
@@ -18,8 +18,8 @@ impl ModelSettings {
     const fn default() -> Self {
         Self {
             short_break_as_sec: 30,
-            long_break_as_sec: ONE_MINUTE * 5,
-            session_as_sec: ONE_MINUTE * 25,
+            long_break_as_sec: ONE_MINUTE_AS_SEC * 5,
+            session_as_sec: ONE_MINUTE_AS_SEC * 25,
             number_session_before_break: 4,
             fullscreen: false,
         }

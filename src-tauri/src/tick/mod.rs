@@ -8,7 +8,7 @@ use crate::{
 };
 
 const ONE_SECOND_AS_MS: u64 = 1000;
-
+const ONE_MINUTE_AS_MS: u64 = ONE_SECOND_AS_MS * 60;
 /// Spawn off a tokio thread, that loops continually, is essentially the internal timer that powers the whole application
 /// Is save in the state struct, so that it can be aborted when settings change etc
 pub fn tick_process(state: &Arc<Mutex<ApplicationState>>, sx: Sender<InternalMessage>) {
@@ -30,7 +30,7 @@ pub fn tick_process(state: &Arc<Mutex<ApplicationState>>, sx: Sender<InternalMes
             let paused = spawn_state.lock().get_paused();
             if !paused && last_updated.elapsed().as_secs() >= 1 {
                 let to_run = spawn_state.lock().session_status;
-                let next_break_in = spawn_state.lock().tick();
+                let tick_count = spawn_state.lock().tick();
                 match to_run {
                     SessionStatus::Break(_) => {
                         spawn_state
@@ -38,7 +38,7 @@ pub fn tick_process(state: &Arc<Mutex<ApplicationState>>, sx: Sender<InternalMes
                             .sx
                             .send(InternalMessage::Emit(Emitter::OnBreak))
                             .unwrap_or_default();
-                        if next_break_in < 1 {
+                        if tick_count < 1 {
                             spawn_state
                                 .lock()
                                 .sx
@@ -47,7 +47,7 @@ pub fn tick_process(state: &Arc<Mutex<ApplicationState>>, sx: Sender<InternalMes
                         }
                     }
                     SessionStatus::Work => {
-                        if menu_updated.elapsed().as_secs() >= 60 {
+                        if menu_updated.elapsed().as_millis() >= u128::from(ONE_MINUTE_AS_MS) {
                             spawn_state
                                 .lock()
                                 .sx
@@ -55,7 +55,7 @@ pub fn tick_process(state: &Arc<Mutex<ApplicationState>>, sx: Sender<InternalMes
                                 .unwrap_or_default();
                             menu_updated = std::time::Instant::now();
                         }
-                        if next_break_in < 1 {
+                        if tick_count < 1 {
                             sx.send(InternalMessage::Break(BreakMessage::Start))
                                 .unwrap_or_default();
                         }

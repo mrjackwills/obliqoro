@@ -25,8 +25,11 @@ struct PackageInfo {
 }
 impl Default for PackageInfo {
     fn default() -> Self {
+        let (homepage, _) = env!("CARGO_PKG_REPOSITORY")
+            .split_once(env!("CARGO_PKG_NAME"))
+            .unwrap_or_default();
         Self {
-            homepage: env!("CARGO_PKG_REPOSITORY").to_owned(),
+            homepage: homepage.to_owned(),
             version: env!("CARGO_PKG_VERSION").to_owned(),
             build_date: env!("BUILD_DATE").to_owned(),
         }
@@ -83,41 +86,70 @@ pub enum InternalMessage {
 /// Control the frontend window component visibility
 struct WindowAction;
 impl WindowAction {
-    // Show, and/or unminimize, the window
-    fn show(window: &tauri::Window) {
+    /// Show the window
+    /// Linux v Windows, need to handle fullscreen & resize on each platform differently
+    #[cfg(target_os = "windows")]
+    fn show(window: &tauri::Window, fullscreen: bool) {
+        window.set_fullscreen(fullscreen).unwrap_or(());
+		window.set_resizable(false).unwrap_or(());
         window.show().unwrap_or(());
-        window.unminimize().unwrap_or(());
+        window.center().unwrap_or(());
     }
 
-    /// Hide window, update tray menu
-    fn hide(window: &tauri::Window) {
-        window.hide().unwrap_or(());
+    /// Show the window
+    /// see github issue #1
+    #[cfg(not(target_os = "windows"))]
+    fn show(window: &tauri::Window, fullscreen: bool) {
+        if fullscreen {
+            if window.is_visible().unwrap_or_default() {
+                window.hide().unwrap_or(());
+            }
+            window.set_resizable(true).unwrap_or(());
+            window.set_fullscreen(fullscreen).unwrap_or(());
+            // This is the linux fix
+            std::thread::sleep(std::time::Duration::from_millis(25));
+        } else if window.is_resizable().unwrap_or(false) {
+            window.set_resizable(false).unwrap_or(());
+        }
+        window.show().unwrap_or(());
+        window.center().unwrap_or(());
     }
+
+    /// Hide window
+    fn hide(window: &tauri::Window, fullscreen: bool) {
+        if fullscreen {
+            window.set_resizable(true).unwrap_or(());
+            window.set_fullscreen(false).unwrap_or(());
+        }
+        window.hide().unwrap_or(());
+        window.center().unwrap_or(());
+    }
+
 
     /// hide window
-    pub fn hide_window(app: &AppHandle) {
+    pub fn hide_window(app: &AppHandle, fullscreen: bool) {
         if let Some(window) = app.get_window(ObliqoroWindow::Main.as_str()) {
-            Self::hide(&window);
+            Self::hide(&window, fullscreen);
         }
     }
 
     /// Toggle the visible of the main window based on current visibility
-    pub fn toggle_visibility(app: &AppHandle) {
+    pub fn toggle_visibility(app: &AppHandle, fullscreen: bool) {
         if let Some(window) = app.get_window(ObliqoroWindow::Main.as_str()) {
             match window.is_visible() {
-                Ok(true) => Self::hide(&window),
-                Ok(false) => Self::show(&window),
+                Ok(true) => Self::hide(&window, fullscreen),
+                Ok(false) => Self::show(&window, fullscreen),
                 Err(_) => app.exit(1),
             }
         }
     }
 
-    /// unminimize the main window
-    pub fn unminimize(app: &AppHandle) {
-        if let Some(window) = app.get_window(ObliqoroWindow::Main.as_str()) {
-            window.unminimize().unwrap_or_default();
-        }
-    }
+    // unminimize the main window
+    // pub fn unminimize(app: &AppHandle) {
+    //     if let Some(window) = app.get_window(ObliqoroWindow::Main.as_str()) {
+    //         window.unminimize().unwrap_or_default();
+    //     }
+    // }
 }
 
 // Update the taskbar to display how many sessions before next long break,
@@ -275,19 +307,19 @@ fn handle_visibility(
         }
         WindowVisibility::Hide => {
             if !on_break {
-                WindowAction::hide_window(app);
+                WindowAction::hide_window(app, false);
             }
         }
         WindowVisibility::Minimize => {
-            if on_break {
-                WindowAction::unminimize(app);
-            } else {
-                WindowAction::hide_window(app);
-            }
+            // if on_break {
+            //     WindowAction::unminimize(app);
+            // } else {
+            WindowAction::hide_window(app, false);
+            // }
         }
         WindowVisibility::Toggle => {
             if !on_break {
-                WindowAction::toggle_visibility(app);
+                WindowAction::toggle_visibility(app, false);
             }
         }
     }
@@ -305,7 +337,7 @@ fn handle_emitter(app: &AppHandle, emitter: Emitter, state: &Arc<Mutex<Applicati
                     (),
                 )
                 .unwrap_or(());
-                WindowAction::toggle_visibility(app);
+                WindowAction::toggle_visibility(app, false);
             }
         }
 
@@ -396,21 +428,14 @@ fn handle_break(
             sx.send(InternalMessage::Emit(Emitter::Timer))
                 .unwrap_or_default();
             if let Some(window) = app.get_window(ObliqoroWindow::Main.as_str()) {
-                if fullscreen {
-                    window.set_fullscreen(true).unwrap_or_default();
-                }
-                WindowAction::show(&window);
+                WindowAction::show(&window, fullscreen);
             }
         }
         BreakMessage::End => {
             state.lock().start_work_session();
             menu_enabled(app, true);
             if let Some(window) = app.get_window(ObliqoroWindow::Main.as_str()) {
-                let fullscreen = state.lock().get_fullscreen();
-                if fullscreen {
-                    window.set_fullscreen(false).unwrap_or_default();
-                }
-                WindowAction::hide(&window);
+                WindowAction::hide(&window, fullscreen);
             }
             update_menu(app, state, sx);
         }

@@ -5,7 +5,7 @@
 			<v-col cols='auto' class='ml-3'>
 				<v-row align='center' justify='start'>
 					<v-col cols='auto' class=''>
-						<v-img src='@/assets/logo.svg' :eager='true' contain width='3rem' class='' />
+						<v-img src='@/assets/logo_transparent.svg' :eager='true' contain width='3rem' class='' />
 					</v-col>
 					<v-col cols='auto' class='ma-0 pa-0'>
 						<span class='text-h4 text-primary'>Obliqoro</span>
