@@ -8,12 +8,12 @@
    version="1.1"
    id="svg5"
    inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
-   sodipodi:docname="logo_transparent.svg"
+   sodipodi:docname="logo.svg"
    inkscape:export-xdpi="96.000008"
    inkscape:export-ydpi="96.000008"
-   inkscape:export-filename="C:\Users\jack\Desktop\tauri\obliqoro\logo.png"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
   <sodipodi:namedview
@@ -38,11 +38,42 @@
      inkscape:current-layer="layer1"
      inkscape:lockguides="true" />
   <defs
-     id="defs2" />
+     id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient5551">
+      <stop
+         style="stop-color:#4f0091;stop-opacity:1;"
+         offset="0"
+         id="stop5547" />
+      <stop
+         style="stop-color:#000000;stop-opacity:1"
+         offset="1"
+         id="stop5549" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5551"
+       id="linearGradient5553"
+       x1="136.63927"
+       y1="-0.69148958"
+       x2="136.63927"
+       y2="271.62482"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(6.9488444e-5,1.4483366e-4)" />
+  </defs>
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1">
+    <circle
+       style="opacity:1;fill:url(#linearGradient5553);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:26.6616;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path4240"
+       cx="135.46666"
+       cy="135.46666"
+       r="135.46666"
+       inkscape:export-xdpi="96.000008"
+       inkscape:export-ydpi="96.000008" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
