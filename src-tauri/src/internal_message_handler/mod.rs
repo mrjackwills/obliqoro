@@ -394,7 +394,6 @@ fn handle_emitter(app: &AppHandle, emitter: Emitter, state: &Arc<Mutex<Applicati
             .unwrap_or(());
         }
         Emitter::PackageInfo => {
-			// TODO use once_cell to make a laxy packageifo
             app.emit_to(
                 ObliqoroWindow::Main.as_str(),
                 EmitMessages::PackageInfo.as_str(),
