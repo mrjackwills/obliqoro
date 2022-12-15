@@ -91,7 +91,7 @@ impl WindowAction {
     #[cfg(target_os = "windows")]
     fn show(window: &tauri::Window, fullscreen: bool) {
         window.set_fullscreen(fullscreen).unwrap_or(());
-		window.set_resizable(false).unwrap_or(());
+        window.set_resizable(false).unwrap_or(());
         window.show().unwrap_or(());
         window.center().unwrap_or(());
     }
@@ -124,7 +124,6 @@ impl WindowAction {
         window.hide().unwrap_or(());
         window.center().unwrap_or(());
     }
-
 
     /// hide window
     pub fn hide_window(app: &AppHandle, fullscreen: bool) {
