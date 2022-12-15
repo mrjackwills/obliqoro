@@ -1,11 +1,11 @@
 <template>
 	<v-app class='ma-0 pa-0 fill-height unselectable' id='obliqoro'>
-		<AppBar v-if='!on_timer' />
+		<AppBar v-if='on_settings' />
 		<v-main>
 			<router-view />
 		</v-main>
 		<TheSnackbar />
-		<TheFooter v-if='!on_timer' />
+		<TheFooter v-if='on_settings' />
 	</v-app>
 </template>
 
@@ -25,8 +25,8 @@ const intervalStore = intervalModule();
 const settingStore = settingModule();
 const packageinfoStore = packageinfoModule();
 
-const on_timer = computed(():boolean => {
-	return route.fullPath === FrontEndRoutes.Timer;
+const on_settings = computed(():boolean => {
+	return route.fullPath === FrontEndRoutes.Settings;
 });
 
 onBeforeMount(async () => {
