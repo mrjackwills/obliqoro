@@ -99,30 +99,30 @@ impl WindowAction {
     fn show(window: &tauri::Window, fullscreen: bool) {
         if fullscreen {
             if window.is_visible().unwrap_or_default() {
-                window.hide().unwrap();
+                window.hide().unwrap_or(());
             }
-            window.set_resizable(true).unwrap();
-            window.set_fullscreen(fullscreen).unwrap();
+            window.set_resizable(true).unwrap_or(());
+            window.set_fullscreen(fullscreen).unwrap_or(());
             // This is the linux fix
             std::thread::sleep(std::time::Duration::from_millis(25));
-            window.show().unwrap();
+            window.show().unwrap_or(());
         } else {
-            if window.is_resizable().unwrap() {
-                window.set_resizable(false).unwrap();
+            if window.is_resizable().unwrap_or(()) {
+                window.set_resizable(false).unwrap_or(());
             }
-            window.show().unwrap();
+            window.show().unwrap_or(());
         }
-        window.center().unwrap();
+        window.center().unwrap_or(());
     }
 
     /// Hide window
     fn hide(window: &tauri::Window, fullscreen: bool) {
         if fullscreen {
-            window.set_resizable(true).unwrap();
-            window.set_fullscreen(false).unwrap();
+            window.set_resizable(true).unwrap_or(());
+            window.set_fullscreen(false).unwrap_or(());
         }
-        window.hide().unwrap();
-        window.center().unwrap();
+        window.hide().unwrap_or(());
+        window.center().unwrap_or(());
     }
 
     /// hide window
