@@ -25,7 +25,9 @@ struct PackageInfo {
 }
 impl Default for PackageInfo {
     fn default() -> Self {
-		let (homepage,  _) = env!("CARGO_PKG_REPOSITORY").split_once(env!("CARGO_PKG_NAME")).unwrap_or_default();
+        let (homepage, _) = env!("CARGO_PKG_REPOSITORY")
+            .split_once(env!("CARGO_PKG_NAME"))
+            .unwrap_or_default();
         Self {
             homepage: homepage.to_owned(),
             version: env!("CARGO_PKG_VERSION").to_owned(),
@@ -85,15 +87,16 @@ pub enum InternalMessage {
 struct WindowAction;
 impl WindowAction {
     /// Show the window
-	/// Linux v Windows, need to handle fullscreen & resize on each platform differently
+    /// Linux v Windows, need to handle fullscreen & resize on each platform differently
     #[cfg(target_os = "windows")]
     fn show(window: &tauri::Window, fullscreen: bool) {
         window.set_fullscreen(fullscreen).unwrap_or(());
+		window.set_resizable(false).unwrap_or(());
         window.show().unwrap_or(());
         window.center().unwrap_or(());
     }
 
-	/// Show the window
+    /// Show the window
     /// see github issue #1
     #[cfg(not(target_os = "windows"))]
     fn show(window: &tauri::Window, fullscreen: bool) {
@@ -105,13 +108,10 @@ impl WindowAction {
             window.set_fullscreen(fullscreen).unwrap_or(());
             // This is the linux fix
             std::thread::sleep(std::time::Duration::from_millis(25));
-            window.show().unwrap_or(());
-        } else {
-            if window.is_resizable().unwrap_or(()) {
-                window.set_resizable(false).unwrap_or(());
-            }
-            window.show().unwrap_or(());
+        } else if window.is_resizable().unwrap_or(false) {
+            window.set_resizable(false).unwrap_or(());
         }
+        window.show().unwrap_or(());
         window.center().unwrap_or(());
     }
 
@@ -124,6 +124,7 @@ impl WindowAction {
         window.hide().unwrap_or(());
         window.center().unwrap_or(());
     }
+
 
     /// hide window
     pub fn hide_window(app: &AppHandle, fullscreen: bool) {
