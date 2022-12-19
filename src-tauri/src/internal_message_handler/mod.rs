@@ -39,10 +39,10 @@ impl Default for PackageInfo {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Hash)]
 pub enum SettingChange {
     FullScreen(bool),
-    LongBreakLength(i64),
+    LongBreakLength(u16),
     NumberSessions(u8),
-    ShortBreakLength(i64),
-    SessionLength(i64),
+    ShortBreakLength(u8),
+    SessionLength(u16),
     Reset,
 }
 
@@ -67,6 +67,7 @@ pub enum Emitter {
     PackageInfo,
     Paused,
     SendError,
+    SendAutoStart(bool),
     SendSettings,
     NextBreak,
     SessionsBeforeLong,
@@ -231,7 +232,7 @@ fn update_menu(
 
 /// Stop the tick process, and start a new one
 fn reset_timer(state: &Arc<Mutex<ApplicationState>>, sx: &Sender<InternalMessage>) {
-    state.lock().reset_next_session_in();
+    state.lock().reset_timer();
     tick_process(state, sx.clone());
 }
 
@@ -354,14 +355,27 @@ fn handle_emitter(app: &AppHandle, emitter: Emitter, state: &Arc<Mutex<Applicati
             app.emit_to(
                 ObliqoroWindow::Main.as_str(),
                 EmitMessages::OnBreak.as_str(),
-                state.lock().get_next_session(),
+                state.lock().current_timer_left(),
             )
             .unwrap_or(());
         }
+
+        Emitter::SendAutoStart(value) => {
+            let on_break = state.lock().on_break();
+            if !on_break {
+                app.emit_to(
+                    ObliqoroWindow::Main.as_str(),
+                    EmitMessages::AutoStart.as_str(),
+                    value,
+                )
+                .unwrap_or(());
+            }
+        }
+
         Emitter::SendError => {
             app.emit_to(
                 ObliqoroWindow::Main.as_str(),
-                EmitMessages::SendError.as_str(),
+                EmitMessages::Error.as_str(),
                 "Internal Error",
             )
             .unwrap_or(());
@@ -459,7 +473,7 @@ pub fn start_message_handler(
 
                 InternalMessage::ChangeSetting(setting_change) => {
                     if let Err(e) = handle_settings(setting_change, &state, &sx).await {
-                        error!("{}", e);
+                        error!("{:#?}", e);
                         sx.send(InternalMessage::Emit(Emitter::SendError))
                             .unwrap_or_default();
                     }

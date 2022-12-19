@@ -3,13 +3,13 @@ use sqlx::{FromRow, Pool, Sqlite};
 
 use crate::app_error::AppError;
 
-const ONE_MINUTE_AS_SEC: i64 = 60;
+const ONE_MINUTE_AS_SEC: u16 = 60;
 
 #[derive(FromRow, Debug, Clone, Copy, Hash, PartialEq, Eq, PartialOrd, Serialize, Deserialize)]
 pub struct ModelSettings {
-    pub short_break_as_sec: i64,
-    pub long_break_as_sec: i64,
-    pub session_as_sec: i64,
+    pub short_break_as_sec: u8,
+    pub long_break_as_sec: u16,
+    pub session_as_sec: u16,
     pub number_session_before_break: u8,
     pub fullscreen: bool,
 }
@@ -36,21 +36,21 @@ impl ModelSettings {
     }
 
     /// Update shortbreak setting
-    pub async fn update_shortbreak(sqlite: &Pool<Sqlite>, shortbreak: i64) -> Result<(), AppError> {
+    pub async fn update_shortbreak(sqlite: &Pool<Sqlite>, shortbreak: u8) -> Result<(), AppError> {
         let query = "UPDATE Settings SET short_break_as_sec = $1";
         sqlx::query(query).bind(shortbreak).execute(sqlite).await?;
         Ok(())
     }
 
     /// Update long break setting
-    pub async fn update_longbreak(sqlite: &Pool<Sqlite>, longbreak: i64) -> Result<(), AppError> {
+    pub async fn update_longbreak(sqlite: &Pool<Sqlite>, longbreak: u16) -> Result<(), AppError> {
         let query = "UPDATE Settings SET long_break_as_sec = $1";
         sqlx::query(query).bind(longbreak).execute(sqlite).await?;
         Ok(())
     }
 
     /// Update session length
-    pub async fn update_session(sqlite: &Pool<Sqlite>, session: i64) -> Result<(), AppError> {
+    pub async fn update_session(sqlite: &Pool<Sqlite>, session: u16) -> Result<(), AppError> {
         let query = "UPDATE Settings SET session_as_sec = $1";
         sqlx::query(query).bind(session).execute(sqlite).await?;
         Ok(())
