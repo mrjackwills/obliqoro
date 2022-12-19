@@ -164,7 +164,9 @@ impl ApplicationState {
 
     /// Return the number of short sessions before the next long break
     const fn get_session_before_long_break(&self) -> u8 {
-		self.settings.number_session_before_break.saturating_sub(self.session_count)
+        self.settings
+            .number_session_before_break
+            .saturating_sub(self.session_count)
     }
 
     /// Create a string `next long break after x session[s]`, for frontend and systemtray

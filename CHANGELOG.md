@@ -1,17 +1,20 @@
+# <a href='https://wwwhub.com/mrjackwills/obliqoro/releases/tag/v0.0.3'>v0.0.3</a>
+### 2022-12-19
+
 ### Docs
-+ readme updated, [8f763839c278f6ddbd7cc1a705c4cd89180ae371]
++ readme updated, [8f763839](https://wwwhub.com/mrjackwills/obliqoro/commit/8f763839c278f6ddbd7cc1a705c4cd89180ae371)
 
 * ### Features
-+ implement start on boot setting, [56362f89167532b8f3e8f4205f65c11dd6f4d5e8]
-+ add checks to database, [a1fbe972752e38ab5726f25eb35e1db6a46c41e5]
-+ tooltip on close/minimize button, [a12838d6305ba472949a6a4ef76ac19105ee3d2c], [debc23fb74fa280dc980028cdb86dc956da5be50]
++ implement start on boot setting, [56362f89](https://wwwhub.com/mrjackwills/obliqoro/commit/56362f89167532b8f3e8f4205f65c11dd6f4d5e8)
++ add checks to database, [a1fbe972](https://wwwhub.com/mrjackwills/obliqoro/commit/a1fbe972752e38ab5726f25eb35e1db6a46c41e5)
++ tooltip on close/minimize button, [a12838d6](https://wwwhub.com/mrjackwills/obliqoro/commit/a12838d6305ba472949a6a4ef76ac19105ee3d2c), [debc23fb](https://wwwhub.com/mrjackwills/obliqoro/commit/debc23fb74fa280dc980028cdb86dc956da5be50)
 
 ### Fixes
-+ only write logs on file on debug mode, [836052deff23102d75aa774c7e0ae7d5f4abb04e]
++ only write logs on file on debug mode, [836052de](https://wwwhub.com/mrjackwills/obliqoro/commit/836052deff23102d75aa774c7e0ae7d5f4abb04e)
 
 ### Refactors
-+ remove tick method, use an Instant in ApplicationState, [bc948aab49f8c1ce7fee8ddf8de7069d93552884]
-+ exit request match simplified, [ce9b407aedce708b16087dd7d10d1eff80680c6b]
++ remove tick method, use an Instant in ApplicationState, [bc948aab](https://wwwhub.com/mrjackwills/obliqoro/commit/bc948aab49f8c1ce7fee8ddf8de7069d93552884)
++ exit request match simplified, [ce9b407a](https://wwwhub.com/mrjackwills/obliqoro/commit/ce9b407aedce708b16087dd7d10d1eff80680c6b)
 
 # <a href='https://github.com/mrjackwills/obliqoro/releases/tag/v0.0.2'>v0.0.2</a>
 ### 2022-12-14

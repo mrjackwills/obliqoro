@@ -80,9 +80,7 @@ fn setup_tracing(app_dir: &PathBuf) -> Result<(), AppError> {
 #[cfg(not(debug_assertions))]
 fn setup_tracing(_app_dir: &PathBuf) -> Result<(), AppError> {
     let level = Level::INFO;
-    let log_fmt = t_fmt::Layer::default()
-        .json()
-        .flatten_event(true);
+    let log_fmt = t_fmt::Layer::default().json().flatten_event(true);
 
     match tracing::subscriber::set_global_default(
         t_fmt::Subscriber::builder()
@@ -171,18 +169,17 @@ async fn main() -> Result<(), ()> {
                 ])
                 .build(tauri::generate_context!())
             {
-				Ok(s) => {
+                Ok(s) => {
                     tick_process(&init_state, timer_sx);
                     start_message_handler(&s, internal_state, rx, handler_sx);
                     s.run(move |_app, event| {
-						if let tauri::RunEvent::ExitRequested{api, ..} = event {
-							close_sx
-							.send(InternalMessage::Window(WindowVisibility::Hide))
-							.unwrap_or_default();
-						api.prevent_exit();
-
-						}
-					});
+                        if let tauri::RunEvent::ExitRequested { api, .. } = event {
+                            close_sx
+                                .send(InternalMessage::Window(WindowVisibility::Hide))
+                                .unwrap_or_default();
+                            api.prevent_exit();
+                        }
+                    });
                 }
                 Err(e) => {
                     error!("{:?}", e);
