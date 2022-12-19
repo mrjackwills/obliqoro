@@ -1,3 +1,11 @@
+### Features
++ implement start on boot setting, [56362f89167532b8f3e8f4205f65c11dd6f4d5e8]
++ add checks to database, [a1fbe972752e38ab5726f25eb35e1db6a46c41e5]
+
+### Refactors
++ remove tick method, use an Instant in ApplicationState, [bc948aab49f8c1ce7fee8ddf8de7069d93552884]
++ exit request match simplified, [ce9b407aedce708b16087dd7d10d1eff80680c6b]
+
 # <a href='https://github.com/mrjackwills/obliqoro/releases/tag/v0.0.2'>v0.0.2</a>
 ### 2022-12-14
 
