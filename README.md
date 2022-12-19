@@ -49,8 +49,8 @@ See the <a href="https://github.com/mrjackwills/obliqoro/releases/latest" target
 
 ### Todo
 
++ [x] Launch on boot
 + [ ] Code sign the application
-+ [ ] Launch on boot
 + [ ] Translations
 + [ ] Limiting to a single instance running at once
 + [ ] Saving strategies into SQLite and enabling the addition of new custom strategies

@@ -69,7 +69,7 @@ fn setup_tracing(app_dir: &PathBuf) -> Result<(), AppError> {
     ) {
         Ok(_) => Ok(()),
         Err(e) => {
-            println!("{:?}", e);
+            println!("{e:?}");
             Err(AppError::Internal("Unable to start tracing".to_owned()))
         }
     }
@@ -84,8 +84,8 @@ async fn main() -> Result<(), ()> {
     let ctx = tauri::generate_context!();
 
     match ApplicationState::new(tauri::api::path::app_data_dir(ctx.config()), &sx).await {
-        Err(error) => {
-            error!("{:?}", error);
+        Err(e) => {
+            error!("{e:?}");
             std::process::exit(1);
         }
         Ok(app_state) => {
@@ -136,6 +136,8 @@ async fn main() -> Result<(), ()> {
                     request_handlers::init,
                     request_handlers::minimize,
                     request_handlers::reset_settings,
+                    request_handlers::get_autostart,
+                    request_handlers::set_autostart,
                     request_handlers::set_setting_fullscreen,
                     request_handlers::set_setting_longbreak,
                     request_handlers::set_setting_number_sessions,
@@ -144,22 +146,18 @@ async fn main() -> Result<(), ()> {
                 ])
                 .build(tauri::generate_context!())
             {
-                Ok(s) => {
+				Ok(s) => {
                     tick_process(&init_state, timer_sx);
                     start_message_handler(&s, internal_state, rx, handler_sx);
                     s.run(move |_app, event| {
-                        // TODO fix this clippy issue
-                        #[allow(clippy::single_match)]
-                        match event {
-                            tauri::RunEvent::ExitRequested { api, .. } => {
-                                close_sx
-                                    .send(InternalMessage::Window(WindowVisibility::Hide))
-                                    .unwrap_or_default();
-                                api.prevent_exit();
-                            }
-                            _ => (),
-                        }
-                    });
+						if let tauri::RunEvent::ExitRequested{api, ..} = event {
+							close_sx
+							.send(InternalMessage::Window(WindowVisibility::Hide))
+							.unwrap_or_default();
+						api.prevent_exit();
+
+						}
+					});
                 }
                 Err(e) => {
                     error!("{:?}", e);
