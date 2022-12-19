@@ -5,15 +5,20 @@ import { ModuleName } from '../../types';
 export const settingModule = defineStore(ModuleName.Setting, {
 
 	state: () => ({
+		autostart: false,
 		fullscreen: false,
-		session_as_sec: 0,
-		short_break_as_sec: 0,
 		long_break_as_sec: 0,
 		number_session_before_break: 0,
-		session_before_next_long_break: '',
 		paused: false,
+		session_as_sec: 0,
+		session_before_next_long_break: '',
+		short_break_as_sec: 0,
 	}),
 	actions: {
+
+		set_autostart(x: boolean): void {
+			this.autostart = x;
+		},
 
 		set_fullscreen(x: boolean): void {
 			this.fullscreen = x;

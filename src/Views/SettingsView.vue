@@ -61,23 +61,13 @@
 
 						<!-- SWITCHES -->
 						<v-form v-on:submit.prevent class='mt-4'>
-							<!-- TODO v-for this -->
-
 							<v-row class='ma-0 pa-0' justify='space-between'>
-								<v-col cols='auto' class='ma-0 pa-0'>
-									<v-switch v-model='fullscreen' :color='fullscreen ? "primary" : ""'
-										density='compact' :class='fullscreen ? "text-primary" : "text-offwhite"'
-										label='full screen breaks'>
+
+								<v-col v-for='(item, index) in switches' :key='index' cols='auto'>
+									<v-switch v-model='item.model.value'
+										density='compact' :class='item.model.value ? "text-primary" : "text-offwhite"'
+										:label='item.label'>
 									</v-switch>
-								</v-col>
-
-								<v-col cols='auto' class='ma-0 pa-0 text-primary'>
-
-									<v-switch disabled label='start on boot' :color='start_on_boot ? "primary" : ""'
-										density='compact' :class='start_on_boot ? "text-primary" : "text-offwhite"' />
-									<v-tooltip activator='parent' location='center center' class='tooltip-z'>
-										<span>work-in-progress</span>
-									</v-tooltip>
 								</v-col>
 
 							</v-row>
@@ -142,6 +132,20 @@ const paused = computed((): boolean => {
 	return settingStore.paused;
 });
 
+const switches = computed(() => {
+	return [
+		{
+			label: 'fullscreen',
+			model: fullscreen
+		},
+		{
+			label: 'start on boot',
+			model: start_on_boot
+		}
+
+	];
+});
+
 const sliders = computed(() => {
 	return [
 		{
@@ -179,7 +183,14 @@ const sliders = computed(() => {
 	];
 });
 
-const start_on_boot = ref(false);
+const start_on_boot = computed({
+	get(): boolean {
+		return settingStore.autostart;
+	},
+	set(b: boolean) {
+		settingStore.set_autostart(b);
+	}
+});
 
 const fullscreen = computed({
 	get(): boolean {
@@ -226,21 +237,12 @@ const number_session_before_break = computed({
 	}
 });
 
-const ignore = ref(false);
-
 const reset_settings = async (): Promise<void> => {
 	clearInterval(saveTimeout.value);
-	ignore.value = true;
 	await invoke(InvokeMessage.ResetSettings);
-	// eslint-disable-next-line require-atomic-updates
-	saveTimeout.value = window.setTimeout(async () => {
-		ignore.value = false;
-	}, 250);
-
 };
 
 const send_settings = async (message: InvokeMessage, value: number | boolean): Promise<void> => {
-	if (ignore.value) return;
 	saveTimeout.value = window.setTimeout(async () => {
 		try {
 			await invoke(message, { value });
@@ -270,6 +272,10 @@ watch(short_break_as_sec, async (value) => {
 
 watch(number_session_before_break, async (value) => {
 	await send_settings(InvokeMessage.SetSettingNumberSession, value);
+});
+
+watch(start_on_boot, async (value) => {
+	await send_settings(InvokeMessage.SetAutoStart, value);
 });
 
 </script>
