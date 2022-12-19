@@ -15,6 +15,9 @@
 			</v-col>
 			<v-col cols='auto' class='mr-3'>
 				<v-icon :icon='mdiMinusThick' size='x-large' color='primary' @click='minimize' />
+				<v-tooltip activator='parent' location='left center' class='tooltip-z'>
+					close to system tray
+				</v-tooltip>
 
 			</v-col>
 		</v-row>
