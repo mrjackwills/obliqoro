@@ -49,10 +49,11 @@ impl ObliqoroWindow {
     }
 }
 
-/// Setup tracing - warning this cant write huge amounts to disk
+/// Setup tracing - warning this can write huge amounts to disk
+#[cfg(debug_assertions)]
 fn setup_tracing(app_dir: &PathBuf) -> Result<(), AppError> {
     let level = Level::DEBUG;
-    let logfile = tracing_appender::rolling::daily(app_dir, "obliqoro.log");
+    let logfile = tracing_appender::rolling::never(app_dir, "obliqoro.log");
 
     let log_fmt = t_fmt::Layer::default()
         .json()
@@ -62,6 +63,30 @@ fn setup_tracing(app_dir: &PathBuf) -> Result<(), AppError> {
     match tracing::subscriber::set_global_default(
         t_fmt::Subscriber::builder()
             .with_file(true)
+            .with_line_number(true)
+            .with_max_level(level)
+            .finish()
+            .with(log_fmt),
+    ) {
+        Ok(_) => Ok(()),
+        Err(e) => {
+            println!("{e:?}");
+            Err(AppError::Internal("Unable to start tracing".to_owned()))
+        }
+    }
+}
+
+/// Setup tracing - warning this can write huge amounts to disk
+#[cfg(not(debug_assertions))]
+fn setup_tracing(_app_dir: &PathBuf) -> Result<(), AppError> {
+    let level = Level::INFO;
+    let log_fmt = t_fmt::Layer::default()
+        .json()
+        .flatten_event(true);
+
+    match tracing::subscriber::set_global_default(
+        t_fmt::Subscriber::builder()
+            .with_file(false)
             .with_line_number(true)
             .with_max_level(level)
             .finish()
@@ -131,7 +156,7 @@ async fn main() -> Result<(), ()> {
                     }
                     _ => (),
                 })
-                // put all this in the handlers mod, then just import one thing!
+                // put all this in the handlers mod, then just import one thing?
                 .invoke_handler(tauri::generate_handler![
                     request_handlers::init,
                     request_handlers::minimize,

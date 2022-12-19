@@ -110,7 +110,7 @@ impl ApplicationState {
         (self.current_timer_left(), self.random_strategy())
     }
 
-    // Return, in seconds, the current amount left of the onoing session, or break
+    // Return, in seconds, the current amount left of the onoing work - or break - session
     pub fn current_timer_left(&self) -> u16 {
         let taken_since = u16::try_from(
             std::time::Instant::now()
@@ -151,7 +151,7 @@ impl ApplicationState {
     /// Start the break session
     /// TODO update db session count
     pub fn start_break_session(&mut self) {
-        let break_length = if self.session_count < self.settings.number_session_before_break {
+        let break_type = if self.session_count < self.settings.number_session_before_break {
             self.session_count += 1;
             Break::Short
         } else {
@@ -159,16 +159,12 @@ impl ApplicationState {
             Break::Long
         };
         self.reset_timer();
-        self.session_status = SessionStatus::Break(break_length);
+        self.session_status = SessionStatus::Break(break_type);
     }
 
     /// Return the number of short sessions before the next long break
     const fn get_session_before_long_break(&self) -> u8 {
-        if self.settings.number_session_before_break >= self.session_count {
-            self.settings.number_session_before_break - self.session_count
-        } else {
-            0
-        }
+		self.settings.number_session_before_break.saturating_sub(self.session_count)
     }
 
     /// Create a string `next long break after x session[s]`, for frontend and systemtray
