@@ -1,9 +1,9 @@
-use tauri::{
-    CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem,
-};
 use crate::{
     internal_message_handler::{Emitter, InternalMessage, WindowVisibility},
     ObliqoroWindow,
+};
+use tauri::{
+    CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem,
 };
 use tokio::sync::broadcast::Sender;
 
@@ -102,6 +102,6 @@ pub fn on_system_tray_event(event: SystemTrayEvent, sx: &Sender<InternalMessage>
             }
             _ => (),
         },
-        _ => ()
+        _ => (),
     }
 }
