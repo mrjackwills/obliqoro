@@ -1,13 +1,13 @@
-<p align="center">
+<p align='center'>
  <img src='./.github/logo.svg' width='100px' />
- <h1 align="center">Obliqoro</h1>
- <div align="center">
+ <h1 align='center'>Obliqoro</h1>
+ <div align='center'>
  <a href='https://en.wikipedia.org/wiki/Oblique_Strategies' target='_blank' rel='noopener noreferrer'>Oblique Strategies</a>
  meets <a href='https://en.wikipedia.org/wiki/Pomodoro_Technique' target='_blank' rel='noopener noreferrer'>Pomodoro</a>
  </div>
 </p>
 
-<p align="center">
+<p align='center'>
  Built in <a href='https://www.rust-lang.org/' target='_blank' rel='noopener noreferrer'>Rust</a>,
  <a href='https://vuejs.org' target='_blank' rel='noopener noreferrer'>Vue3</a>,
  and <a href='https://www.typescriptlang.org/' target='_blank' rel='noopener noreferrer'>Typescript</a>,
@@ -19,11 +19,11 @@
 
 ### Screenshots
 
-<p align="center">
- <a href="https://raw.githubusercontent.com/mrjackwills/obliqoro/main/.github/screenshot_01.png" target='_blank' rel='noopener noreferrer'>
+<p align='center'>
+ <a href='https://raw.githubusercontent.com/mrjackwills/obliqoro/main/.github/screenshot_01.png' target='_blank' rel='noopener noreferrer'>
   <img src='./.github/screenshot_01.png' width='48%'/>
  </a>&nbsp;
- <a href="https://raw.githubusercontent.com/mrjackwills/obliqoro/main/.github/screenshot_02.png" target='_blank' rel='noopener noreferrer'>
+ <a href='https://raw.githubusercontent.com/mrjackwills/obliqoro/main/.github/screenshot_02.png' target='_blank' rel='noopener noreferrer'>
   <img src='./.github/screenshot_02.png' width='48%'/>
  </a>
 </p>
@@ -45,12 +45,12 @@ Obliqoro is an open source, cross platform, graphical application, that combines
 
 ### Download + Install
 
-See the <a href="https://github.com/mrjackwills/obliqoro/releases/latest" target='_blank' rel='noopener noreferrer'>pre-built binaries</a>
+See the <a href='https://github.com/mrjackwills/obliqoro/releases/latest' target='_blank' rel='noopener noreferrer'>pre-built binaries</a>
 
 ### Todo
 
++ [x] Launch on boot
 + [ ] Code sign the application
-+ [ ] Launch on boot
 + [ ] Translations
 + [ ] Limiting to a single instance running at once
 + [ ] Saving strategies into SQLite and enabling the addition of new custom strategies
@@ -61,6 +61,7 @@ See the <a href="https://github.com/mrjackwills/obliqoro/releases/latest" target
 + [ ] Testing on Mac
 + [ ] Password protection for exiting a long break
 + [ ] Removal of OpenSSL Rust dependency
++ [ ] Setting to enable writing logs to file when on production version
 
 ### Development
 

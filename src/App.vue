@@ -62,6 +62,10 @@ onBeforeMount(async () => {
 		intervalStore.set_interval(event.payload);
 	});
 
+	await listen(ListenMessage.Autostart, async (event: Event<boolean>) => {
+		settingStore.set_autostart(event.payload);
+	});
+
 	await listen(ListenMessage.Error, async (event: Event<string>) => {
 		snackError({ message: event.payload });
 	});

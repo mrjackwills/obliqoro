@@ -15,6 +15,9 @@
 			</v-col>
 			<v-col cols='auto' class='mr-3'>
 				<v-icon :icon='mdiMinusThick' size='x-large' color='primary' @click='minimize' />
+				<v-tooltip activator='parent' v-if='show_tooltip' location='left center' class='tooltip-z'>
+					close to system tray
+				</v-tooltip>
 
 			</v-col>
 		</v-row>
@@ -26,8 +29,14 @@ import { invoke } from '@tauri-apps/api/tauri';
 import { InvokeMessage } from '../types';
 import { mdiMinusThick } from '@mdi/js';
 
+const show_tooltip = ref(true);
+
 const minimize = async (): Promise<void> => {
+	show_tooltip.value = false;
 	await invoke(InvokeMessage.Minimize);
+	setTimeout(() => {
+		show_tooltip.value = true;
+	}, 100);
 };
 
 </script>

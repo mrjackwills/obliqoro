@@ -49,10 +49,11 @@ impl ObliqoroWindow {
     }
 }
 
-/// Setup tracing - warning this cant write huge amounts to disk
+/// Setup tracing - warning this can write huge amounts to disk
+#[cfg(debug_assertions)]
 fn setup_tracing(app_dir: &PathBuf) -> Result<(), AppError> {
     let level = Level::DEBUG;
-    let logfile = tracing_appender::rolling::daily(app_dir, "obliqoro.log");
+    let logfile = tracing_appender::rolling::never(app_dir, "obliqoro.log");
 
     let log_fmt = t_fmt::Layer::default()
         .json()
@@ -69,7 +70,29 @@ fn setup_tracing(app_dir: &PathBuf) -> Result<(), AppError> {
     ) {
         Ok(_) => Ok(()),
         Err(e) => {
-            println!("{:?}", e);
+            println!("{e:?}");
+            Err(AppError::Internal("Unable to start tracing".to_owned()))
+        }
+    }
+}
+
+/// Setup tracing - warning this can write huge amounts to disk
+#[cfg(not(debug_assertions))]
+fn setup_tracing(_app_dir: &PathBuf) -> Result<(), AppError> {
+    let level = Level::INFO;
+    let log_fmt = t_fmt::Layer::default().json().flatten_event(true);
+
+    match tracing::subscriber::set_global_default(
+        t_fmt::Subscriber::builder()
+            .with_file(false)
+            .with_line_number(true)
+            .with_max_level(level)
+            .finish()
+            .with(log_fmt),
+    ) {
+        Ok(_) => Ok(()),
+        Err(e) => {
+            println!("{e:?}");
             Err(AppError::Internal("Unable to start tracing".to_owned()))
         }
     }
@@ -84,8 +107,8 @@ async fn main() -> Result<(), ()> {
     let ctx = tauri::generate_context!();
 
     match ApplicationState::new(tauri::api::path::app_data_dir(ctx.config()), &sx).await {
-        Err(error) => {
-            error!("{:?}", error);
+        Err(e) => {
+            error!("{e:?}");
             std::process::exit(1);
         }
         Ok(app_state) => {
@@ -131,11 +154,13 @@ async fn main() -> Result<(), ()> {
                     }
                     _ => (),
                 })
-                // put all this in the handlers mod, then just import one thing!
+                // put all this in the handlers mod, then just import one thing?
                 .invoke_handler(tauri::generate_handler![
                     request_handlers::init,
                     request_handlers::minimize,
                     request_handlers::reset_settings,
+                    request_handlers::get_autostart,
+                    request_handlers::set_autostart,
                     request_handlers::set_setting_fullscreen,
                     request_handlers::set_setting_longbreak,
                     request_handlers::set_setting_number_sessions,
@@ -148,16 +173,11 @@ async fn main() -> Result<(), ()> {
                     tick_process(&init_state, timer_sx);
                     start_message_handler(&s, internal_state, rx, handler_sx);
                     s.run(move |_app, event| {
-                        // TODO fix this clippy issue
-                        #[allow(clippy::single_match)]
-                        match event {
-                            tauri::RunEvent::ExitRequested { api, .. } => {
-                                close_sx
-                                    .send(InternalMessage::Window(WindowVisibility::Hide))
-                                    .unwrap_or_default();
-                                api.prevent_exit();
-                            }
-                            _ => (),
+                        if let tauri::RunEvent::ExitRequested { api, .. } = event {
+                            close_sx
+                                .send(InternalMessage::Window(WindowVisibility::Hide))
+                                .unwrap_or_default();
+                            api.prevent_exit();
                         }
                     });
                 }

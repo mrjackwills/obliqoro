@@ -8,12 +8,13 @@ CREATE TABLE IF NOT EXISTS error (
 
 CREATE TABLE IF NOT EXISTS settings (
 	settings_id INTEGER PRIMARY KEY AUTOINCREMENT CHECK (settings_id = 1),
-	short_break_as_sec INTEGER NOT NULL,
-	long_break_as_sec INTEGER NOT NULL,
-	session_as_sec INTEGER NOT NULL,
-	number_session_before_break INTEGER NOT NULL,
+	short_break_as_sec INTEGER CHECK(short_break_as_sec >= 10 AND short_break_as_sec <= 120) NOT NULL,
+	long_break_as_sec INTEGER CHECK(long_break_as_sec>= 60 AND long_break_as_sec <= 600) NOT NULL,
+	session_as_sec INTEGER CHECK(session_as_sec >= 60 AND session_as_sec <= 3540) NOT NULL,
+	number_session_before_break INTEGER CHECK(number_session_before_break >= 2 AND number_session_before_break <= 10) NOT NULL,
 	fullscreen BOOLEAN NOT NULL
 );
+
 
 
 CREATE TABLE IF NOT EXISTS stats (

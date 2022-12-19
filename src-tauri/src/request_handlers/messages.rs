@@ -9,17 +9,18 @@ pub enum EmitMessages {
     NextBreak,
     OnBreak,
     Paused,
-    SendError,
+    Error,
+    AutoStart,
     SessionsBeforeLong,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, Serialize)]
 pub struct ShowTimer {
-    interval: i64,
+    interval: u16,
     strategy: String,
 }
 impl ShowTimer {
-    pub const fn new(interval: i64, strategy: String) -> Self {
+    pub const fn new(interval: u16, strategy: String) -> Self {
         Self { interval, strategy }
     }
 }
@@ -33,7 +34,8 @@ impl EmitMessages {
             Self::GoToTimer => "goto::timer",
             Self::NextBreak => "next-break",
             Self::OnBreak => "on-break",
-            Self::SendError => "error",
+            Self::Error => "error",
+            Self::AutoStart => "autostart",
             Self::SessionsBeforeLong => "sessions-before-long",
             Self::PackageInfo => "package-info",
             Self::Paused => "paused",

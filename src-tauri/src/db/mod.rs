@@ -27,7 +27,7 @@ async fn create_tables(db: &SqlitePool) {
     match sqlx::query(init_db).execute(db).await {
         Ok(_) => (),
         Err(e) => {
-            println!("{:?}", e);
+            println!("{e:?}");
             // todo!("handle this better");
             std::process::exit(1);
         }

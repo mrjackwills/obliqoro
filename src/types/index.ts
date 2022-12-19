@@ -9,6 +9,8 @@ export enum InvokeMessage {
 	SetSettingShortBreak = 'set_setting_shortbreak',
 	SetSettingSession = 'set_setting_session',
 	GetPackageInfo = 'get_package_info',
+	GetAutoStart = 'get_autostart',
+	SetAutoStart = 'set_autostart',
 }
 
 export enum FrontEndRoutes {
@@ -25,6 +27,7 @@ export enum ModuleName {
 }
 
 export enum ListenMessage {
+	Autostart = 'autostart',
 	Error = 'error',
 	GetSettings = 'get::settings',
 	GoToSettings = 'goto::settings',
