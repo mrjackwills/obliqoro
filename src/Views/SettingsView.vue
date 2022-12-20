@@ -4,7 +4,7 @@
 			<v-container fluid class='ma-0 pa-0'>
 
 				<v-row align='center' justify='center' class=''>
-					<v-col cols='8' class='ma-0 pa-0'>
+					<v-col cols='9' class='ma-0 pa-0'>
 
 						<!-- TITLE -->
 						<v-row align='center' justify='center'>
@@ -15,24 +15,34 @@
 
 						<v-divider color='primary' class='my-4' />
 
-						<!-- BREAK INFO -->
-						<v-row align='center' justify='start' class='ma-0 pa-0' v-if='!paused'>
+						<!-- BREAK/PAUSE INFO -->
+						<v-row align='center' justify='space-around' class='ma-0 pa-0'>
 
-							<v-col cols='auto' class='ma-0 pa-0 text-primary text-left'>
+							<v-col cols='5' class='ma-0 pa-0 text-primary text-left'>
 								<v-row align='center' justify='start' class='ma-0 pa-0'>
-									<v-col cols='auto' class='ma-0 pa-0 mr-2'>
-										<v-icon :icon='mdiCoffeeOutline' class='' />
-									</v-col>
-									<v-col cols='auto' class='ma-0 pa-0'>
-										{{ next_in }}
-									</v-col>
+									<template v-if='!paused'>
+										<v-col cols='auto' class='ma-0 pa-0 mr-2'>
+											<v-icon :icon='mdiCoffeeOutline' class='' />
+										</v-col>
+										<v-col cols='auto' class='ma-0 pa-0'>
+											{{ next_in }}
+										</v-col>
+									</template>
+									<template v-else>
+										currently paused
+									</template>
 								</v-row>
 							</v-col>
 
-							<v-spacer />
-							<v-col cols='auto' class='ma-0 pa-0 text-primary' disabled>
+							<v-col cols='2' class='ma-0 pa-0'>
+								<v-btn @click='toggle_pause' :variant='pauseVairant' color='primary' size='small' block rounded='lg'>
+									<v-icon :icon='pauseIcon' class='mr-1' />
+									{{ pauseText }}
+								</v-btn>
+							</v-col>
 
-								<v-row align='center' justify='start' class='ma-0 pa-0'>
+							<v-col cols='5' class='ma-0 pa-0 text-primary'>
+								<v-row align='center' justify='end' class='ma-0 pa-0' v-if='!paused'>
 									<v-col cols='auto' class='ma-0 pa-0'>
 										{{ sessions_before_long }}
 									</v-col>
@@ -42,21 +52,8 @@
 								</v-row>
 
 							</v-col>
-
 						</v-row>
-						<v-row align='center' justify='center' class='ma-0 pa-0' v-else>
-							<v-col cols='auto' class='ma-0 pa-0 text-primary' disabled>
-
-								<v-row align='center' justify='start' class='ma-0 pa-0'>
-									<v-col cols='auto' class='ma-0 pa-0'>
-										currently paused
-									</v-col>
-								</v-row>
-
-							</v-col>
-
-						</v-row>
-
+						
 						<v-divider color='primary' class='my-4' />
 
 						<!-- SWITCHES -->
@@ -87,9 +84,10 @@
 
 								<v-row class='ma-0 pa-0'>
 									<v-col cols='12' class='ma-0 pa-0'>
-										<v-slider v-model='item.model.value' color='primary' :min='item.min'
+										<v-slider v-model='item.model.value' color='primary' :disabled='paused' :min='item.min'
 											density='compact' :max='item.max' :step='item.step' rounded>
 										</v-slider>
+										<ResumeTooltip :paused='paused' />
 									</v-col>
 								</v-row>
 							</section>
@@ -99,9 +97,11 @@
 						<!-- RESET BUTTON -->
 						<v-row class='ma-0 pa-0' justify='center'>
 							<v-col cols='auto' class='ma-0 pa-0'>
-								<v-btn @click='reset_settings' variant='outlined' color='primary' size='large'>
+								<v-btn @click='reset_settings' :disabled='paused' :variant='paused? "outlined" : undefined' color='primary' size='large' rounded='lg'>
 									<v-icon :icon='mdiCogRefresh' class='mr-1' />
-									reset settings</v-btn>
+									reset settings
+								</v-btn>
+							
 							</v-col>
 						</v-row>
 
@@ -117,7 +117,8 @@ import { sec_to_minutes, sec_to_minutes_only } from '../vanillaTS/second';
 import { invoke } from '@tauri-apps/api/tauri';
 import { InvokeMessage } from '../types';
 import { snackError } from '../services/snack';
-import { mdiCogRefresh, mdiCoffeeOutline, mdiWeatherNight } from '@mdi/js';
+import { mdiCogRefresh, mdiCoffeeOutline, mdiWeatherNight, mdiPlay, mdiPause } from '@mdi/js';
+import ResumeTooltip from '../components/ResumeTooltip.vue';
 const settingStore = settingModule();
 
 const next_in = computed((): string => {
@@ -130,6 +131,15 @@ const sessions_before_long = computed((): string => {
 
 const paused = computed((): boolean => {
 	return settingStore.paused;
+});
+const pauseIcon = computed((): string => {
+	return paused.value? mdiPlay:mdiPause;
+});
+const pauseVairant = computed((): undefined | 'outlined' => {
+	return paused.value? undefined :'outlined';
+});
+const pauseText = computed((): string => {
+	return paused.value? 'resume':'pause';
 });
 
 const switches = computed(() => {
@@ -240,6 +250,10 @@ const number_session_before_break = computed({
 const reset_settings = async (): Promise<void> => {
 	clearInterval(saveTimeout.value);
 	await invoke(InvokeMessage.ResetSettings);
+};
+
+const toggle_pause = async (): Promise<void> => {
+	await invoke(InvokeMessage.TogglePause);
 };
 
 const send_settings = async (message: InvokeMessage, value: number | boolean): Promise<void> => {
