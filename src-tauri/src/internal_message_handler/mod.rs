@@ -62,15 +62,15 @@ pub enum WindowVisibility {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Hash)]
 pub enum Emitter {
+    AutoStart(bool),
     GoToSettings,
+    NextBreak,
     OnBreak,
     PackageInfo,
     Paused,
     SendError,
-    SendAutoStart(bool),
-    SendSettings,
-    NextBreak,
     SessionsBeforeLong,
+    Settings,
     Timer,
 }
 
@@ -270,7 +270,9 @@ async fn handle_settings(
             let settings = ModelSettings::reset_settings(&sqlite).await?;
             state.lock().reset_settings(settings);
             reset_timer(state, sx);
-            sx.send(InternalMessage::Emit(Emitter::SendSettings))
+            sx.send(InternalMessage::Emit(Emitter::Settings))
+                .unwrap_or_default();
+            sx.send(InternalMessage::Emit(Emitter::Paused))
                 .unwrap_or_default();
         }
         SettingChange::ShortBreakLength(value) => {
@@ -360,7 +362,7 @@ fn handle_emitter(app: &AppHandle, emitter: Emitter, state: &Arc<Mutex<Applicati
             .unwrap_or(());
         }
 
-        Emitter::SendAutoStart(value) => {
+        Emitter::AutoStart(value) => {
             let on_break = state.lock().on_break();
             if !on_break {
                 app.emit_to(
@@ -381,7 +383,7 @@ fn handle_emitter(app: &AppHandle, emitter: Emitter, state: &Arc<Mutex<Applicati
             .unwrap_or(());
         }
 
-        Emitter::SendSettings => {
+        Emitter::Settings => {
             app.emit_to(
                 ObliqoroWindow::Main.as_str(),
                 EmitMessages::GetSettings.as_str(),

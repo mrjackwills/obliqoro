@@ -27,7 +27,7 @@ pub fn init(state: TauriState<'_>) {
     state
         .lock()
         .sx
-        .send(InternalMessage::Emit(Emitter::SendSettings))
+        .send(InternalMessage::Emit(Emitter::Settings))
         .unwrap_or_default();
     state
         .lock()
@@ -72,6 +72,17 @@ pub fn set_autostart(state: TauriState<'_>, value: bool) {
     get_autostart(state);
 }
 
+/// Toggle the autostart option
+#[tauri::command]
+#[allow(clippy::needless_pass_by_value)]
+pub fn toggle_pause(state: TauriState<'_>) {
+    state
+        .lock()
+        .sx
+        .send(InternalMessage::Pause)
+        .unwrap_or_default();
+}
+
 /// Get the current status of the autostart setting
 #[tauri::command]
 #[allow(clippy::needless_pass_by_value)]
@@ -79,7 +90,7 @@ pub fn get_autostart(state: TauriState<'_>) {
     state
         .lock()
         .sx
-        .send(InternalMessage::Emit(Emitter::SendAutoStart(
+        .send(InternalMessage::Emit(Emitter::AutoStart(
             auto_launch().map_or(false, |i| i.is_enabled().unwrap_or_default()),
         )))
         .unwrap_or_default();

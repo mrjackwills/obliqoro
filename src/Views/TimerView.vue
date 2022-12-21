@@ -3,14 +3,14 @@
 		<v-row align='center' justify='center' class='fill-height ma-0 pa-0'>
 			<v-container fluid class='ma-0 pa-0'>
 				<v-row align='center' justify='center' class='ma-0 pa-0'>
-					<v-col cols='auto' class='ma-0 pa-0'>
+					<v-col cols='auto' class='ma-0 pa-0' v-if='interval > 0'>
 						<v-progress-circular :model-value='circ_value' color='primary' :size='circle_size' width='30'>
 							<v-row align='center' justify='center' class='ma-0 pa-0'>
 								<v-col cols='11' class='text-primary text-center ma-2' :class='text_size'>
 									{{ strategy }}
 								</v-col>
 								<v-col cols='auto' class='text-subtitle1 monospace-text text-primary'>
-									{{ sec_to_minutes(timeout) }}
+									{{ sec_to_minutes(interval) }}
 								</v-col>
 							</v-row>
 						</v-progress-circular>
@@ -27,7 +27,7 @@ import { FrontEndRoutes } from '../types';
 import { sec_to_minutes } from '../vanillaTS/second';
 
 const store = intervalModule();
-const timeout = computed(() => store.interval);
+const interval = computed(() => store.interval);
 const circ_value = computed(() => {
 	return store.interval * (100 / store.original_interval);
 });
@@ -45,7 +45,7 @@ const text_size = computed((): string => {
 
 const router = useRouter();
 
-watch(timeout, (i) => {
+watch(interval, (i) => {
 	if (i <= 0) {
 		// set a 200ms timeout?
 		router.push(FrontEndRoutes.Settings);
