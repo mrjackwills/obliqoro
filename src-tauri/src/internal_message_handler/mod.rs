@@ -231,9 +231,9 @@ fn update_menu(
 }
 
 /// Stop the tick process, and start a new one
-fn reset_timer(state: &Arc<Mutex<ApplicationState>>, sx: &Sender<InternalMessage>) {
+fn reset_timer(state: &Arc<Mutex<ApplicationState>>) {
     state.lock().reset_timer();
-    tick_process(state, sx.clone());
+    tick_process(state);
 }
 
 /// Update the database setting data, and self.setting, and if necessary reset timers etc
@@ -269,7 +269,7 @@ async fn handle_settings(
             let sqlite = state.lock().sqlite.clone();
             let settings = ModelSettings::reset_settings(&sqlite).await?;
             state.lock().reset_settings(settings);
-            reset_timer(state, sx);
+            reset_timer(state);
             sx.send(InternalMessage::Emit(Emitter::Settings))
                 .unwrap_or_default();
             sx.send(InternalMessage::Emit(Emitter::Paused))
@@ -287,7 +287,7 @@ async fn handle_settings(
                 let sqlite = state.lock().sqlite.clone();
                 ModelSettings::update_session(&sqlite, value).await?;
                 state.lock().set_session_as_sec(value);
-                reset_timer(state, sx);
+                reset_timer(state);
             }
         }
     }

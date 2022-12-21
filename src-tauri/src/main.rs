@@ -117,7 +117,7 @@ async fn main() -> Result<(), ()> {
             let internal_state = Arc::clone(&state);
 
             let event_sx = sx.clone();
-            let timer_sx = sx.clone();
+            // let timer_sx = sx.clone();
             let close_sx = sx.clone();
             let handler_sx = sx.clone();
             let tray_sx = sx.clone();
@@ -171,7 +171,7 @@ async fn main() -> Result<(), ()> {
                 .build(tauri::generate_context!())
             {
                 Ok(s) => {
-                    tick_process(&init_state, timer_sx);
+                    tick_process(&init_state);
                     start_message_handler(&s, internal_state, rx, handler_sx);
                     s.run(move |_app, event| {
                         if let tauri::RunEvent::ExitRequested { api, .. } = event {

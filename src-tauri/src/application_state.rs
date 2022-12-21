@@ -7,7 +7,7 @@ use tokio::{sync::broadcast::Sender, task::JoinHandle};
 use crate::{
     app_error::AppError,
     db::{self, ModelSettings},
-    internal_message_handler::InternalMessage,
+    internal_message_handler::{InternalMessage, Emitter, BreakMessage},
     setup_tracing,
 };
 
@@ -156,11 +156,11 @@ impl ApplicationState {
 
     /// Toggle the pause status
     pub fn toggle_pause(&mut self) {
-        self.timer = self.timer.toggle()
+        self.timer = self.timer.toggle();
     }
 
     /// Check if the timer (tick process) is paused
-    pub fn get_paused(&self) -> bool {
+    pub const fn get_paused(&self) -> bool {
         match self.timer {
             Timer::Paused(_) => true,
             Timer::Work(_) => false,
@@ -215,11 +215,6 @@ impl ApplicationState {
             "next break in {}",
             Self::format_sec_to_min(self.current_timer_left())
         )
-		// let sec =     self.current_timer_left();
-		// format!(
-            // "seconds::{}, minutes::{}",
-        //  sec, Self::format_sec_to_min(sec)
-        // )
     }
 
     /// Return ModelSettings object
@@ -262,6 +257,31 @@ impl ApplicationState {
         self.settings.short_break_as_sec = i;
     }
 
+
+	pub fn tick_process(&self) {
+		// let paused = spawn_state.lock().get_paused();
+		if !self.get_paused() {
+
+		match self.session_status {
+			SessionStatus::Break(_) => {
+				self.sx.send(InternalMessage::Emit(Emitter::OnBreak))
+					.unwrap_or_default();
+				if self.current_timer_left() < 1 {
+					self.sx.send(InternalMessage::Break(BreakMessage::End))
+						.unwrap_or_default();
+				}
+			}
+			SessionStatus::Work => {
+					self.sx.send(InternalMessage::UpdateMenuTimer)
+						.unwrap_or_default();
+				if self.current_timer_left() < 1 {
+					self.sx.send(InternalMessage::Break(BreakMessage::Start))
+						.unwrap_or_default();
+				}
+			}
+		}
+	}
+	}
     // /// close the sql connection in a tokio thead
     // /// Honestly think this is pointless
     // pub fn close_sql(&mut self) {
