@@ -7,7 +7,7 @@ use tokio::{sync::broadcast::Sender, task::JoinHandle};
 use crate::{
     app_error::AppError,
     db::{self, ModelSettings},
-    internal_message_handler::{InternalMessage, Emitter, BreakMessage},
+    internal_message_handler::{BreakMessage, Emitter, InternalMessage},
     setup_tracing,
 };
 
@@ -113,7 +113,7 @@ impl ApplicationState {
 
     /// fuzzy second to minutes conversion
     fn format_sec_to_min(sec: u16) -> String {
-        if sec < 60 {
+        if sec <= 60 {
             String::from("less than 1 minute")
         } else {
             let minutes = (f64::try_from(sec).unwrap_or(0.0) / 60.0).ceil();
@@ -135,7 +135,7 @@ impl ApplicationState {
     }
 
     /// Return, in seconds, the current amount left of the onoing work - or break - session
-	pub fn current_timer_left(&self) -> u16 {
+    pub fn current_timer_left(&self) -> u16 {
         let taken_since = match self.timer {
             Timer::Paused(_) => 0,
             Timer::Work(timer) => {
@@ -257,29 +257,32 @@ impl ApplicationState {
         self.settings.short_break_as_sec = i;
     }
 
-
-	pub fn tick_process(&self) {
-		if !self.get_paused() {
-		match self.session_status {
-			SessionStatus::Break(_) => {
-				self.sx.send(InternalMessage::Emit(Emitter::OnBreak))
-					.unwrap_or_default();
-				if self.current_timer_left() < 1 {
-					self.sx.send(InternalMessage::Break(BreakMessage::End))
-						.unwrap_or_default();
-				}
-			}
-			SessionStatus::Work => {
-					self.sx.send(InternalMessage::UpdateMenuTimer)
-						.unwrap_or_default();
-				if self.current_timer_left() < 1 {
-					self.sx.send(InternalMessage::Break(BreakMessage::Start))
-						.unwrap_or_default();
-				}
-			}
-		}
-	}
-	}
+    pub fn tick_process(&self) {
+        if !self.get_paused() {
+            match self.session_status {
+                SessionStatus::Break(_) => {
+                    self.sx
+                        .send(InternalMessage::Emit(Emitter::OnBreak))
+                        .unwrap_or_default();
+                    if self.current_timer_left() < 1 {
+                        self.sx
+                            .send(InternalMessage::Break(BreakMessage::End))
+                            .unwrap_or_default();
+                    }
+                }
+                SessionStatus::Work => {
+                    self.sx
+                        .send(InternalMessage::UpdateMenuTimer)
+                        .unwrap_or_default();
+                    if self.current_timer_left() < 1 {
+                        self.sx
+                            .send(InternalMessage::Break(BreakMessage::Start))
+                            .unwrap_or_default();
+                    }
+                }
+            }
+        }
+    }
     // /// close the sql connection in a tokio thead
     // /// Honestly think this is pointless
     // pub fn close_sql(&mut self) {

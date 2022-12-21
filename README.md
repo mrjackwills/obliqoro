@@ -29,9 +29,9 @@
 </p>
 <p align='center'>
  <a href='https://raw.githubusercontent.com/mrjackwills/obliqoro/main/.github/screenshot_03.png' target='_blank' rel='noopener noreferrer'>
-  <img src='./.github/screenshot_03.png' width='48%'/>
+  <img src='./.github/screenshot_03.png' width='18%'/>
  </a>
- </p>
+</p>
 <hr>
 
 ### About
