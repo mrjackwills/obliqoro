@@ -107,8 +107,8 @@ impl WindowAction {
             }
             window.set_resizable(true).unwrap_or(());
             window.set_fullscreen(fullscreen).unwrap_or(());
-            // This is the linux fix
-            std::thread::sleep(std::time::Duration::from_millis(25));
+            // This is the linux fix - dirty, but it seems to work
+            std::thread::sleep(std::time::Duration::from_millis(50));
         } else if window.is_resizable().unwrap_or(false) {
             window.set_resizable(false).unwrap_or(());
         }

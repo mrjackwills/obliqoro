@@ -56,6 +56,7 @@ See the <a href='https://github.com/mrjackwills/obliqoro/releases/latest' target
 
 + [x] Launch on boot
 + [ ] Code sign the application
++ [ ] Pause on no/low cpu usage - user controllable setting
 + [ ] Translations
 + [ ] Limiting to a single instance running at once
 + [ ] Saving strategies into SQLite and enabling the addition of new custom strategies
@@ -64,7 +65,7 @@ See the <a href='https://github.com/mrjackwills/obliqoro/releases/latest' target
 + [ ] General code refactoring
 + [ ] Frontend link to the location of the SQLite file on disk
 + [ ] Testing on Mac
-+ [ ] Password protection for exiting a long break
++ [ ] Password for exiting a long break?
 + [ ] Removal of OpenSSL Rust dependency
 + [ ] Setting to enable writing logs to file when on production version
 

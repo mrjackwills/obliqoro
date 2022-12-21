@@ -3,9 +3,6 @@ use std::sync::Arc;
 
 use crate::{application_state::ApplicationState, internal_message_handler::InternalMessage};
 
-// const ONE_SECOND_AS_MS: u64 = 1000;
-// const ONE_MINUTE_AS_MS: u64 = ONE_SECOND_AS_MS * 60;
-
 /// Spawn off a tokio thread, that loops continually, well with a 250ms pause between each loop
 /// The timer checking is then spawned off into another thread
 /// The outer tread is saved into ApplicationState, so that it can be cancelled at any time

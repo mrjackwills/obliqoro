@@ -36,8 +36,14 @@
 
 							<v-col cols='2' class='ma-0 pa-0'>
 								<v-btn @click='toggle_pause' :variant='pauseVairant' color='primary' size='small' block rounded='lg'>
-									<v-icon :icon='pauseIcon' class='mr-1' />
-									{{ pauseText }}
+									<v-row align='center' justify='start' class='ma-0 pa-0'>
+										<v-col cols='auto' class='ma-0 pa-0 mr-1'>
+											<v-icon :icon='pauseIcon' class='' />
+										</v-col>
+										<v-col cols='auto' class='ma-0 pa-0'>
+											{{ pauseText }}
+										</v-col>
+									</v-row>
 								</v-btn>
 							</v-col>
 

@@ -28,7 +28,7 @@ async fn create_tables(db: &SqlitePool) {
         Ok(_) => (),
         Err(e) => {
             println!("{e:?}");
-            // todo!("handle this better");
+            // TODO - handle this better
             std::process::exit(1);
         }
     }
