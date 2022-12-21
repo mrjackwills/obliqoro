@@ -259,9 +259,7 @@ impl ApplicationState {
 
 
 	pub fn tick_process(&self) {
-		// let paused = spawn_state.lock().get_paused();
 		if !self.get_paused() {
-
 		match self.session_status {
 			SessionStatus::Break(_) => {
 				self.sx.send(InternalMessage::Emit(Emitter::OnBreak))
