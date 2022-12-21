@@ -117,7 +117,7 @@ async fn main() -> Result<(), ()> {
             let internal_state = Arc::clone(&state);
 
             let event_sx = sx.clone();
-            let timer_sx = sx.clone();
+            // let timer_sx = sx.clone();
             let close_sx = sx.clone();
             let handler_sx = sx.clone();
             let tray_sx = sx.clone();
@@ -161,6 +161,7 @@ async fn main() -> Result<(), ()> {
                     request_handlers::reset_settings,
                     request_handlers::get_autostart,
                     request_handlers::set_autostart,
+                    request_handlers::toggle_pause,
                     request_handlers::set_setting_fullscreen,
                     request_handlers::set_setting_longbreak,
                     request_handlers::set_setting_number_sessions,
@@ -170,7 +171,7 @@ async fn main() -> Result<(), ()> {
                 .build(tauri::generate_context!())
             {
                 Ok(s) => {
-                    tick_process(&init_state, timer_sx);
+                    tick_process(&init_state);
                     start_message_handler(&s, internal_state, rx, handler_sx);
                     s.run(move |_app, event| {
                         if let tauri::RunEvent::ExitRequested { api, .. } = event {

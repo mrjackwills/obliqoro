@@ -29,8 +29,8 @@ const on_settings = computed(():boolean => {
 	return route.fullPath === FrontEndRoutes.Settings;
 });
 
-onBeforeMount(async () => {
-
+/// Disable refreshing the page, via F5 or rightlick menu
+const disable_reload = (): void => {
 	/// disable right click
 	window.addEventListener('contextmenu', (event) => event.preventDefault());
 
@@ -38,6 +38,10 @@ onBeforeMount(async () => {
 	window.addEventListener('keydown', (event) => {
 		if (event.key.toLowerCase() === 'f5') event.preventDefault();
 	}, true);
+
+};
+onBeforeMount(async () => {
+	disable_reload();
 
 	await listen(ListenMessage.NumberSessionsBeforeLong, async (event: Event<string>) => {
 		settingStore.set_session_before_next_long_break(event.payload);

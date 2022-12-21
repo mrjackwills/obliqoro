@@ -62,15 +62,15 @@ pub enum WindowVisibility {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Hash)]
 pub enum Emitter {
+    AutoStart(bool),
     GoToSettings,
+    NextBreak,
     OnBreak,
     PackageInfo,
     Paused,
     SendError,
-    SendAutoStart(bool),
-    SendSettings,
-    NextBreak,
     SessionsBeforeLong,
+    Settings,
     Timer,
 }
 
@@ -107,8 +107,8 @@ impl WindowAction {
             }
             window.set_resizable(true).unwrap_or(());
             window.set_fullscreen(fullscreen).unwrap_or(());
-            // This is the linux fix
-            std::thread::sleep(std::time::Duration::from_millis(25));
+            // This is the linux fix - dirty, but it seems to work
+            std::thread::sleep(std::time::Duration::from_millis(50));
         } else if window.is_resizable().unwrap_or(false) {
             window.set_resizable(false).unwrap_or(());
         }
@@ -231,9 +231,9 @@ fn update_menu(
 }
 
 /// Stop the tick process, and start a new one
-fn reset_timer(state: &Arc<Mutex<ApplicationState>>, sx: &Sender<InternalMessage>) {
+fn reset_timer(state: &Arc<Mutex<ApplicationState>>) {
     state.lock().reset_timer();
-    tick_process(state, sx.clone());
+    tick_process(state);
 }
 
 /// Update the database setting data, and self.setting, and if necessary reset timers etc
@@ -269,8 +269,10 @@ async fn handle_settings(
             let sqlite = state.lock().sqlite.clone();
             let settings = ModelSettings::reset_settings(&sqlite).await?;
             state.lock().reset_settings(settings);
-            reset_timer(state, sx);
-            sx.send(InternalMessage::Emit(Emitter::SendSettings))
+            reset_timer(state);
+            sx.send(InternalMessage::Emit(Emitter::Settings))
+                .unwrap_or_default();
+            sx.send(InternalMessage::Emit(Emitter::Paused))
                 .unwrap_or_default();
         }
         SettingChange::ShortBreakLength(value) => {
@@ -285,7 +287,7 @@ async fn handle_settings(
                 let sqlite = state.lock().sqlite.clone();
                 ModelSettings::update_session(&sqlite, value).await?;
                 state.lock().set_session_as_sec(value);
-                reset_timer(state, sx);
+                reset_timer(state);
             }
         }
     }
@@ -360,7 +362,7 @@ fn handle_emitter(app: &AppHandle, emitter: Emitter, state: &Arc<Mutex<Applicati
             .unwrap_or(());
         }
 
-        Emitter::SendAutoStart(value) => {
+        Emitter::AutoStart(value) => {
             let on_break = state.lock().on_break();
             if !on_break {
                 app.emit_to(
@@ -381,7 +383,7 @@ fn handle_emitter(app: &AppHandle, emitter: Emitter, state: &Arc<Mutex<Applicati
             .unwrap_or(());
         }
 
-        Emitter::SendSettings => {
+        Emitter::Settings => {
             app.emit_to(
                 ObliqoroWindow::Main.as_str(),
                 EmitMessages::GetSettings.as_str(),

@@ -7,7 +7,7 @@ use tokio::{sync::broadcast::Sender, task::JoinHandle};
 use crate::{
     app_error::AppError,
     db::{self, ModelSettings},
-    internal_message_handler::InternalMessage,
+    internal_message_handler::{BreakMessage, Emitter, InternalMessage},
     setup_tracing,
 };
 
@@ -32,6 +32,32 @@ pub enum SessionStatus {
     Break(Break),
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Hash)]
+pub enum Timer {
+    Paused((Instant, Instant)),
+    Work(Instant),
+}
+impl Default for Timer {
+    fn default() -> Self {
+        Self::Work(std::time::Instant::now())
+    }
+}
+
+impl Timer {
+    fn toggle(self) -> Self {
+        match self {
+            Self::Paused((original, paused)) => Self::Work(original + paused.elapsed()),
+            Self::Work(original) => Self::Paused((original, std::time::Instant::now())),
+        }
+    }
+    fn reset(self) -> Self {
+        match self {
+            Self::Work(_) => Self::default(),
+            Self::Paused(_) => Self::Paused((std::time::Instant::now(), std::time::Instant::now())),
+        }
+    }
+}
+
 #[derive(Debug)]
 pub struct ApplicationState {
     pub session_status: SessionStatus,
@@ -40,11 +66,10 @@ pub struct ApplicationState {
     pub tick_process: Option<JoinHandle<()>>,
     // TODO button on frontend to open this location
     _data_location: PathBuf,
-    timer_start: Instant,
-    paused: bool,
     session_count: u8,
     settings: ModelSettings,
     strategies: Vec<String>,
+    timer: Timer,
 }
 
 impl ApplicationState {
@@ -69,8 +94,7 @@ impl ApplicationState {
                 _data_location: local_dir,
                 session_count: 0,
                 strategies,
-                timer_start: std::time::Instant::now(),
-                paused: false,
+                timer: Timer::default(),
                 session_status: SessionStatus::Work,
                 settings,
                 sqlite,
@@ -89,10 +113,10 @@ impl ApplicationState {
 
     /// fuzzy second to minutes conversion
     fn format_sec_to_min(sec: u16) -> String {
-        if sec < 60 {
+        if sec <= 60 {
             String::from("less than 1 minute")
         } else {
-            let minutes = (f64::try_from(sec).unwrap_or(0.0) / 60.0).round();
+            let minutes = (f64::try_from(sec).unwrap_or(0.0) / 60.0).ceil();
             format!("{minutes} minutes")
         }
     }
@@ -110,14 +134,15 @@ impl ApplicationState {
         (self.current_timer_left(), self.random_strategy())
     }
 
-    // Return, in seconds, the current amount left of the onoing work - or break - session
+    /// Return, in seconds, the current amount left of the onoing work - or break - session
     pub fn current_timer_left(&self) -> u16 {
-        let taken_since = u16::try_from(
-            std::time::Instant::now()
-                .duration_since(self.timer_start)
-                .as_secs(),
-        )
-        .unwrap_or(0);
+        let taken_since = match self.timer {
+            Timer::Paused(_) => 0,
+            Timer::Work(timer) => {
+                u16::try_from(std::time::Instant::now().duration_since(timer).as_secs())
+                    .unwrap_or(0)
+            }
+        };
         match self.session_status {
             SessionStatus::Break(break_type) => match break_type {
                 Break::Short => {
@@ -131,16 +156,19 @@ impl ApplicationState {
 
     /// Toggle the pause status
     pub fn toggle_pause(&mut self) {
-        self.paused = !self.paused;
+        self.timer = self.timer.toggle();
     }
 
     /// Check if the timer (tick process) is paused
     pub const fn get_paused(&self) -> bool {
-        self.paused
+        match self.timer {
+            Timer::Paused(_) => true,
+            Timer::Work(_) => false,
+        }
     }
 
     pub fn reset_timer(&mut self) {
-        self.timer_start = std::time::Instant::now();
+        self.timer = self.timer.reset();
     }
     /// Start the timer, by saetting the next_break_in value
     pub fn start_work_session(&mut self) {
@@ -229,6 +257,32 @@ impl ApplicationState {
         self.settings.short_break_as_sec = i;
     }
 
+    pub fn tick_process(&self) {
+        if !self.get_paused() {
+            match self.session_status {
+                SessionStatus::Break(_) => {
+                    self.sx
+                        .send(InternalMessage::Emit(Emitter::OnBreak))
+                        .unwrap_or_default();
+                    if self.current_timer_left() < 1 {
+                        self.sx
+                            .send(InternalMessage::Break(BreakMessage::End))
+                            .unwrap_or_default();
+                    }
+                }
+                SessionStatus::Work => {
+                    self.sx
+                        .send(InternalMessage::UpdateMenuTimer)
+                        .unwrap_or_default();
+                    if self.current_timer_left() < 1 {
+                        self.sx
+                            .send(InternalMessage::Break(BreakMessage::Start))
+                            .unwrap_or_default();
+                    }
+                }
+            }
+        }
+    }
     // /// close the sql connection in a tokio thead
     // /// Honestly think this is pointless
     // pub fn close_sql(&mut self) {
