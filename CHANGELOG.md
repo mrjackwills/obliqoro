@@ -1,4 +1,10 @@
-# <a href='https://wwwhub.com/mrjackwills/obliqoro/releases/tag/v0.0.4'>v0.0.4</a>
+### Chores
++ dependencies updated, [aab6e0adb5ee4069a69c2793c5c19e34a5ddf607], [6b4347be6c751459728747d46a65cf3a8f934196]
+
+### Fixes
++ hr styling, [3f216528c8f8763000dff63f5a04882706909fa0]
+
+* # <a href='https://wwwhub.com/mrjackwills/obliqoro/releases/tag/v0.0.4'>v0.0.4</a>
 ### 2022-12-20
 
 ### Docs
