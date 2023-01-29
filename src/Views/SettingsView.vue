@@ -13,7 +13,8 @@
 							</v-col>
 						</v-row>
 
-						<v-divider color='primary' class='my-4' />
+						<hr class='my-4 hr' />
+						<!-- <v-divider class='my-4 abc' /> -->
 
 						<!-- BREAK/PAUSE INFO -->
 						<v-row align='center' justify='space-around' class='ma-0 pa-0'>
@@ -60,7 +61,8 @@
 							</v-col>
 						</v-row>
 						
-						<v-divider color='primary' class='my-4' />
+						<hr class='my-4 hr' />
+						<!-- <v-divider  class='text-primary dark my-4' /> -->
 
 						<!-- SWITCHES -->
 						<v-form v-on:submit.prevent class='mt-4'>
@@ -304,5 +306,10 @@ watch(start_on_boot, async (value) => {
 
 .v-label {
 	opacity: 1 !important;
+}
+
+.hr {
+	border: 1px solid rgba(var(--v-theme-primary), .9);
+	
 }
 </style>

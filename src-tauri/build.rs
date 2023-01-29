@@ -5,6 +5,6 @@ fn main() {
         .duration_since(SystemTime::UNIX_EPOCH)
         .expect("This error shouln't happen")
         .as_secs();
-    println!("cargo:rustc-env=BUILD_DATE={}", now);
+    println!("cargo:rustc-env=BUILD_DATE={now}");
     tauri_build::build()
 }

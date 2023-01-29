@@ -117,7 +117,6 @@ async fn main() -> Result<(), ()> {
             let internal_state = Arc::clone(&state);
 
             let event_sx = sx.clone();
-            // let timer_sx = sx.clone();
             let close_sx = sx.clone();
             let handler_sx = sx.clone();
             let tray_sx = sx.clone();

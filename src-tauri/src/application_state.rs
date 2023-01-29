@@ -179,7 +179,7 @@ impl ApplicationState {
     /// Start the break session
     /// TODO update db session count
     pub fn start_break_session(&mut self) {
-        let break_type = if self.session_count < self.settings.number_session_before_break {
+        let break_type = if self.session_count + 1 < self.settings.number_session_before_break {
             self.session_count += 1;
             Break::Short
         } else {
@@ -197,13 +197,12 @@ impl ApplicationState {
             .saturating_sub(self.session_count)
     }
 
-    /// Create a string `next long break after x session[s]`, for frontend and systemtray
+    /// Create a string `next long break after x sessions`, for frontend and systemtray
     pub fn get_sessions_before_long_title(&self) -> String {
         let number_before_long = self.get_session_before_long_break();
         let mut title = String::from("next long break after ");
         match number_before_long {
             2.. => title.push_str(&format!("{number_before_long} sessions")),
-            1 => title.push_str(&format!("{number_before_long} session")),
             _ => title.push_str("current session"),
         }
         title
