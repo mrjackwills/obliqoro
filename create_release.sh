@@ -155,8 +155,7 @@ check_tag () {
 				PATCH=$((PATCH + 1))
 				break;;
 			*)
-				error_close "invalid option $REPLY"
-				break;;
+				error_close "invalid option $REPLY";;
 		esac
 	done
 }
@@ -164,7 +163,7 @@ check_tag () {
 # ask continue, or quit
 ask_continue () {
 	ask_yn "continue"
-	if [[ ! "$(user_input)" =~ ^y$ ]] 
+	if [[ ! "$(user_input)" =~ ^y$ ]]
 	then 
 		exit
 	fi
@@ -265,8 +264,7 @@ main() {
 	do
 		case $choice in
 			0)
-				exit
-				break;;
+				exit;;
 			1)
 				cargo_test
 				main
