@@ -115,11 +115,8 @@ update_release_body_and_changelog () {
 # Update package.json
 update_json () {
 	local json_file="./package.json"
-	local json_version_update
-	local json_build_update
 	json_version_update=$(jq ".version = \"${NEW_TAG_WITH_V:1}\"" "${json_file}")
-	json_build_update=$(jq ".buildDate =\"${BUILD_DATE}\"" <<< "${json_version_update}")
-	echo "$json_build_update" > "$json_file"
+	echo "$json_version_update" > "$json_file"
 }
 
 # update version in cargo.toml, to match selected current version
