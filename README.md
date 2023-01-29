@@ -47,6 +47,7 @@ Obliqoro is an open source, cross platform, graphical application, that combines
 + Overlay window on top of other windows
 + System tray menu inactive during breaks
 + Automated build with `.deb`, `.AppImage`, and `.msi` output, via GitHub Action
++ Launch on boot
 
 ### Download + Install
 
@@ -54,7 +55,6 @@ See the <a href='https://github.com/mrjackwills/obliqoro/releases/latest' target
 
 ### Todo
 
-+ [x] Launch on boot
 + [ ] Code sign the application
 + [ ] Pause on no/low cpu usage - user controllable setting
 + [ ] Translations
