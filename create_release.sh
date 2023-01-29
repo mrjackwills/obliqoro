@@ -112,6 +112,16 @@ update_release_body_and_changelog () {
 	sed -i -r -E "s=closes \#([0-9]+)=closes [#\1](${GIT_REPO_URL}/issues/\1)=g" ./CHANGELOG.md
 }
 
+# Update package.json
+update_json () {
+	local json_file="./package.json"
+	local json_version_update
+	local json_build_update
+	json_version_update=$(jq ".version = \"${NEW_TAG_WITH_V:1}\"" "${json_file}")
+	json_build_update=$(jq ".buildDate =\"${BUILD_DATE}\"" <<< "${json_version_update}")
+	echo "$json_build_update" > "$json_file"
+}
+
 # update version in cargo.toml, to match selected current version
 update_version_number_in_files () {
 	sed -i "s|^version = .*|version = \"${MAJOR}.${MINOR}.${PATCH}\"|" ./src-tauri/Cargo.toml
@@ -209,6 +219,7 @@ release_flow() {
 
 	release_continue "update_version_number_in_files"
 	update_version_number_in_files
+	update_json
 	
 	echo -e "\ncargo fmt"
 	cd src-tauri || error_close "Can't find src-tauri"
