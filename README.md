@@ -72,7 +72,7 @@ See the <a href='https://github.com/mrjackwills/obliqoro/releases/latest' target
 
 ### Development
 
-Requires Node & Rust to be installed installed
+Requires Node & Rust to be installed
 
 ```bash
 git clone https://www.github.com/mrjackwills/obliqoro.git
