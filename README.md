@@ -12,6 +12,7 @@
  <a href='https://vuejs.org' target='_blank' rel='noopener noreferrer'>Vue3</a>,
  and <a href='https://www.typescriptlang.org/' target='_blank' rel='noopener noreferrer'>Typescript</a>,
  using <a href='https://www.tauri.app/' target='_blank' rel='noopener noreferrer'>Tauri</a>,
+ <a href='https://vuetifyjs.com/' target='_blank' rel='noopener noreferrer'>Vuetify</a>,
  and <a href='https://www.sqlite.org/' target='_blank' rel='noopener noreferrer'>SQLite</a>
 </p>
 
@@ -67,12 +68,11 @@ See the <a href='https://github.com/mrjackwills/obliqoro/releases/latest' target
 + [ ] Frontend link to the location of the SQLite file on disk
 + [ ] Testing on Mac
 + [ ] Password for exiting a long break?
-+ [ ] Removal of OpenSSL Rust dependency
 + [ ] Setting to enable writing logs to file when on production version
 
 ### Development
 
-Requires Node & Rust to be installed installed
+Requires Node & Rust to be installed
 
 ```bash
 git clone https://www.github.com/mrjackwills/obliqoro.git

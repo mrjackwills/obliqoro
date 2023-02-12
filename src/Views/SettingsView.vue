@@ -36,7 +36,7 @@
 							</v-col>
 
 							<v-col cols='2' class='ma-0 pa-0'>
-								<v-btn @click='toggle_pause' :variant='pauseVairant' color='primary' size='small' block rounded='lg'>
+								<v-btn @click='toggle_pause' :variant='pauseVariant' color='primary' size='small' block rounded='lg'>
 									<v-row align='center' justify='start' class='ma-0 pa-0'>
 										<v-col cols='auto' class='ma-0 pa-0 mr-1'>
 											<v-icon :icon='pauseIcon' class='' />
@@ -143,7 +143,7 @@ const paused = computed((): boolean => {
 const pauseIcon = computed((): string => {
 	return paused.value? mdiPlay:mdiPause;
 });
-const pauseVairant = computed((): undefined | 'outlined' => {
+const pauseVariant = computed((): undefined | 'outlined' => {
 	return paused.value? undefined :'outlined';
 });
 const pauseText = computed((): string => {

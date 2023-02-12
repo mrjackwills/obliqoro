@@ -221,7 +221,7 @@ impl ApplicationState {
         self.settings
     }
 
-    /// Set the in memory settings to a new ModelSettings objects, is written to sql seperately
+    /// Set the in memory settings to a new ModelSettings objects, is written to sql separately
     pub fn reset_settings(&mut self, settings: ModelSettings) {
         self.settings = settings;
     }
