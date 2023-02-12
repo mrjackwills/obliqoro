@@ -67,8 +67,8 @@ See the <a href='https://github.com/mrjackwills/obliqoro/releases/latest' target
 + [ ] Frontend link to the location of the SQLite file on disk
 + [ ] Testing on Mac
 + [ ] Password for exiting a long break?
-+ [ ] Removal of OpenSSL Rust dependency
 + [ ] Setting to enable writing logs to file when on production version
++ [x] ~~~Removal of OpenSSL Rust dependency~~~
 
 ### Development
 

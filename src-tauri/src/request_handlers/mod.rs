@@ -20,7 +20,7 @@ fn auto_launch() -> Option<AutoLaunch> {
     })
 }
 
-/// Initialise the frontent store & settings
+/// Initialise the fontend store & settings
 #[tauri::command]
 #[allow(clippy::needless_pass_by_value)]
 pub fn init(state: TauriState<'_>) {
