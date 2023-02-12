@@ -39,7 +39,6 @@ default = [ "custom-protocol" ]
 # DO NOT remove this
 custom-protocol = [ "tauri/custom-protocol" ]
 
-# 8.7M 73M
 [profile.release]
 lto = true
 codegen-units = 1
