@@ -23,17 +23,13 @@ rand = "0.8"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 sqlx = { version = "0.6", default-features = false, features = [ "runtime-tokio-rustls", "sqlite", "macros", "time"] }
-tauri = { version = "1.2", features = ["api-all", "system-tray"] }
+tauri = { version = "1.2", features = ["api-all", "system-tray", "native-tls-vendored"] }
 thiserror = "1.0"
 time = { version="0.3", features= ["serde", "parsing", "local-offset"] }
 tokio = { version = "1.25", features = ["full"] }
 tracing = "0.1"
 tracing-appender = "0.2"
 tracing-subscriber = {version="0.3", features = ["json"] }
-
-[target.'cfg(target_os = "linux")'.dependencies]
-openssl = { version = '0.10', features = ["vendored"] }
-
 
 [features]
 # by default Tauri runs in production mode
