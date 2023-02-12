@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # rust create_release
-# v0.1.2
+# v0.2.7
 
 STAR_LINE='****************************************'
 CWD=$(pwd)
@@ -176,30 +176,41 @@ ask_continue () {
 	fi
 }
 
+# $1 text to colourise
+release_continue () {
+	echo -e "\n${PURPLE}$1${RESET}"
+	ask_continue
+}
+
 # run all tests
 cargo_test () {
 	cargo test -- --test-threads=1
 	ask_continue
 }
 
-# Build all releases that GitHub workflow would
-# This will download GB's of docker images
-cargo_build () {
+# build for production, as Github action would do
+cargo_build() {
+	echo -e "\n${GREEN}cargo tauri build${RESET}"
 	cargo tauri build
-}
-
-# $1 text to colourise
-release_continue () {
-	echo -e "\n${PURPLE}$1${RESET}"
 	ask_continue
-
 }
+
+check_typos () {
+	echo -e "\n${YELLOW}checking for typos${RESET}"
+	typos
+	ask_continue
+}
+
 # Full flow to create a new release
 release_flow() {
+	
+	check_typos
+
 	check_git
 	get_git_remote_url
-	# cargo_test
-	# cargo_build
+
+	cargo_test
+	cargo_build
 
 	cd "${CWD}" || error_close "Can't find ${CWD}"
 	check_tag
@@ -230,9 +241,8 @@ release_flow() {
 	git commit -m "chore: release ${NEW_TAG_WITH_V}"
 
 	release_continue "git checkout main"
+	echo -e "git merge --no-ff \"${RELEASE_BRANCH}\" -m \"chore: merge ${RELEASE_BRANCH} into main\"" 
 	git checkout main
-
-	release_continue "git merge --no-ff \"${RELEASE_BRANCH}\" -m \"chore: merge ${RELEASE_BRANCH} into main\"" 
 	git merge --no-ff "$RELEASE_BRANCH" -m "chore: merge ${RELEASE_BRANCH} into main"
 
 	release_continue "git tag -am \"${RELEASE_BRANCH}\" \"$NEW_TAG_WITH_V\""
