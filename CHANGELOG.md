@@ -1,61 +1,61 @@
-# <a href='https://wwwhub.com/mrjackwills/obliqoro/releases/tag/v0.1.0'>v0.1.0</a>
+# <a href='https://www.github.com/mrjackwills/obliqoro/releases/tag/v0.1.0'>v0.1.0</a>
 ### 2023-02-12
 
 ### Chores
-+ create_releave v0.2.7, [a34f1f09](https://wwwhub.com/mrjackwills/obliqoro/commit/a34f1f09fcbd1af01ee48fe535e7137d8aa32844), [0c691341](https://wwwhub.com/mrjackwills/obliqoro/commit/0c691341003153361064d071a3301d4d24740c79)
-+ typos.toml added, [15a2c276](https://wwwhub.com/mrjackwills/obliqoro/commit/15a2c2761f11bb7eab1b5be70f1c4bb017be9af8)
-+ dev container updated, [44ced2d8](https://wwwhub.com/mrjackwills/obliqoro/commit/44ced2d8fcf9ed0c957f910761771fc8892f5af5)
-+ dependencies updated, [aef6f9ea](https://wwwhub.com/mrjackwills/obliqoro/commit/aef6f9ea6f0474f6c99745eed1660f7e51c14107)
++ create_releave v0.2.7, [a34f1f09](https://www.github.com/mrjackwills/obliqoro/commit/a34f1f09fcbd1af01ee48fe535e7137d8aa32844), [0c691341](https://www.github.com/mrjackwills/obliqoro/commit/0c691341003153361064d071a3301d4d24740c79)
++ typos.toml added, [15a2c276](https://www.github.com/mrjackwills/obliqoro/commit/15a2c2761f11bb7eab1b5be70f1c4bb017be9af8)
++ dev container updated, [44ced2d8](https://www.github.com/mrjackwills/obliqoro/commit/44ced2d8fcf9ed0c957f910761771fc8892f5af5)
++ dependencies updated, [aef6f9ea](https://www.github.com/mrjackwills/obliqoro/commit/aef6f9ea6f0474f6c99745eed1660f7e51c14107)
 
 ### Docs
-+ typos, [0b900357](https://wwwhub.com/mrjackwills/obliqoro/commit/0b900357f0af0abfe32c080d06c260d721ca15bb), [40514c3c](https://wwwhub.com/mrjackwills/obliqoro/commit/40514c3cc773fd2af795c310c0aad246deac4d62)
++ typos, [0b900357](https://www.github.com/mrjackwills/obliqoro/commit/0b900357f0af0abfe32c080d06c260d721ca15bb), [40514c3c](https://www.github.com/mrjackwills/obliqoro/commit/40514c3cc773fd2af795c310c0aad246deac4d62)
 
 ### Features
-+ openssl dependency removed, [cf01f3a4](https://wwwhub.com/mrjackwills/obliqoro/commit/cf01f3a493ac359093fb378b2e2e0c28afcd5c7b)
++ openssl dependency removed, [cf01f3a4](https://www.github.com/mrjackwills/obliqoro/commit/cf01f3a493ac359093fb378b2e2e0c28afcd5c7b)
 
 ### Reverts
-+ github workflow branch removed, [62045b57](https://wwwhub.com/mrjackwills/obliqoro/commit/62045b5732cb41f4bb3820a2605c62ca0dd37b30)
++ github workflow branch removed, [62045b57](https://www.github.com/mrjackwills/obliqoro/commit/62045b5732cb41f4bb3820a2605c62ca0dd37b30)
 
-# <a href='https://wwwhub.com/mrjackwills/obliqoro/releases/tag/v0.0.5'>v0.0.5</a>
+# <a href='https://www.github.com/mrjackwills/obliqoro/releases/tag/v0.0.5'>v0.0.5</a>
 ### 2023-01-29
 
 ### Chores
-+ dependencies updated, [aab6e0ad](https://wwwhub.com/mrjackwills/obliqoro/commit/aab6e0adb5ee4069a69c2793c5c19e34a5ddf607), [6b4347be](https://wwwhub.com/mrjackwills/obliqoro/commit/6b4347be6c751459728747d46a65cf3a8f934196), [fe1f11a2](https://wwwhub.com/mrjackwills/obliqoro/commit/fe1f11a25ed8a6b322c4b42708afde05960d0030)
-+ github workflow main only, [4ba2aff3](https://wwwhub.com/mrjackwills/obliqoro/commit/4ba2aff3ec3ad2d2ebd8c14c068e610f0fa098c0)
++ dependencies updated, [aab6e0ad](https://www.github.com/mrjackwills/obliqoro/commit/aab6e0adb5ee4069a69c2793c5c19e34a5ddf607), [6b4347be](https://www.github.com/mrjackwills/obliqoro/commit/6b4347be6c751459728747d46a65cf3a8f934196), [fe1f11a2](https://www.github.com/mrjackwills/obliqoro/commit/fe1f11a25ed8a6b322c4b42708afde05960d0030)
++ github workflow main only, [4ba2aff3](https://www.github.com/mrjackwills/obliqoro/commit/4ba2aff3ec3ad2d2ebd8c14c068e610f0fa098c0)
 
 ### Docs
-+ readme updated, [144ebee9](https://wwwhub.com/mrjackwills/obliqoro/commit/144ebee9de3297ca246b4de64662eeca7e781f77), [350484ec](https://wwwhub.com/mrjackwills/obliqoro/commit/350484ec54bb0d3ed2c0343a1058e764a9f7ea8f)
++ readme updated, [144ebee9](https://www.github.com/mrjackwills/obliqoro/commit/144ebee9de3297ca246b4de64662eeca7e781f77), [350484ec](https://www.github.com/mrjackwills/obliqoro/commit/350484ec54bb0d3ed2c0343a1058e764a9f7ea8f)
 
 ### Fixes
-+ hr styling, [3f216528](https://wwwhub.com/mrjackwills/obliqoro/commit/3f216528c8f8763000dff63f5a04882706909fa0)
-+ long session logic fixed, [903079af](https://wwwhub.com/mrjackwills/obliqoro/commit/903079af9da926f78b5c06848023970caf0c57e4)
++ hr styling, [3f216528](https://www.github.com/mrjackwills/obliqoro/commit/3f216528c8f8763000dff63f5a04882706909fa0)
++ long session logic fixed, [903079af](https://www.github.com/mrjackwills/obliqoro/commit/903079af9da926f78b5c06848023970caf0c57e4)
 
-# <a href='https://wwwhub.com/mrjackwills/obliqoro/releases/tag/v0.0.4'>v0.0.4</a>
+# <a href='https://www.github.com/mrjackwills/obliqoro/releases/tag/v0.0.4'>v0.0.4</a>
 ### 2022-12-20
 
 ### Docs
-+ readme screenshot updated, [911a5294](https://wwwhub.com/mrjackwills/obliqoro/commit/911a529440a1d20012912aba8be4d5334f3385b3)
++ readme screenshot updated, [911a5294](https://www.github.com/mrjackwills/obliqoro/commit/911a529440a1d20012912aba8be4d5334f3385b3)
 
 ### Refactors
-+ tick process in application state, [dce8cae1](https://wwwhub.com/mrjackwills/obliqoro/commit/dce8cae18f8359f21ffdbc5c3bb6aa28b0a8303a), [b9fdb6a3](https://wwwhub.com/mrjackwills/obliqoro/commit/b9fdb6a37020894d57470586b7f58adc94628523)
++ tick process in application state, [dce8cae1](https://www.github.com/mrjackwills/obliqoro/commit/dce8cae18f8359f21ffdbc5c3bb6aa28b0a8303a), [b9fdb6a3](https://www.github.com/mrjackwills/obliqoro/commit/b9fdb6a37020894d57470586b7f58adc94628523)
 
-# <a href='https://wwwhub.com/mrjackwills/obliqoro/releases/tag/v0.0.3'>v0.0.3</a>
+# <a href='https://www.github.com/mrjackwills/obliqoro/releases/tag/v0.0.3'>v0.0.3</a>
 ### 2022-12-19
 
 ### Docs
-+ readme updated, [8f763839](https://wwwhub.com/mrjackwills/obliqoro/commit/8f763839c278f6ddbd7cc1a705c4cd89180ae371)
++ readme updated, [8f763839](https://www.github.com/mrjackwills/obliqoro/commit/8f763839c278f6ddbd7cc1a705c4cd89180ae371)
 
 * ### Features
-+ implement start on boot setting, [56362f89](https://wwwhub.com/mrjackwills/obliqoro/commit/56362f89167532b8f3e8f4205f65c11dd6f4d5e8)
-+ add checks to database, [a1fbe972](https://wwwhub.com/mrjackwills/obliqoro/commit/a1fbe972752e38ab5726f25eb35e1db6a46c41e5)
-+ tooltip on close/minimize button, [a12838d6](https://wwwhub.com/mrjackwills/obliqoro/commit/a12838d6305ba472949a6a4ef76ac19105ee3d2c), [debc23fb](https://wwwhub.com/mrjackwills/obliqoro/commit/debc23fb74fa280dc980028cdb86dc956da5be50)
++ implement start on boot setting, [56362f89](https://www.github.com/mrjackwills/obliqoro/commit/56362f89167532b8f3e8f4205f65c11dd6f4d5e8)
++ add checks to database, [a1fbe972](https://www.github.com/mrjackwills/obliqoro/commit/a1fbe972752e38ab5726f25eb35e1db6a46c41e5)
++ tooltip on close/minimize button, [a12838d6](https://www.github.com/mrjackwills/obliqoro/commit/a12838d6305ba472949a6a4ef76ac19105ee3d2c), [debc23fb](https://www.github.com/mrjackwills/obliqoro/commit/debc23fb74fa280dc980028cdb86dc956da5be50)
 
 ### Fixes
-+ only write logs on file on debug mode, [836052de](https://wwwhub.com/mrjackwills/obliqoro/commit/836052deff23102d75aa774c7e0ae7d5f4abb04e)
++ only write logs on file on debug mode, [836052de](https://www.github.com/mrjackwills/obliqoro/commit/836052deff23102d75aa774c7e0ae7d5f4abb04e)
 
 ### Refactors
-+ remove tick method, use an Instant in ApplicationState, [bc948aab](https://wwwhub.com/mrjackwills/obliqoro/commit/bc948aab49f8c1ce7fee8ddf8de7069d93552884)
-+ exit request match simplified, [ce9b407a](https://wwwhub.com/mrjackwills/obliqoro/commit/ce9b407aedce708b16087dd7d10d1eff80680c6b)
++ remove tick method, use an Instant in ApplicationState, [bc948aab](https://www.github.com/mrjackwills/obliqoro/commit/bc948aab49f8c1ce7fee8ddf8de7069d93552884)
++ exit request match simplified, [ce9b407a](https://www.github.com/mrjackwills/obliqoro/commit/ce9b407aedce708b16087dd7d10d1eff80680c6b)
 
 # <a href='https://github.com/mrjackwills/obliqoro/releases/tag/v0.0.2'>v0.0.2</a>
 ### 2022-12-14
