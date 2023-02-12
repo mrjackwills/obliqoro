@@ -1,0 +1,2 @@
+[files]
+extend-exclude = ["node_modules/*", "src-tauri/target/*"]
