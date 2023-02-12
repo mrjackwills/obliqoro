@@ -1,15 +1,19 @@
-### 2023-01-29
+### 2023-02-12
 
 ### Chores
-+ dependencies updated, [aab6e0adb5ee4069a69c2793c5c19e34a5ddf607], [6b4347be6c751459728747d46a65cf3a8f934196], [fe1f11a25ed8a6b322c4b42708afde05960d0030]
-+ github workflow main only, [4ba2aff3ec3ad2d2ebd8c14c068e610f0fa098c0]
++ create_releave v0.2.7, [a34f1f09fcbd1af01ee48fe535e7137d8aa32844], [0c691341003153361064d071a3301d4d24740c79]
++ typos.toml added, [15a2c2761f11bb7eab1b5be70f1c4bb017be9af8]
++ dev container updated, [44ced2d8fcf9ed0c957f910761771fc8892f5af5]
++ dependencies updated, [aef6f9ea6f0474f6c99745eed1660f7e51c14107]
 
 ### Docs
-+ readme updated, [144ebee9de3297ca246b4de64662eeca7e781f77], [350484ec54bb0d3ed2c0343a1058e764a9f7ea8f]
++ typos, [0b900357f0af0abfe32c080d06c260d721ca15bb], [40514c3cc773fd2af795c310c0aad246deac4d62]
 
-### Fixes
-+ hr styling, [3f216528c8f8763000dff63f5a04882706909fa0]
-+ long session logic fixed, [903079af9da926f78b5c06848023970caf0c57e4]
+### Features
++ openssl dependency removed, [cf01f3a493ac359093fb378b2e2e0c28afcd5c7b]
+
+### Reverts
++ github workflow branch removed, [62045b5732cb41f4bb3820a2605c62ca0dd37b30]
 
 
 see <a href='https://wwwhub.com/mrjackwills/obliqoro/blob/main/CHANGELOG.md'>CHANGELOG.md</a> for more details
