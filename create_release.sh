@@ -112,6 +112,13 @@ update_release_body_and_changelog () {
 	sed -i -r -E "s=closes \#([0-9]+)=closes [#\1](${GIT_REPO_URL}/issues/\1)=g" ./CHANGELOG.md
 }
 
+# Update package.json
+update_json () {
+	local json_file="./package.json"
+	json_version_update=$(jq ".version = \"${NEW_TAG_WITH_V:1}\"" "${json_file}")
+	echo "$json_version_update" > "$json_file"
+}
+
 # update version in cargo.toml, to match selected current version
 update_version_number_in_files () {
 	sed -i "s|^version = .*|version = \"${MAJOR}.${MINOR}.${PATCH}\"|" ./src-tauri/Cargo.toml
@@ -155,8 +162,7 @@ check_tag () {
 				PATCH=$((PATCH + 1))
 				break;;
 			*)
-				error_close "invalid option $REPLY"
-				break;;
+				error_close "invalid option $REPLY";;
 		esac
 	done
 }
@@ -164,7 +170,7 @@ check_tag () {
 # ask continue, or quit
 ask_continue () {
 	ask_yn "continue"
-	if [[ ! "$(user_input)" =~ ^y$ ]] 
+	if [[ ! "$(user_input)" =~ ^y$ ]]
 	then 
 		exit
 	fi
@@ -210,6 +216,7 @@ release_flow() {
 
 	release_continue "update_version_number_in_files"
 	update_version_number_in_files
+	update_json
 	
 	echo -e "\ncargo fmt"
 	cd src-tauri || error_close "Can't find src-tauri"
@@ -265,8 +272,7 @@ main() {
 	do
 		case $choice in
 			0)
-				exit
-				break;;
+				exit;;
 			1)
 				cargo_test
 				main
