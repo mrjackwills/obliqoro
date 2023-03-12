@@ -1,10 +1,11 @@
 #![forbid(unsafe_code)]
 #![warn(
+	clippy::expect_used,
+    clippy::nursery,
+    clippy::pedantic,
+	clippy::todo,
     clippy::unused_async,
     clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::pedantic,
-    clippy::nursery
 )]
 #![allow(clippy::module_name_repetitions, clippy::doc_markdown)]
 // Only allow when debugging
@@ -142,30 +143,30 @@ async fn main() -> Result<(), ()> {
                         api.prevent_close();
                         event_sx
                             .send(InternalMessage::Window(WindowVisibility::Hide))
-                            .unwrap_or_default();
+                            .ok();
                     }
                     tauri::WindowEvent::Moved(val) => {
                         if val.x <= -32000 && val.y <= -32000 {
                             event_sx
                                 .send(InternalMessage::Window(WindowVisibility::Minimize))
-                                .unwrap_or_default();
+                                .ok();
                         }
                     }
                     _ => (),
                 })
                 // put all this in the handlers mod, then just import one thing?
                 .invoke_handler(tauri::generate_handler![
+                    request_handlers::get_autostart,
                     request_handlers::init,
                     request_handlers::minimize,
                     request_handlers::reset_settings,
-                    request_handlers::get_autostart,
                     request_handlers::set_autostart,
-                    request_handlers::toggle_pause,
                     request_handlers::set_setting_fullscreen,
                     request_handlers::set_setting_longbreak,
                     request_handlers::set_setting_number_sessions,
                     request_handlers::set_setting_session,
                     request_handlers::set_setting_shortbreak,
+                    request_handlers::toggle_pause,
                 ])
                 .build(tauri::generate_context!())
             {
@@ -176,7 +177,7 @@ async fn main() -> Result<(), ()> {
                         if let tauri::RunEvent::ExitRequested { api, .. } = event {
                             close_sx
                                 .send(InternalMessage::Window(WindowVisibility::Hide))
-                                .unwrap_or_default();
+                                .ok();
                             api.prevent_exit();
                         }
                     });

@@ -116,7 +116,7 @@ impl ApplicationState {
         if sec <= 60 {
             String::from("less than 1 minute")
         } else {
-            let minutes = (f64::try_from(sec).unwrap_or(0.0) / 60.0).ceil();
+            let minutes = (f64::try_from(sec).unwrap_or_default() / 60.0).ceil();
             format!("{minutes} minutes")
         }
     }
@@ -140,7 +140,7 @@ impl ApplicationState {
             Timer::Paused(_) => 0,
             Timer::Work(timer) => {
                 u16::try_from(std::time::Instant::now().duration_since(timer).as_secs())
-                    .unwrap_or(0)
+                    .unwrap_or_default()
             }
         };
         match self.session_status {
@@ -262,21 +262,21 @@ impl ApplicationState {
                 SessionStatus::Break(_) => {
                     self.sx
                         .send(InternalMessage::Emit(Emitter::OnBreak))
-                        .unwrap_or_default();
+                        .ok();
                     if self.current_timer_left() < 1 {
                         self.sx
                             .send(InternalMessage::Break(BreakMessage::End))
-                            .unwrap_or_default();
+                            .ok();
                     }
                 }
                 SessionStatus::Work => {
                     self.sx
                         .send(InternalMessage::UpdateMenuTimer)
-                        .unwrap_or_default();
+                        .ok();
                     if self.current_timer_left() < 1 {
                         self.sx
                             .send(InternalMessage::Break(BreakMessage::Start))
-                            .unwrap_or_default();
+                            .ok();
                     }
                 }
             }
