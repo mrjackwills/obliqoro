@@ -46,7 +46,7 @@ pub fn menu_enabled(app: &tauri::AppHandle, enable: bool) {
                 .tray_handle()
                 .get_item(MenuItem::Next.get_id())
                 .set_title("on a break")
-                .unwrap_or(());
+                .ok();
         }
     }
 
@@ -60,7 +60,7 @@ pub fn menu_enabled(app: &tauri::AppHandle, enable: bool) {
         app.tray_handle()
             .get_item(i.get_id())
             .set_enabled(enable)
-            .unwrap_or_default();
+            .ok();
     }
 }
 
@@ -86,19 +86,19 @@ pub fn on_system_tray_event(event: SystemTrayEvent, sx: &Sender<InternalMessage>
     match event {
         SystemTrayEvent::DoubleClick { .. } => {
             sx.send(InternalMessage::Window(WindowVisibility::Toggle))
-                .unwrap_or_default();
+			.ok();
         }
         SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
             x if x == MenuItem::Settings.get_id() => {
                 sx.send(InternalMessage::Emit(Emitter::GoToSettings))
-                    .unwrap_or_default();
+				.ok();
             }
             x if x == MenuItem::Quit.get_id() => {
                 sx.send(InternalMessage::Window(WindowVisibility::Close))
-                    .unwrap_or_default();
+				.ok();
             }
             x if x == MenuItem::Pause.get_id() => {
-                sx.send(InternalMessage::Pause).unwrap_or_default();
+                sx.send(InternalMessage::Pause).ok();
             }
             _ => (),
         },
