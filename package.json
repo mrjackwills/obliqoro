@@ -23,7 +23,7 @@
     "@mdi/js": "^7.1.96",
     "@rushstack/eslint-patch": "^1.2.0",
     "@tauri-apps/cli": "^1.2.3",
-    "@types/node": "^18.15.1",
+    "@types/node": "^18.15.2",
     "@types/secure-json-parse": "^1.0.3",
     "@vitejs/plugin-vue": "^4.0.0",
     "@vue/eslint-config-typescript": "^11.0.2",
