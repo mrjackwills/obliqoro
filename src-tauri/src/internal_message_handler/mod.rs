@@ -91,10 +91,10 @@ impl WindowAction {
     /// Linux v Windows, need to handle fullscreen & resize on each platform differently
     #[cfg(target_os = "windows")]
     fn show(window: &tauri::Window, fullscreen: bool) {
-        window.set_fullscreen(fullscreen).unwrap_or(());
-        window.set_resizable(false).unwrap_or(());
-        window.show().unwrap_or(());
-        window.center().unwrap_or(());
+        window.set_fullscreen(fullscreen).ok();
+        window.set_resizable(false).ok();
+        window.show().ok();
+        window.center().ok();
     }
 
     /// Show the window
@@ -103,27 +103,27 @@ impl WindowAction {
     fn show(window: &tauri::Window, fullscreen: bool) {
         if fullscreen {
             if window.is_visible().unwrap_or_default() {
-                window.hide().unwrap_or(());
+                window.hide().ok();
             }
-            window.set_resizable(true).unwrap_or(());
-            window.set_fullscreen(fullscreen).unwrap_or(());
+            window.set_resizable(true).ok();
+            window.set_fullscreen(fullscreen).ok();
             // This is the linux fix - dirty, but it seems to work
             std::thread::sleep(std::time::Duration::from_millis(50));
         } else if window.is_resizable().unwrap_or(false) {
-            window.set_resizable(false).unwrap_or(());
+            window.set_resizable(false).ok();
         }
-        window.show().unwrap_or(());
-        window.center().unwrap_or(());
+        window.show().ok();
+        window.center().ok();
     }
 
     /// Hide window
     fn hide(window: &tauri::Window, fullscreen: bool) {
         if fullscreen {
-            window.set_resizable(true).unwrap_or(());
-            window.set_fullscreen(false).unwrap_or(());
+            window.set_resizable(true).ok();
+            window.set_fullscreen(false).ok();
         }
-        window.hide().unwrap_or(());
-        window.center().unwrap_or(());
+        window.hide().ok();
+        window.center().ok();
     }
 
     /// hide window
@@ -165,10 +165,10 @@ fn update_menu_session_number(
             .tray_handle()
             .get_item(MenuItem::Session.get_id())
             .set_title(state.lock().get_sessions_before_long_title())
-            .unwrap_or_default();
+            .ok();
     };
     sx.send(InternalMessage::Emit(Emitter::SessionsBeforeLong))
-        .unwrap_or_default();
+        .ok();
 }
 
 /// Update the systemtray next break in text, and emit to frontend to next break timer
@@ -183,10 +183,9 @@ fn update_menu_next_break(
             .tray_handle()
             .get_item(MenuItem::Next.get_id())
             .set_title(state.lock().get_next_break_title())
-            .unwrap_or_default();
+            .ok();
     }
-    sx.send(InternalMessage::Emit(Emitter::NextBreak))
-        .unwrap_or_default();
+    sx.send(InternalMessage::Emit(Emitter::NextBreak)).ok();
 }
 
 /// Update the systemtray `Puased/Resume` item
@@ -204,19 +203,19 @@ fn update_menu_pause(app: &AppHandle, state: &Arc<Mutex<ApplicationState>>) {
             .tray_handle()
             .get_item(MenuItem::Next.get_id())
             .set_enabled(!paused)
-            .unwrap_or_default();
+            .ok();
         window
             .app_handle()
             .tray_handle()
             .get_item(MenuItem::Session.get_id())
             .set_enabled(!paused)
-            .unwrap_or_default();
+            .ok();
         window
             .app_handle()
             .tray_handle()
             .get_item(MenuItem::Pause.get_id())
             .set_title(title)
-            .unwrap_or_default();
+            .ok();
     }
 }
 
@@ -270,10 +269,8 @@ async fn handle_settings(
             let settings = ModelSettings::reset_settings(&sqlite).await?;
             state.lock().reset_settings(settings);
             reset_timer(state);
-            sx.send(InternalMessage::Emit(Emitter::Settings))
-                .unwrap_or_default();
-            sx.send(InternalMessage::Emit(Emitter::Paused))
-                .unwrap_or_default();
+            sx.send(InternalMessage::Emit(Emitter::Settings)).ok();
+            sx.send(InternalMessage::Emit(Emitter::Paused)).ok();
         }
         SettingChange::ShortBreakLength(value) => {
             if value != settings.short_break_as_sec {
@@ -338,7 +335,7 @@ fn handle_emitter(app: &AppHandle, emitter: Emitter, state: &Arc<Mutex<Applicati
                     EmitMessages::GoToSettings.as_str(),
                     (),
                 )
-                .unwrap_or(());
+                .ok();
                 WindowAction::toggle_visibility(app, false);
             }
         }
@@ -350,7 +347,7 @@ fn handle_emitter(app: &AppHandle, emitter: Emitter, state: &Arc<Mutex<Applicati
                     EmitMessages::NextBreak.as_str(),
                     state.lock().get_next_break_title(),
                 )
-                .unwrap_or(());
+                .ok();
         }
 
         Emitter::OnBreak => {
@@ -359,7 +356,7 @@ fn handle_emitter(app: &AppHandle, emitter: Emitter, state: &Arc<Mutex<Applicati
                 EmitMessages::OnBreak.as_str(),
                 state.lock().current_timer_left(),
             )
-            .unwrap_or(());
+            .ok();
         }
 
         Emitter::AutoStart(value) => {
@@ -370,7 +367,7 @@ fn handle_emitter(app: &AppHandle, emitter: Emitter, state: &Arc<Mutex<Applicati
                     EmitMessages::AutoStart.as_str(),
                     value,
                 )
-                .unwrap_or(());
+                .ok();
             }
         }
 
@@ -380,7 +377,7 @@ fn handle_emitter(app: &AppHandle, emitter: Emitter, state: &Arc<Mutex<Applicati
                 EmitMessages::Error.as_str(),
                 "Internal Error",
             )
-            .unwrap_or(());
+            .ok();
         }
 
         Emitter::Settings => {
@@ -389,7 +386,7 @@ fn handle_emitter(app: &AppHandle, emitter: Emitter, state: &Arc<Mutex<Applicati
                 EmitMessages::GetSettings.as_str(),
                 state.lock().get_settings(),
             )
-            .unwrap_or(());
+            .ok();
         }
         Emitter::SessionsBeforeLong => {
             app.app_handle()
@@ -398,7 +395,7 @@ fn handle_emitter(app: &AppHandle, emitter: Emitter, state: &Arc<Mutex<Applicati
                     EmitMessages::SessionsBeforeLong.as_str(),
                     state.lock().get_sessions_before_long_title(),
                 )
-                .unwrap_or(());
+                .ok();
         }
         Emitter::Timer => {
             let (break_time, strategy) = state.lock().get_break_settings();
@@ -407,7 +404,7 @@ fn handle_emitter(app: &AppHandle, emitter: Emitter, state: &Arc<Mutex<Applicati
                 EmitMessages::GoToTimer.as_str(),
                 ShowTimer::new(break_time, strategy),
             )
-            .unwrap_or(());
+            .ok();
         }
         Emitter::PackageInfo => {
             app.emit_to(
@@ -415,7 +412,7 @@ fn handle_emitter(app: &AppHandle, emitter: Emitter, state: &Arc<Mutex<Applicati
                 EmitMessages::PackageInfo.as_str(),
                 PackageInfo::default(),
             )
-            .unwrap_or(());
+            .ok();
         }
         Emitter::Paused => {
             app.emit_to(
@@ -423,7 +420,7 @@ fn handle_emitter(app: &AppHandle, emitter: Emitter, state: &Arc<Mutex<Applicati
                 EmitMessages::Paused.as_str(),
                 state.lock().get_paused(),
             )
-            .unwrap_or(());
+            .ok();
         }
     }
 }
@@ -440,8 +437,7 @@ fn handle_break(
         BreakMessage::Start => {
             state.lock().start_break_session();
             menu_enabled(app, false);
-            sx.send(InternalMessage::Emit(Emitter::Timer))
-                .unwrap_or_default();
+            sx.send(InternalMessage::Emit(Emitter::Timer)).ok();
             if let Some(window) = app.get_window(ObliqoroWindow::Main.as_str()) {
                 WindowAction::show(&window, fullscreen);
             }
@@ -476,8 +472,7 @@ pub fn start_message_handler(
                 InternalMessage::ChangeSetting(setting_change) => {
                     if let Err(e) = handle_settings(setting_change, &state, &sx).await {
                         error!("{:#?}", e);
-                        sx.send(InternalMessage::Emit(Emitter::SendError))
-                            .unwrap_or_default();
+                        sx.send(InternalMessage::Emit(Emitter::SendError)).ok();
                     }
                     update_menu(&app_handle, &state, &sx);
                 }
@@ -495,8 +490,7 @@ pub fn start_message_handler(
                 InternalMessage::Pause => {
                     state.lock().toggle_pause();
                     update_menu_pause(&app_handle, &state);
-                    sx.send(InternalMessage::Emit(Emitter::Paused))
-                        .unwrap_or_default();
+                    sx.send(InternalMessage::Emit(Emitter::Paused)).ok();
                 }
             }
         }

@@ -1,6 +1,6 @@
 <template>
 
-	<v-tooltip activator='parent' v-if='paused' location='top center' class='tooltip-z'>
+	<v-tooltip activator='parent' v-if='paused' location='top center' content-class='tooltip'>
 		resume to alter
 	</v-tooltip>
 </template>
