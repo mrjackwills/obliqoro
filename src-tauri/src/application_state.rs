@@ -260,19 +260,13 @@ impl ApplicationState {
         if !self.get_paused() {
             match self.session_status {
                 SessionStatus::Break(_) => {
-                    self.sx
-                        .send(InternalMessage::Emit(Emitter::OnBreak))
-                        .ok();
+                    self.sx.send(InternalMessage::Emit(Emitter::OnBreak)).ok();
                     if self.current_timer_left() < 1 {
-                        self.sx
-                            .send(InternalMessage::Break(BreakMessage::End))
-                            .ok();
+                        self.sx.send(InternalMessage::Break(BreakMessage::End)).ok();
                     }
                 }
                 SessionStatus::Work => {
-                    self.sx
-                        .send(InternalMessage::UpdateMenuTimer)
-                        .ok();
+                    self.sx.send(InternalMessage::UpdateMenuTimer).ok();
                     if self.current_timer_left() < 1 {
                         self.sx
                             .send(InternalMessage::Break(BreakMessage::Start))
