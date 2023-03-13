@@ -20,7 +20,11 @@
 		"source=/etc/localtime,target=/etc/localtime,type=bind,readonly"
 	],
 
-	"postCreateCommand": "cargo install typos-cli tauri-cli",
+	"postCreateCommand": "cargo install typos-cli tauri-cli && npm install -g npm-check-updates",
+
+	"containerEnv": {
+		"CARGO_REGISTRIES_CRATES_IO_PROTOCOL": "sparse"
+	},
 
 	"customizations": {
 		"vscode": {
