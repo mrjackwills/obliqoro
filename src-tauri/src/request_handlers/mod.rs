@@ -76,11 +76,7 @@ pub fn set_autostart(state: TauriState<'_>, value: bool) {
 #[tauri::command]
 #[allow(clippy::needless_pass_by_value)]
 pub fn toggle_pause(state: TauriState<'_>) {
-    state
-        .lock()
-        .sx
-        .send(InternalMessage::Pause)
-        .ok();
+    state.lock().sx.send(InternalMessage::Pause).ok();
 }
 
 /// Get the current status of the autostart setting
