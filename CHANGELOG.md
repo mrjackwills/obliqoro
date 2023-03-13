@@ -1,12 +1,15 @@
+# <a href='https://wwwhub.com/mrjackwills/obliqoro/releases/tag/v0.1.1'>v0.1.1</a>
+### 2023-03-13
+
 ### Chores
-+ dependencies updated, [9661f7356fc1a822b31bb420754caa948b84acd8], [09e95c48680043e99029fab496a76d747c0ac86c], [b56f9808e251bbe6ece3030c26ef6ce3064072b6], [3b71ee50936ffd41171bb34b2e401ede657f4e7d], [7c85d69b9e2f26004ae7a4897c1c34b95af094ac], [0bb9ad27abbda00cba3dd3fcc875ed39ae206e89]
-+ devcontainer install `ncu`, [3807eaaa6bdc26540d6da64ad168e675b39741d7]
++ dependencies updated, [9661f735](https://wwwhub.com/mrjackwills/obliqoro/commit/9661f7356fc1a822b31bb420754caa948b84acd8), [09e95c48](https://wwwhub.com/mrjackwills/obliqoro/commit/09e95c48680043e99029fab496a76d747c0ac86c), [b56f9808](https://wwwhub.com/mrjackwills/obliqoro/commit/b56f9808e251bbe6ece3030c26ef6ce3064072b6), [3b71ee50](https://wwwhub.com/mrjackwills/obliqoro/commit/3b71ee50936ffd41171bb34b2e401ede657f4e7d), [7c85d69b](https://wwwhub.com/mrjackwills/obliqoro/commit/7c85d69b9e2f26004ae7a4897c1c34b95af094ac), [0bb9ad27](https://wwwhub.com/mrjackwills/obliqoro/commit/0bb9ad27abbda00cba3dd3fcc875ed39ae206e89)
++ devcontainer install `ncu`, [3807eaaa](https://wwwhub.com/mrjackwills/obliqoro/commit/3807eaaa6bdc26540d6da64ad168e675b39741d7)
 
 ### Features
-+ use `content-class` for tooltip, [d59624aa0e8073ae85ff2dc80c240894e35c44d2]
++ use `content-class` for tooltip, [d59624aa](https://wwwhub.com/mrjackwills/obliqoro/commit/d59624aa0e8073ae85ff2dc80c240894e35c44d2)
 
 ### Refactors
-+ `unwrap_or_default()/unwrap_or(())` > `.ok()`, [1603e9258f9f71fab601c27451a4ca296cb84d6c]
++ `unwrap_or_default()/unwrap_or(())` > `.ok()`, [1603e925](https://wwwhub.com/mrjackwills/obliqoro/commit/1603e9258f9f71fab601c27451a4ca296cb84d6c)
 
 # <a href='https://www.github.com/mrjackwills/obliqoro/releases/tag/v0.1.0'>v0.1.0</a>
 ### 2023-02-12

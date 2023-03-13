@@ -11,11 +11,7 @@ pub fn tick_process(state: &Arc<Mutex<ApplicationState>>) {
         x.abort();
     }
     let spawn_state = Arc::clone(state);
-    state
-        .lock()
-        .sx
-        .send(InternalMessage::UpdateMenuTimer)
-        .ok();
+    state.lock().sx.send(InternalMessage::UpdateMenuTimer).ok();
     state.lock().tick_process = Some(tokio::task::spawn(async move {
         loop {
             let spawn_state = Arc::clone(&spawn_state);
