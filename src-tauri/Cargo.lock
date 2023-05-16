@@ -2144,7 +2144,6 @@ version = "0.1.0"
 dependencies = [
  "auto-launch",
  "dunce",
- "once_cell",
  "parking_lot 0.12.1",
  "rand 0.8.5",
  "serde",

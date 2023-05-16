@@ -86,16 +86,15 @@ pub fn on_system_tray_event(event: SystemTrayEvent, sx: &Sender<InternalMessage>
     match event {
         SystemTrayEvent::DoubleClick { .. } => {
             sx.send(InternalMessage::Window(WindowVisibility::Toggle))
-			.ok();
+                .ok();
         }
         SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
             x if x == MenuItem::Settings.get_id() => {
-                sx.send(InternalMessage::Emit(Emitter::GoToSettings))
-				.ok();
+                sx.send(InternalMessage::Emit(Emitter::GoToSettings)).ok();
             }
             x if x == MenuItem::Quit.get_id() => {
                 sx.send(InternalMessage::Window(WindowVisibility::Close))
-				.ok();
+                    .ok();
             }
             x if x == MenuItem::Pause.get_id() => {
                 sx.send(InternalMessage::Pause).ok();

@@ -185,8 +185,7 @@ fn update_menu_next_break(
             .set_title(state.lock().get_next_break_title())
             .ok();
     }
-    sx.send(InternalMessage::Emit(Emitter::NextBreak))
-        .ok();
+    sx.send(InternalMessage::Emit(Emitter::NextBreak)).ok();
 }
 
 /// Update the systemtray `Puased/Resume` item
@@ -270,10 +269,8 @@ async fn handle_settings(
             let settings = ModelSettings::reset_settings(&sqlite).await?;
             state.lock().reset_settings(settings);
             reset_timer(state);
-            sx.send(InternalMessage::Emit(Emitter::Settings))
-                .ok();
-            sx.send(InternalMessage::Emit(Emitter::Paused))
-                .ok();
+            sx.send(InternalMessage::Emit(Emitter::Settings)).ok();
+            sx.send(InternalMessage::Emit(Emitter::Paused)).ok();
         }
         SettingChange::ShortBreakLength(value) => {
             if value != settings.short_break_as_sec {
@@ -440,8 +437,7 @@ fn handle_break(
         BreakMessage::Start => {
             state.lock().start_break_session();
             menu_enabled(app, false);
-            sx.send(InternalMessage::Emit(Emitter::Timer))
-                .ok();
+            sx.send(InternalMessage::Emit(Emitter::Timer)).ok();
             if let Some(window) = app.get_window(ObliqoroWindow::Main.as_str()) {
                 WindowAction::show(&window, fullscreen);
             }
@@ -476,8 +472,7 @@ pub fn start_message_handler(
                 InternalMessage::ChangeSetting(setting_change) => {
                     if let Err(e) = handle_settings(setting_change, &state, &sx).await {
                         error!("{:#?}", e);
-                        sx.send(InternalMessage::Emit(Emitter::SendError))
-                            .ok();
+                        sx.send(InternalMessage::Emit(Emitter::SendError)).ok();
                     }
                     update_menu(&app_handle, &state, &sx);
                 }
@@ -495,8 +490,7 @@ pub fn start_message_handler(
                 InternalMessage::Pause => {
                     state.lock().toggle_pause();
                     update_menu_pause(&app_handle, &state);
-                    sx.send(InternalMessage::Emit(Emitter::Paused))
-                        .ok();
+                    sx.send(InternalMessage::Emit(Emitter::Paused)).ok();
                 }
             }
         }

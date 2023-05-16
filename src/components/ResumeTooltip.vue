@@ -6,11 +6,6 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
-	paused: {
-		type: Boolean,
-		required: true
-	}
-});
+defineProps<{paused: boolean}>();
 
 </script>
