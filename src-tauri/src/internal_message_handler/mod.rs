@@ -437,16 +437,7 @@ fn handle_break(
         BreakMessage::Start => {
             state.lock().start_break_session();
             menu_enabled(app, false);
-<<<<<<< HEAD
             sx.send(InternalMessage::Emit(Emitter::Timer)).ok();
-=======
-<<<<<<< HEAD
-            sx.send(InternalMessage::Emit(Emitter::Timer))
-                .ok();
-=======
-            sx.send(InternalMessage::Emit(Emitter::Timer)).ok();
->>>>>>> main
->>>>>>> b1d965cead7e2f373391a3717db54f2a9e719bfa
             if let Some(window) = app.get_window(ObliqoroWindow::Main.as_str()) {
                 WindowAction::show(&window, fullscreen);
             }
@@ -481,16 +472,7 @@ pub fn start_message_handler(
                 InternalMessage::ChangeSetting(setting_change) => {
                     if let Err(e) = handle_settings(setting_change, &state, &sx).await {
                         error!("{:#?}", e);
-<<<<<<< HEAD
                         sx.send(InternalMessage::Emit(Emitter::SendError)).ok();
-=======
-<<<<<<< HEAD
-                        sx.send(InternalMessage::Emit(Emitter::SendError))
-                            .ok();
-=======
-                        sx.send(InternalMessage::Emit(Emitter::SendError)).ok();
->>>>>>> main
->>>>>>> b1d965cead7e2f373391a3717db54f2a9e719bfa
                     }
                     update_menu(&app_handle, &state, &sx);
                 }
@@ -508,16 +490,7 @@ pub fn start_message_handler(
                 InternalMessage::Pause => {
                     state.lock().toggle_pause();
                     update_menu_pause(&app_handle, &state);
-<<<<<<< HEAD
                     sx.send(InternalMessage::Emit(Emitter::Paused)).ok();
-=======
-<<<<<<< HEAD
-                    sx.send(InternalMessage::Emit(Emitter::Paused))
-                        .ok();
-=======
-                    sx.send(InternalMessage::Emit(Emitter::Paused)).ok();
->>>>>>> main
->>>>>>> b1d965cead7e2f373391a3717db54f2a9e719bfa
                 }
             }
         }
