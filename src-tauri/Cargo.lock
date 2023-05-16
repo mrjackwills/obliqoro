@@ -2140,7 +2140,7 @@ dependencies = [
 
 [[package]]
 name = "obliqoro"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "auto-launch",
  "dunce",
@@ -2623,9 +2623,15 @@ dependencies = [
 
 [[package]]
 name = "quote"
+<<<<<<< HEAD
 version = "1.0.27"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8f4f29d145265ec1c483c7c654450edde0bfe043d3938d6972630663356d9500"
+=======
+version = "1.0.26"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4424af4bf778aae2051a77b60283332f386554255d722233d09fbfc7e30da2fc"
+>>>>>>> b1d965cead7e2f373391a3717db54f2a9e719bfa
 dependencies = [
  "proc-macro2",
 ]
