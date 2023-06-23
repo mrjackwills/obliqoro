@@ -1,3 +1,9 @@
+# <a href='https://www.github.com/mrjackwills/obliqoro/releases/tag/v0.1.3'>v0.1.3</a>
+### 2023-06-23
+
+### Fixes
++ package.json "tauri" script added, [7e51a748](https://www.github.com/mrjackwills/obliqoro/commit/7e51a7480005bd13242b1d2d55227222dc7430ff)
+
 # <a href='https://www.github.com/mrjackwills/obliqoro/releases/tag/v0.1.2'>v0.1.2</a>
 ### 2023-06-23
 
