@@ -10,9 +10,10 @@
 
 ### Fixes
 + remove "allowlist: all", only use "shell.open", [42b08bf808832edec6878dedd2f9721d37062fc5]
++ create_release.sh, [f319f4189ca7d2e59465ad8f27911a426f92f633]
 
 ### Refactors
 + Rust 1.70 linting about early Drops, [a29ede3f93c6a9f9208f0936510dace498280705]
 
 
-see <a href='https://wwwhub.com/mrjackwills/obliqoro/blob/main/CHANGELOG.md'>CHANGELOG.md</a> for more details
+see <a href='https://www.github.com/mrjackwills/obliqoro/blob/main/CHANGELOG.md'>CHANGELOG.md</a> for more details
