@@ -24,26 +24,14 @@ fn auto_launch() -> Option<AutoLaunch> {
 #[tauri::command]
 #[allow(clippy::needless_pass_by_value)]
 pub fn init(state: TauriState<'_>) {
-    state
-        .lock()
-        .sx
-        .send(InternalMessage::Emit(Emitter::Settings))
-        .ok();
-    state
-        .lock()
-        .sx
-        .send(InternalMessage::Emit(Emitter::NextBreak))
-        .ok();
-    state
-        .lock()
-        .sx
-        .send(InternalMessage::Emit(Emitter::SessionsBeforeLong))
-        .ok();
-    state
-        .lock()
-        .sx
-        .send(InternalMessage::Emit(Emitter::PackageInfo))
-        .ok();
+    for message in [
+        Emitter::Settings,
+        Emitter::NextBreak,
+        Emitter::SessionsBeforeLong,
+        Emitter::PackageInfo,
+    ] {
+        state.lock().sx.send(InternalMessage::Emit(message)).ok();
+    }
     get_autostart(state);
 }
 
