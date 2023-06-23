@@ -1,4 +1,21 @@
 # <a href='https://wwwhub.com/mrjackwills/obliqoro/releases/tag/v0.1.1'>v0.1.1</a>
+### 2023-06-23
+
+### Chores
++ .devcontainer, remove sparse_protocol and docker, [0e1ad2a8](https://wwwhub.com/mrjackwills/obliqoro/commit/0e1ad2a8e920fa3e607d46d0b84b5b9a629fc785)
++ dependencies updated, [4e32bec6](https://wwwhub.com/mrjackwills/obliqoro/commit/4e32bec65af4cc2c5959c17ed6af214ab7e49078)
++ create_release cargo_fmt_check(), [0b6613c6](https://wwwhub.com/mrjackwills/obliqoro/commit/0b6613c6730ffc5a5949d4d7bdf458989104869a)
+
+### Features
++ use Vue component auto import, [41239125](https://wwwhub.com/mrjackwills/obliqoro/commit/41239125637046c147421b3f0913f503a162e4af)
+
+### Fixes
++ remove "allowlist: all", only use "shell.open", [42b08bf8](https://wwwhub.com/mrjackwills/obliqoro/commit/42b08bf808832edec6878dedd2f9721d37062fc5)
+
+### Refactors
++ Rust 1.70 linting about early Drops, [a29ede3f](https://wwwhub.com/mrjackwills/obliqoro/commit/a29ede3f93c6a9f9208f0936510dace498280705)
+
+# <a href='https://wwwhub.com/mrjackwills/obliqoro/releases/tag/v0.1.1'>v0.1.1</a>
 ### 2023-03-13
 
 ### Chores
@@ -15,7 +32,7 @@
 ### 2023-02-12
 
 ### Chores
-+ create_releave v0.2.7, [a34f1f09](https://www.github.com/mrjackwills/obliqoro/commit/a34f1f09fcbd1af01ee48fe535e7137d8aa32844), [0c691341](https://www.github.com/mrjackwills/obliqoro/commit/0c691341003153361064d071a3301d4d24740c79)
++ create_release v0.2.7, [a34f1f09](https://www.github.com/mrjackwills/obliqoro/commit/a34f1f09fcbd1af01ee48fe535e7137d8aa32844), [0c691341](https://www.github.com/mrjackwills/obliqoro/commit/0c691341003153361064d071a3301d4d24740c79)
 + typos.toml added, [15a2c276](https://www.github.com/mrjackwills/obliqoro/commit/15a2c2761f11bb7eab1b5be70f1c4bb017be9af8)
 + dev container updated, [44ced2d8](https://www.github.com/mrjackwills/obliqoro/commit/44ced2d8fcf9ed0c957f910761771fc8892f5af5)
 + dependencies updated, [aef6f9ea](https://www.github.com/mrjackwills/obliqoro/commit/aef6f9ea6f0474f6c99745eed1660f7e51c14107)

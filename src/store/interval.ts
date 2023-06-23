@@ -1,6 +1,6 @@
 /* eslint-disable space-before-function-paren */
 import { defineStore } from 'pinia';
-import { BreakTypes, ModuleName } from '../../types';
+import { BreakTypes, ModuleName } from '../types';
 
 export const intervalModule = defineStore(ModuleName.Interval, {
 

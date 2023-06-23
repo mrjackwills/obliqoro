@@ -265,9 +265,11 @@ async fn handle_settings(
             }
         }
         SettingChange::Reset => {
-            let sqlite = state.lock().sqlite.clone();
-            let settings = ModelSettings::reset_settings(&sqlite).await?;
-            state.lock().reset_settings(settings);
+            {
+                let sqlite = state.lock().sqlite.clone();
+                let settings = ModelSettings::reset_settings(&sqlite).await?;
+                state.lock().reset_settings(settings);
+            }
             reset_timer(state);
             sx.send(InternalMessage::Emit(Emitter::Settings)).ok();
             sx.send(InternalMessage::Emit(Emitter::Paused)).ok();
@@ -281,8 +283,10 @@ async fn handle_settings(
         }
         SettingChange::SessionLength(value) => {
             if value != settings.session_as_sec {
-                let sqlite = state.lock().sqlite.clone();
-                ModelSettings::update_session(&sqlite, value).await?;
+                {
+                    let sqlite = state.lock().sqlite.clone();
+                    ModelSettings::update_session(&sqlite, value).await?;
+                }
                 state.lock().set_session_as_sec(value);
                 reset_timer(state);
             }

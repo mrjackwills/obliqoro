@@ -8,12 +8,14 @@
 		"withGlobalTauri": true
 	},
 	"package": {
-		"productName": "obliqoro",
+		"productName": "Obliqoro",
 		"version": "0.1.1"
 	},
 	"tauri": {
 		"allowlist": {
-			"all": true
+			"shell": {
+				"open": true
+			}
 		},
 		"bundle": {
 			"active": true,
@@ -69,7 +71,7 @@
 				"fullscreen": false,
 				"height": 850,
 				"resizable": false,
-				"title": "obliqoro",
+				"title": "Obliqoro",
 				"visible": false,
 				"width": 1000,
 				"skipTaskbar": true

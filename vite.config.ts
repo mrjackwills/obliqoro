@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 import AutoImport from 'unplugin-auto-import/vite';
+import Components from 'unplugin-vue-components/vite';
 
 import { fileURLToPath, URL } from 'node:url';
 
@@ -20,6 +21,7 @@ export default defineConfig({
 		vuetify({
 			autoImport: true,
 		}),
+		Components(),
 		AutoImport({
 			include: [
 				/\.[tj]sx?$/,

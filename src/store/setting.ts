@@ -1,6 +1,6 @@
 /* eslint-disable space-before-function-paren */
 import { defineStore } from 'pinia';
-import { ModuleName } from '../../types';
+import { ModuleName } from '../types';
 
 export const settingModule = defineStore(ModuleName.Setting, {
 
