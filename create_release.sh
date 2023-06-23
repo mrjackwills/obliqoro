@@ -48,11 +48,10 @@ update_patch () {
 	echo "${MAJOR}.${MINOR}.${bumped_patch}"
 }
 
-# Get the url of the github repo, strip .git from the end of it
+# Get the url of the github repo, strip .git (i.e. the last 4 chars) from the end of it
 get_git_remote_url() {
 	REMOTE_ORIGIN=$(git config --get remote.origin.url)
-	TO_REMOVE=".git"
-	GIT_REPO_URL="${REMOTE_ORIGIN//$TO_REMOVE}"
+	GIT_REPO_URL="${REMOTE_ORIGIN::-4}"
 }
 
 # Check that git status is clean
@@ -131,7 +130,7 @@ update_version_number_in_files () {
 # create new semver version based on user input
 # Set MAJOR MINOR PATCH
 check_tag () {
-	LATEST_TAG=$(git describe --tags --abbrev=0 --always)
+	LATEST_TAG=$(git describe --tags "$(git rev-list --tags --max-count=1)")
 	echo -e "\nCurrent tag: ${PURPLE}${LATEST_TAG}${RESET}\n"
 	echo -e "${YELLOW}Choose new tag version:${RESET}\n"
 	if [[ $LATEST_TAG =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-((0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*))*))?(\+([0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*))?$ ]]
