@@ -22,10 +22,6 @@
 
 	"postCreateCommand": "cargo install typos-cli tauri-cli && npm install -g npm-check-updates",
 
-	"containerEnv": {
-		"CARGO_REGISTRIES_CRATES_IO_PROTOCOL": "sparse"
-	},
-
 	"customizations": {
 		"vscode": {
 				// Add the IDs of extensions you want installed when the container is created.
@@ -58,11 +54,6 @@
 	"features": {
 		"ghcr.io/devcontainers/features/node:1": {
 
-		},
-		"ghcr.io/devcontainers/features/docker-in-docker:2": {
-			"version": "latest",
-			"moby": true,
-			"dockerDashComposeVersion":"v2"
 		},
 		"ghcr.io/devcontainers/features/git:1": {
 				"version":"os-provided"
