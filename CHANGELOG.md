@@ -1,5 +1,5 @@
 ### Fixes
-+ package.json fix,
++ package.json fix, [8b2f8f9d7adee55b9fcdb31f8f966075d13f689a]
 
 # <a href='https://www.github.com/mrjackwills/obliqoro/releases/tag/v0.1.3'>v0.1.3</a>
 ### 2023-06-23
