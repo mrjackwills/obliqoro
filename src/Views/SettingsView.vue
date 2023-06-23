@@ -126,7 +126,6 @@ import { invoke } from '@tauri-apps/api/tauri';
 import { InvokeMessage } from '../types';
 import { snackError } from '../services/snack';
 import { mdiCogRefresh, mdiCoffeeOutline, mdiWeatherNight, mdiPlay, mdiPause } from '@mdi/js';
-import ResumeTooltip from '../components/ResumeTooltip.vue';
 const settingStore = settingModule();
 
 const next_in = computed((): string => {

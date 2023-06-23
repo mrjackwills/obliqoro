@@ -10,13 +10,10 @@
 </template>
 
 <script setup lang="ts">
-import AppBar from './components/AppBar.vue';
-import TheSnackbar from './components/SnackBar.vue';
-import TheFooter from './components/TheFooter.vue';
 import { listen, Event, } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api/tauri';
 import { ListenMessage, ShowTimer, FrontEndRoutes, BreakSettings, InvokeMessage, PackageInfo } from './types';
-import { useRouter, } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { snackError } from './services/snack';
 
 const router = useRouter();
