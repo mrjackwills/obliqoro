@@ -212,6 +212,7 @@ release_flow() {
 	# cargo_test
 	cargo_build
 
+	echo -e "\n${YELLOW}cd ${CWD}${RESET}"
 	cd "${CWD}" || error_close "Can't find ${CWD}"
 	check_tag
 	
@@ -229,11 +230,17 @@ release_flow() {
 	update_version_number_in_files
 	update_json
 	
+	echo -e "\n${YELLOW}cd src-tauri${RESET}"
+	cd src-tauri || error_close "Can't find src-tauri"
+
 	echo "cargo fmt"
 	cargo fmt
 
 	echo -e "\n${PURPLE}cargo check${RESET}"
 	cargo check
+
+	echo -e "\n${YELLOW}cd ${CWD}${RESET}"
+	cd "${CWD}" || error_close "Can't find ${CWD}"
 	
 	release_continue "git add ."
 	git add .
