@@ -13,7 +13,7 @@ async fn get_db(path: &PathBuf) -> Result<SqlitePool, sqlx::Error> {
         .filename(path)
         .create_if_missing(true)
         .journal_mode(SqliteJournalMode::Wal);
-    connect_options.disable_statement_logging();
+    connect_options = connect_options.disable_statement_logging();
     let db = sqlx::pool::PoolOptions::<sqlx::Sqlite>::new()
         .max_connections(1)
         .connect_with(connect_options)
