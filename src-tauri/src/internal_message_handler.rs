@@ -163,9 +163,11 @@ fn update_menu_session_number(
         window
             .app_handle()
             .tray_handle()
-            .get_item(MenuItem::Session.get_id())
-            .set_title(state.lock().get_sessions_before_long_title())
-            .ok();
+            .try_get_item(MenuItem::Session.get_id())
+            .and_then(|item| {
+                item.set_title(state.lock().get_sessions_before_long_title())
+                    .ok()
+            });
     };
     sx.send(InternalMessage::Emit(Emitter::SessionsBeforeLong))
         .ok();
@@ -181,9 +183,8 @@ fn update_menu_next_break(
         window
             .app_handle()
             .tray_handle()
-            .get_item(MenuItem::Next.get_id())
-            .set_title(state.lock().get_next_break_title())
-            .ok();
+            .try_get_item(MenuItem::Next.get_id())
+            .and_then(|item| item.set_title(state.lock().get_next_break_title()).ok());
     }
     sx.send(InternalMessage::Emit(Emitter::NextBreak)).ok();
 }
@@ -201,21 +202,18 @@ fn update_menu_pause(app: &AppHandle, state: &Arc<Mutex<ApplicationState>>) {
         window
             .app_handle()
             .tray_handle()
-            .get_item(MenuItem::Next.get_id())
-            .set_enabled(!paused)
-            .ok();
+            .try_get_item(MenuItem::Next.get_id())
+            .and_then(|item| item.set_enabled(!paused).ok());
         window
             .app_handle()
             .tray_handle()
-            .get_item(MenuItem::Session.get_id())
-            .set_enabled(!paused)
-            .ok();
+            .try_get_item(MenuItem::Session.get_id())
+            .and_then(|item| item.set_enabled(!paused).ok());
         window
             .app_handle()
             .tray_handle()
-            .get_item(MenuItem::Pause.get_id())
-            .set_title(title)
-            .ok();
+            .try_get_item(MenuItem::Pause.get_id())
+            .and_then(|item| item.set_title(title).ok());
     }
 }
 

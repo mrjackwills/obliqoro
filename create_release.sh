@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # rust create_release
-# v0.2.7
+# v0.3.0
 
 STAR_LINE='****************************************'
 CWD=$(pwd)
@@ -50,8 +50,7 @@ update_patch () {
 
 # Get the url of the github repo, strip .git (i.e. the last 4 chars) from the end of it
 get_git_remote_url() {
-	REMOTE_ORIGIN=$(git config --get remote.origin.url)
-	GIT_REPO_URL="${REMOTE_ORIGIN::-4}"
+	GIT_REPO_URL="$(git config --get remote.origin.url | sed 's/\.git$//')"
 }
 
 # Check that git status is clean
