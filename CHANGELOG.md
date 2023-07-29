@@ -1,35 +1,51 @@
-### Chores
-+ .devcontainer, remove sparse_protocol and docker, [0e1ad2a8e920fa3e607d46d0b84b5b9a629fc785]
-+ dependencies updated, [4e32bec65af4cc2c5959c17ed6af214ab7e49078]
-+ create_release cargo_fmt_check(), [0b6613c6730ffc5a5949d4d7bdf458989104869a]
-
-### Features
-+ use Vue component auto import, [41239125637046c147421b3f0913f503a162e4af]
+# <a href='https://www.github.com/mrjackwills/obliqoro/releases/tag/v0.1.4'>v0.1.4</a>
+### 2023-06-23
 
 ### Fixes
-+ remove "allowlist: all", only use "shell.open", [42b08bf808832edec6878dedd2f9721d37062fc5]
++ package.json fix, [8b2f8f9d](https://www.github.com/mrjackwills/obliqoro/commit/8b2f8f9d7adee55b9fcdb31f8f966075d13f689a)
+
+# <a href='https://www.github.com/mrjackwills/obliqoro/releases/tag/v0.1.3'>v0.1.3</a>
+### 2023-06-23
+
+### Fixes
++ package.json "tauri" script added, [7e51a748](https://www.github.com/mrjackwills/obliqoro/commit/7e51a7480005bd13242b1d2d55227222dc7430ff)
+
+# <a href='https://www.github.com/mrjackwills/obliqoro/releases/tag/v0.1.2'>v0.1.2</a>
+### 2023-06-23
+
+### Chores
++ .devcontainer, remove sparse_protocol and docker, [0e1ad2a8](https://www.github.com/mrjackwills/obliqoro/commit/0e1ad2a8e920fa3e607d46d0b84b5b9a629fc785)
++ dependencies updated, [4e32bec6](https://www.github.com/mrjackwills/obliqoro/commit/4e32bec65af4cc2c5959c17ed6af214ab7e49078)
++ create_release cargo_fmt_check(), [0b6613c6](https://www.github.com/mrjackwills/obliqoro/commit/0b6613c6730ffc5a5949d4d7bdf458989104869a)
+
+### Features
++ use Vue component auto import, [41239125](https://www.github.com/mrjackwills/obliqoro/commit/41239125637046c147421b3f0913f503a162e4af)
+
+### Fixes
++ remove "allowlist: all", only use "shell.open", [42b08bf8](https://www.github.com/mrjackwills/obliqoro/commit/42b08bf808832edec6878dedd2f9721d37062fc5)
++ create_release.sh, [f319f418](https://www.github.com/mrjackwills/obliqoro/commit/f319f4189ca7d2e59465ad8f27911a426f92f633)
 
 ### Refactors
-+ Rust 1.70 linting about early Drops, [a29ede3f93c6a9f9208f0936510dace498280705]
++ Rust 1.70 linting about early Drops, [a29ede3f](https://www.github.com/mrjackwills/obliqoro/commit/a29ede3f93c6a9f9208f0936510dace498280705)
 
-# <a href='https://wwwhub.com/mrjackwills/obliqoro/releases/tag/v0.1.1'>v0.1.1</a>
+# <a href='https://www.github.com/mrjackwills/obliqoro/releases/tag/v0.1.1'>v0.1.1</a>
 ### 2023-03-13
 
 ### Chores
-+ dependencies updated, [9661f735](https://wwwhub.com/mrjackwills/obliqoro/commit/9661f7356fc1a822b31bb420754caa948b84acd8), [09e95c48](https://wwwhub.com/mrjackwills/obliqoro/commit/09e95c48680043e99029fab496a76d747c0ac86c), [b56f9808](https://wwwhub.com/mrjackwills/obliqoro/commit/b56f9808e251bbe6ece3030c26ef6ce3064072b6), [3b71ee50](https://wwwhub.com/mrjackwills/obliqoro/commit/3b71ee50936ffd41171bb34b2e401ede657f4e7d), [7c85d69b](https://wwwhub.com/mrjackwills/obliqoro/commit/7c85d69b9e2f26004ae7a4897c1c34b95af094ac), [0bb9ad27](https://wwwhub.com/mrjackwills/obliqoro/commit/0bb9ad27abbda00cba3dd3fcc875ed39ae206e89)
-+ devcontainer install `ncu`, [3807eaaa](https://wwwhub.com/mrjackwills/obliqoro/commit/3807eaaa6bdc26540d6da64ad168e675b39741d7)
++ dependencies updated, [9661f735](https://www.github.com/mrjackwills/obliqoro/commit/9661f7356fc1a822b31bb420754caa948b84acd8), [09e95c48](https://www.github.com/mrjackwills/obliqoro/commit/09e95c48680043e99029fab496a76d747c0ac86c), [b56f9808](https://www.github.com/mrjackwills/obliqoro/commit/b56f9808e251bbe6ece3030c26ef6ce3064072b6), [3b71ee50](https://www.github.com/mrjackwills/obliqoro/commit/3b71ee50936ffd41171bb34b2e401ede657f4e7d), [7c85d69b](https://www.github.com/mrjackwills/obliqoro/commit/7c85d69b9e2f26004ae7a4897c1c34b95af094ac), [0bb9ad27](https://www.github.com/mrjackwills/obliqoro/commit/0bb9ad27abbda00cba3dd3fcc875ed39ae206e89)
++ devcontainer install `ncu`, [3807eaaa](https://www.github.com/mrjackwills/obliqoro/commit/3807eaaa6bdc26540d6da64ad168e675b39741d7)
 
 ### Features
-+ use `content-class` for tooltip, [d59624aa](https://wwwhub.com/mrjackwills/obliqoro/commit/d59624aa0e8073ae85ff2dc80c240894e35c44d2)
++ use `content-class` for tooltip, [d59624aa](https://www.github.com/mrjackwills/obliqoro/commit/d59624aa0e8073ae85ff2dc80c240894e35c44d2)
 
 ### Refactors
-+ `unwrap_or_default()/unwrap_or(())` > `.ok()`, [1603e925](https://wwwhub.com/mrjackwills/obliqoro/commit/1603e9258f9f71fab601c27451a4ca296cb84d6c)
++ `unwrap_or_default()/unwrap_or(())` > `.ok()`, [1603e925](https://www.github.com/mrjackwills/obliqoro/commit/1603e9258f9f71fab601c27451a4ca296cb84d6c)
 
 # <a href='https://www.github.com/mrjackwills/obliqoro/releases/tag/v0.1.0'>v0.1.0</a>
 ### 2023-02-12
 
 ### Chores
-+ create_releave v0.2.7, [a34f1f09](https://www.github.com/mrjackwills/obliqoro/commit/a34f1f09fcbd1af01ee48fe535e7137d8aa32844), [0c691341](https://www.github.com/mrjackwills/obliqoro/commit/0c691341003153361064d071a3301d4d24740c79)
++ create_release v0.2.7, [a34f1f09](https://www.github.com/mrjackwills/obliqoro/commit/a34f1f09fcbd1af01ee48fe535e7137d8aa32844), [0c691341](https://www.github.com/mrjackwills/obliqoro/commit/0c691341003153361064d071a3301d4d24740c79)
 + typos.toml added, [15a2c276](https://www.github.com/mrjackwills/obliqoro/commit/15a2c2761f11bb7eab1b5be70f1c4bb017be9af8)
 + dev container updated, [44ced2d8](https://www.github.com/mrjackwills/obliqoro/commit/44ced2d8fcf9ed0c957f910761771fc8892f5af5)
 + dependencies updated, [aef6f9ea](https://www.github.com/mrjackwills/obliqoro/commit/aef6f9ea6f0474f6c99745eed1660f7e51c14107)

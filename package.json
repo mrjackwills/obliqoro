@@ -1,12 +1,13 @@
 {
   "name": "obliqoro",
   "private": true,
-  "version": "0.1.1",
+  "version": "0.1.4",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "tauri": "tauri"
   },
   "dependencies": {
     "@tauri-apps/api": "^1.4.0",
