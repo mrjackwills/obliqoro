@@ -40,14 +40,14 @@ impl MenuItem {
 
 pub fn menu_enabled(app: &tauri::AppHandle, enable: bool) {
     if !enable {
-        if let Some(window) = app.get_window(ObliqoroWindow::Main.as_str()) {
-            window
-                .app_handle()
-                .tray_handle()
-                .get_item(MenuItem::Next.get_id())
-                .set_title("on a break")
-                .ok();
-        }
+        app.get_window(ObliqoroWindow::Main.as_str())
+            .and_then(|window| {
+                window
+                    .app_handle()
+                    .tray_handle()
+                    .try_get_item(MenuItem::Next.get_id())
+                    .and_then(|item| item.set_title("on a break").ok())
+            });
     }
 
     for i in [
@@ -57,10 +57,10 @@ pub fn menu_enabled(app: &tauri::AppHandle, enable: bool) {
         MenuItem::Next,
         MenuItem::Session,
     ] {
-        app.tray_handle()
-            .get_item(i.get_id())
-            .set_enabled(enable)
-            .ok();
+        app.app_handle()
+            .tray_handle()
+            .try_get_item(i.get_id())
+            .and_then(|item| item.set_enabled(enable).ok());
     }
 }
 
