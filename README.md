@@ -97,3 +97,32 @@ sudo apt install libwebkit2gtk-4.0-dev \
     libayatana-appindicator3-dev \
     librsvg2-dev
 ```
+### arm64 cross compliation
+
+tauri.conf.json:
+```json
+"targets": ["deb", "msi", "app", "dmg", "updater"],
+```
+
+```shell
+rustup target add aarch64-unknown-linux-gnu
+sudo apt install gcc-aarch64-linux-gnu
+```
+
+nano ~/.cargo/config.toml
+```toml
+[target.aarch64-unknown-linux-gnu]
+linker = "aarch64-linux-gnu-gcc"
+```
+
+```shell
+sudo dpkg --add-architecture arm64
+
+sudo apt-get update && sudo apt-get upgrade -y
+
+sudo apt install libwebkit2gtk-4.0-dev:arm64
+
+export PKG_CONFIG_SYSROOT_DIR=/usr/aarch64-linux-gnu/
+
+cargo tauri build --target aarch64-unknown-linux-gnu
+```
