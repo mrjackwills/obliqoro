@@ -1,17 +1,10 @@
-### 2023-07-29
+### 2023-08-26
 
 ### Chores
-+ dependencies updated, [634c1ce759b298d7c71a9a6b37d85e7f3d5b9e92]
-+ create_release 0.3.0, [36351229b1e88b26af531cad2b7f88e466e92bf3]
-
-### Features
-+ use try_get_item() method, [171dca81fe8f0bb646efcbc6c113372eee3a2516]
++ dependencies updated, [99dd3c8249e8a68686d9d7c99d2c8aafa0c60b32]
 
 ### Fixes
-+ sqlx disable logging, [06a831f578d46d788066340aeffc788724069778]
-
-### Refactors
-+ single folder/files into src, [ba9b09195775fb1fcef3732c96272a26e7bd3562]
++ specific build targets, [5c9707f99931e68c78f89de485136557ec77d26f]
 
 
 see <a href='https://www.github.com/mrjackwills/obliqoro/blob/main/CHANGELOG.md'>CHANGELOG.md</a> for more details
