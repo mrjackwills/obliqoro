@@ -1,3 +1,9 @@
+### Chores
++ dependencies updated, [99dd3c8249e8a68686d9d7c99d2c8aafa0c60b32]
+
+### Fixes
++ specific build targets, [5c9707f99931e68c78f89de485136557ec77d26f]
+
 # <a href='https://www.github.com/mrjackwills/obliqoro/releases/tag/v0.1.5'>v0.1.5</a>
 ### 2023-07-29
 
