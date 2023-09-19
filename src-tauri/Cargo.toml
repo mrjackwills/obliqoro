@@ -15,7 +15,7 @@ keywords = ["pomodoro", "timer", "tauri", "gui", "oblique"]
 tauri-build = { version = "1.3", features = [] }
 
 [dependencies]
-auto-launch = "0.4"
+auto-launch = "0.5"
 dunce = "1.0"
 parking_lot = "0.12"
 rand = "0.8"
