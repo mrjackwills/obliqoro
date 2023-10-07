@@ -14,7 +14,6 @@
 						</v-row>
 
 						<hr class='my-4 hr' />
-						<!-- <v-divider class='my-4 abc' /> -->
 
 						<!-- BREAK/PAUSE INFO -->
 						<v-row align='center' justify='space-around' class='ma-0 pa-0'>
@@ -62,16 +61,19 @@
 						</v-row>
 						
 						<hr class='my-4 hr' />
-						<!-- <v-divider  class='text-primary dark my-4' /> -->
 
 						<!-- SWITCHES -->
 						<v-form v-on:submit.prevent class='mt-4'>
 							<v-row class='ma-0 pa-0' justify='space-between'>
 
 								<v-col v-for='(item, index) in switches' :key='index' cols='auto'>
-									<v-switch v-model='item.model.value'
-										density='compact' :class='item.model.value ? "text-primary" : "text-offwhite"'
-										:label='item.label'>
+									<v-switch
+										v-model='item.model.value'
+										:class='item.model.value ? "text-primary" : "text-offwhite"'
+										:label='item.label'
+										flat
+										color='primary'
+									>
 									</v-switch>
 								</v-col>
 
@@ -309,6 +311,9 @@ watch(start_on_boot, async (value) => {
 
 .hr {
 	border: 1px solid rgba(var(--v-theme-primary), .9);
-	
+}
+
+.v-switch__track {
+	background-color: rgb(var(--v-theme-offwhite))!important;
 }
 </style>
