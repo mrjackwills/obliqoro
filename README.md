@@ -96,7 +96,7 @@ sudo apt install libwebkit2gtk-4.0-dev \
     libayatana-appindicator3-dev \
     librsvg2-dev
 ```
-### arm64 cross compliation
+### arm64 cross compilation
 
 tauri.conf.json:
 ```json
