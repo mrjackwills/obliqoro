@@ -44,7 +44,7 @@ impl WindowAction {
         window.center().ok();
     }
 
-	/// show window
+    /// show window
     pub fn show_window(app: &AppHandle, fullscreen: bool) {
         if let Some(window) = app.get_window(ObliqoroWindow::Main.as_str()) {
             Self::show(&window, fullscreen);

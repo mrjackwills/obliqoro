@@ -120,7 +120,7 @@ async fn main() -> Result<(), ()> {
 
             let event_sx = sx.clone();
             let close_sx = sx.clone();
-			let instance_sx = sx.clone();
+            let instance_sx = sx.clone();
             let handler_sx = sx.clone();
             let tray_sx = sx.clone();
 
@@ -170,9 +170,11 @@ async fn main() -> Result<(), ()> {
                     request_handlers::set_setting_shortbreak,
                     request_handlers::toggle_pause,
                 ])
-				.plugin(tauri_plugin_single_instance::init(move |app, argv, cwd| {
-					instance_sx.send(InternalMessage::Window(WindowVisibility::Show)).ok();
-				}))
+                .plugin(tauri_plugin_single_instance::init(move |app, argv, cwd| {
+                    instance_sx
+                        .send(InternalMessage::Window(WindowVisibility::Show))
+                        .ok();
+                }))
                 .build(tauri::generate_context!())
             {
                 Ok(s) => {

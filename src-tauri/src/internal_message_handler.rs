@@ -11,7 +11,8 @@ use crate::{
     request_handlers::{EmitMessages, ShowTimer},
     system_tray::{menu_enabled, MenuItem},
     tick::tick_process,
-    ObliqoroWindow, window_action::WindowAction,
+    window_action::WindowAction,
+    ObliqoroWindow,
 };
 use tokio::sync::broadcast::{Receiver, Sender};
 
@@ -58,7 +59,7 @@ pub enum WindowVisibility {
     Hide,
     Minimize,
     Toggle,
-	Show,
+    Show,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Hash)]
@@ -175,8 +176,8 @@ async fn handle_settings(
     let settings = state.lock().get_settings();
     match setting_change {
         SettingChange::FullScreen(value) => {
+            let sqlite = state.lock().sqlite.clone();
             if value != settings.fullscreen {
-                let sqlite = state.lock().sqlite.clone();
                 ModelSettings::update_fullscreen(&sqlite, value).await?;
                 state.lock().set_fullscreen(value);
             }
@@ -196,11 +197,9 @@ async fn handle_settings(
             }
         }
         SettingChange::Reset => {
-            {
-                let sqlite = state.lock().sqlite.clone();
-                let settings = ModelSettings::reset_settings(&sqlite).await?;
-                state.lock().reset_settings(settings);
-            }
+            let sqlite = state.lock().sqlite.clone();
+            let settings = ModelSettings::reset_settings(&sqlite).await?;
+            state.lock().reset_settings(settings);
             reset_timer(state);
             sx.send(InternalMessage::Emit(Emitter::Settings)).ok();
             sx.send(InternalMessage::Emit(Emitter::Paused)).ok();
@@ -214,10 +213,8 @@ async fn handle_settings(
         }
         SettingChange::SessionLength(value) => {
             if value != settings.session_as_sec {
-                {
-                    let sqlite = state.lock().sqlite.clone();
-                    ModelSettings::update_session(&sqlite, value).await?;
-                }
+                let sqlite = state.lock().sqlite.clone();
+                ModelSettings::update_session(&sqlite, value).await?;
                 state.lock().set_session_as_sec(value);
                 reset_timer(state);
             }
@@ -244,12 +241,12 @@ fn handle_visibility(
                 WindowAction::hide_window(app, false);
             }
         }
-	
+
         WindowVisibility::Minimize => {
             WindowAction::hide_window(app, false);
         }
-		WindowVisibility::Show => {
-			WindowAction::show_window(app, false);
+        WindowVisibility::Show => {
+            WindowAction::show_window(app, false);
         }
         WindowVisibility::Toggle => {
             if !on_break {
@@ -373,12 +370,12 @@ fn handle_break(
             state.lock().start_break_session();
             menu_enabled(app, false);
             sx.send(InternalMessage::Emit(Emitter::Timer)).ok();
-			WindowAction::show_window(app, fullscreen);
+            WindowAction::show_window(app, fullscreen);
         }
         BreakMessage::End => {
             state.lock().start_work_session();
             menu_enabled(app, true);
-			WindowAction::hide_window(app, fullscreen);
+            WindowAction::hide_window(app, fullscreen);
             update_menu(app, state, sx);
         }
     }
