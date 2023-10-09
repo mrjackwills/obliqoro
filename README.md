@@ -60,7 +60,6 @@ See the <a href='https://github.com/mrjackwills/obliqoro/releases/latest' target
 + [ ] Pause on no/low cpu usage - user controllable setting
 + [ ] Notify user if new version available
 + [ ] Translations
-+ [ ] Limiting to a single instance running at once
 + [ ] Saving strategies into SQLite and enabling the addition of new custom strategies
 + [ ] Statistics for the number of sessions worked
 + [ ] Ability to display on multiple monitors
