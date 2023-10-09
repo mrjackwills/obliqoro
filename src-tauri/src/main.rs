@@ -24,7 +24,7 @@ use tick::tick_process;
 use tracing::{error, Level};
 use tracing_subscriber::{fmt as t_fmt, prelude::__tracing_subscriber_SubscriberExt};
 
-#[allow(unused_imports)]
+#[cfg(debug_assertions)]
 use tauri::Manager;
 
 mod app_error;
@@ -34,6 +34,7 @@ mod internal_message_handler;
 mod request_handlers;
 mod system_tray;
 mod tick;
+mod window_action;
 
 pub type TauriState<'a> = tauri::State<'a, Arc<Mutex<ApplicationState>>>;
 
@@ -69,7 +70,7 @@ fn setup_tracing(app_dir: &PathBuf) -> Result<(), AppError> {
             .finish()
             .with(log_fmt),
     ) {
-        Ok(_) => Ok(()),
+        Ok(()) => Ok(()),
         Err(e) => {
             println!("{e:?}");
             Err(AppError::Internal("Unable to start tracing".to_owned()))
@@ -119,6 +120,7 @@ async fn main() -> Result<(), ()> {
 
             let event_sx = sx.clone();
             let close_sx = sx.clone();
+            let instance_sx = sx.clone();
             let handler_sx = sx.clone();
             let tray_sx = sx.clone();
 
@@ -168,6 +170,11 @@ async fn main() -> Result<(), ()> {
                     request_handlers::set_setting_shortbreak,
                     request_handlers::toggle_pause,
                 ])
+                .plugin(tauri_plugin_single_instance::init(move |app, argv, cwd| {
+                    instance_sx
+                        .send(InternalMessage::Window(WindowVisibility::Show))
+                        .ok();
+                }))
                 .build(tauri::generate_context!())
             {
                 Ok(s) => {
