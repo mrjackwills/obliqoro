@@ -1,16 +1,12 @@
-### 2023-10-09
+### 2023-11-21
 
 ### Chores
-+ dependencies updated, [0b15a2f78f42215c4c8f456f7b3da4048ceb9009], [e43d2fd028f72a188c8041ad45319a85cbd760b5], [7367c7b9df1fd7d69b6377f93fca65f8e781e2d1]
++ Rust 1.74.0 linting, [aef904215f2c9833b8f7c4675a5486f332578baa]
++ .devcontainer updated, [0fc86d1292ebf25e1655672a11bc0f685fb80a97]
++ lints moved from main.rs to Cargo.toml, [99e9ff212869e2ce893cf72402042d1b2c06184c]
++ dependencies updated, [92656b7982fa2794f333df60c968e740b3be28f1]
 
-### Features
-+ Only allow single instance, [e742c5d11038efb40af2dadc6875df9f31a8ef9e]
-
-## Fixes
-+ Settings Vue switches track color, [5aac72123e4e37673decc40515f410df2e188412]
-
-### Refactors
-+ dead code removed, [fa1d24918a9ec5f8bf51f06b0d75b75d33fdf15f], [1a55aff680626a24aa8fa9f714f93dfcff94cca3]
-
+### Fixes
++ reduce tick sleep rate from 1000ms to 500ms, [216eb1990d533a0803666ab6ecbebcb29cd7e255]
 
 see <a href='https://www.github.com/mrjackwills/obliqoro/blob/main/CHANGELOG.md'>CHANGELOG.md</a> for more details
