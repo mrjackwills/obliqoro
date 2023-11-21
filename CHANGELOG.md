@@ -1,3 +1,8 @@
+### Chores
++ Rust 1.74.0 linting, [aef904215f2c9833b8f7c4675a5486f332578baa]
++ lints moved from main.rs to Cargo.toml, [99e9ff212869e2ce893cf72402042d1b2c06184c]
++ dependencies updated, [92656b7982fa2794f333df60c968e740b3be28f1]
+
 # <a href='https://www.github.com/mrjackwills/obliqoro/releases/tag/v0.1.7'>v0.1.7</a>
 ### 2023-10-09
 
