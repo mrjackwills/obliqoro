@@ -3,6 +3,9 @@
 + lints moved from main.rs to Cargo.toml, [99e9ff212869e2ce893cf72402042d1b2c06184c]
 + dependencies updated, [92656b7982fa2794f333df60c968e740b3be28f1]
 
+### Fixes
++ reduce tick sleep rate from 1000ms to 500ms, [216eb1990d533a0803666ab6ecbebcb29cd7e255]
+
 # <a href='https://www.github.com/mrjackwills/obliqoro/releases/tag/v0.1.7'>v0.1.7</a>
 ### 2023-10-09
 
