@@ -38,7 +38,7 @@ jobs:
           cache: "npm"
 
       - name: Install app dependencies and build web
-        run: npm install
+        run: npm install --force
 
       ###########################
       ## Build & Create release #
