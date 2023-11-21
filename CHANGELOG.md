@@ -1,3 +1,15 @@
+# <a href='https://www.github.com/mrjackwills/obliqoro/releases/tag/v0.1.8'>v0.1.8</a>
+### 2023-11-21
+
+### Chores
++ Rust 1.74.0 linting, [aef90421](https://www.github.com/mrjackwills/obliqoro/commit/aef904215f2c9833b8f7c4675a5486f332578baa)
++ .devcontainer updated, [0fc86d12](https://www.github.com/mrjackwills/obliqoro/commit/0fc86d1292ebf25e1655672a11bc0f685fb80a97)
++ lints moved from main.rs to Cargo.toml, [99e9ff21](https://www.github.com/mrjackwills/obliqoro/commit/99e9ff212869e2ce893cf72402042d1b2c06184c)
++ dependencies updated, [92656b79](https://www.github.com/mrjackwills/obliqoro/commit/92656b7982fa2794f333df60c968e740b3be28f1)
+
+### Fixes
++ reduce tick sleep rate from 1000ms to 500ms, [216eb199](https://www.github.com/mrjackwills/obliqoro/commit/216eb1990d533a0803666ab6ecbebcb29cd7e255)
+
 # <a href='https://www.github.com/mrjackwills/obliqoro/releases/tag/v0.1.7'>v0.1.7</a>
 ### 2023-10-09
 

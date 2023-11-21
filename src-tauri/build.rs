@@ -3,8 +3,8 @@ fn main() {
     // Inject BUILD_DATE into cargo envs
     let now = SystemTime::now()
         .duration_since(SystemTime::UNIX_EPOCH)
-        .expect("This error shouln't happen")
+        .unwrap_or_default()
         .as_secs();
     println!("cargo:rustc-env=BUILD_DATE={now}");
-    tauri_build::build()
+    tauri_build::build();
 }

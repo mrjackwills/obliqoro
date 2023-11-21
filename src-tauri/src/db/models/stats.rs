@@ -5,7 +5,6 @@ use sqlx::{types::time::PrimitiveDateTime, FromRow, Pool, Sqlite};
 use crate::app_error::AppError;
 
 /// This is on the TODO list
-
 #[derive(FromRow, Debug, Clone, Serialize, Deserialize)]
 pub struct ModelStats {
     pub date: PrimitiveDateTime,
