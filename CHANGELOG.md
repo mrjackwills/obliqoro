@@ -1,4 +1,4 @@
-# <a href='https://www.github.com/mrjackwills/obliqoro/releases/tag/v0.1.8'>v0.1.8</a>
+# <a href='https://www.github.com/mrjackwills/obliqoro/releases/tag/v0.1.9'>v0.1.9</a>
 ### 2023-11-21
 
 ### Chores
