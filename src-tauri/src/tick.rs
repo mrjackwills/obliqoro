@@ -3,7 +3,7 @@ use std::sync::Arc;
 
 use crate::{application_state::ApplicationState, internal_message_handler::InternalMessage};
 
-/// Spawn off a tokio thread, that loops continually, well with a 250ms pause between each loop
+/// Spawn off a tokio thread, that loops continually, well with a 500ms pause between each loop
 /// The timer checking is then spawned off into another thread
 /// The outer tread is saved into ApplicationState, so that it can be cancelled at any time
 pub fn tick_process(state: &Arc<Mutex<ApplicationState>>) {
@@ -19,7 +19,7 @@ pub fn tick_process(state: &Arc<Mutex<ApplicationState>>) {
                 spawn_state.lock().tick_process();
             });
             // 500ms?
-            tokio::time::sleep(std::time::Duration::from_millis(1000)).await;
+            tokio::time::sleep(std::time::Duration::from_millis(500)).await;
         }
     }));
 }
