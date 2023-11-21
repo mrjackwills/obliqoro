@@ -1,3 +1,6 @@
+# <a href='https://www.github.com/mrjackwills/obliqoro/releases/tag/v0.1.9'>v0.1.9</a>
+### 2023-11-21
+
 ### Chores
 + Rust 1.74.0 linting, [aef90421](https://www.github.com/mrjackwills/obliqoro/commit/aef904215f2c9833b8f7c4675a5486f332578baa)
 + .devcontainer updated, [0fc86d12](https://www.github.com/mrjackwills/obliqoro/commit/0fc86d1292ebf25e1655672a11bc0f685fb80a97)
