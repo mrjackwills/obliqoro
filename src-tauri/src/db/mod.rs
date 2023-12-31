@@ -3,7 +3,7 @@ use std::path::PathBuf;
 
 mod models;
 
-pub use models::{settings::ModelSettings, stats::ModelStats};
+pub use models::settings::ModelSettings;
 
 use crate::app_error::AppError;
 /// Open Sqlite pool connection, and return
