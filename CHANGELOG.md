@@ -1,10 +1,13 @@
+# <a href='https://github.com/mrjackwills/obliqoro/releases/tag/v0.1.10'>v0.1.10</a>
+### 2024-01-04
+
 ### Chores
-+ dependencies updated, [14ee3caf4129e796a5f1536b7cecbfb1b85c6c28], [0985cf85db5fffe28f9b0184104c7523a4b22423]
-+ Rust 1.75.0 linting, [70214a84798b3826790655f9205f7048070d75bd]
++ dependencies updated, [14ee3caf](https://github.com/mrjackwills/obliqoro/commit/14ee3caf4129e796a5f1536b7cecbfb1b85c6c28), [0985cf85](https://github.com/mrjackwills/obliqoro/commit/0985cf85db5fffe28f9b0184104c7523a4b22423)
++ Rust 1.75.0 linting, [70214a84](https://github.com/mrjackwills/obliqoro/commit/70214a84798b3826790655f9205f7048070d75bd)
 
 ### Fixes
-+ GitHub action workflow, [73669e8c752027bc08f849d535cf3e2ce4885abc]
-+ tauri.conf description, and allowlist issue, [a3d6ea37c2e5bb0892640b4fcaea45a1e9f75ac0]
++ GitHub action workflow, [73669e8c](https://github.com/mrjackwills/obliqoro/commit/73669e8c752027bc08f849d535cf3e2ce4885abc)
++ tauri.conf description, and allowlist issue, [a3d6ea37](https://github.com/mrjackwills/obliqoro/commit/a3d6ea37c2e5bb0892640b4fcaea45a1e9f75ac0)
 
 # <a href='https://www.github.com/mrjackwills/obliqoro/releases/tag/v0.1.9'>v0.1.9</a>
 ### 2023-11-21
