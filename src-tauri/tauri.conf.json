@@ -9,12 +9,18 @@
 	},
 	"package": {
 		"productName": "Obliqoro",
-		"version": "0.1.9"
+		"version": "0.1.10"
 	},
 	"tauri": {
 		"allowlist": {
 			"shell": {
 				"open": true
+			},
+			"clipboard": {
+				"all": false
+			},
+			"globalShortcut": {
+				"all": false
 			}
 		},
 		"bundle": {
@@ -33,7 +39,7 @@
 				"icons/icon.ico"
 			],
 			"identifier": "mrjackwills.obliqoro",
-			"longDescription": "",
+			"longDescription": "Obliqoro is an open source, cross platform, graphical application, that combines the creative approach of Oblique Strategies with the time management system of the Pomodoro Technique.",
 			"macOS": {
 				"entitlements": null,
 				"exceptionDomain": "",
@@ -42,8 +48,15 @@
 				"signingIdentity": null
 			},
 			"resources": [],
-			"shortDescription": "",
-			"targets": ["deb", "msi", "app", "appimage", "dmg", "updater"],
+			"shortDescription": "Oblique Strategies meets Pomodoro",
+			"targets": [
+				"deb",
+				"msi",
+				"app",
+				"appimage",
+				"dmg",
+				"updater"
+			],
 			"windows": {
 				"certificateThumbprint": null,
 				"digestAlgorithm": "sha256",

@@ -116,7 +116,7 @@ impl ApplicationState {
         if sec <= 60 {
             String::from("less than 1 minute")
         } else {
-            let minutes = (f64::try_from(sec).unwrap_or_default() / 60.0).ceil();
+            let minutes = (f64::from(sec) / 60.0).ceil();
             format!("{minutes} minutes")
         }
     }
