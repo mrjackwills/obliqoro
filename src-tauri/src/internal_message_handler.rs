@@ -377,7 +377,7 @@ fn handle_break(
             menu_enabled(app, true);
             if state.lock().pause_after_break {
                 sx.send(InternalMessage::Pause).ok();
-                // if the app is in fullscreen mode, need to remove the fullscreen, normally this is hanlded by the hide_window function, but it's not being called here
+                // if the app is in fullscreen mode, need to remove the fullscreen, normally this is handled by the hide_window function, but it's not being called here
                 WindowAction::remove_fullscreen(app);
             } else {
                 WindowAction::hide_window(app, fullscreen);
