@@ -34,7 +34,7 @@ impl WindowAction {
         window.center().ok();
     }
 
-	/// Change from full screen to the standard window size
+    /// Change from full screen to the standard window size
     fn _remove_fullscreen(window: &tauri::Window) {
         window.set_resizable(true).ok();
         window.set_fullscreen(false).ok();
