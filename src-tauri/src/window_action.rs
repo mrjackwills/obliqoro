@@ -34,11 +34,16 @@ impl WindowAction {
         window.center().ok();
     }
 
+    /// Change from full screen to the standard window size
+    fn _remove_fullscreen(window: &tauri::Window) {
+        window.set_resizable(true).ok();
+        window.set_fullscreen(false).ok();
+    }
+
     /// Hide window
     fn hide(window: &tauri::Window, fullscreen: bool) {
         if fullscreen {
-            window.set_resizable(true).ok();
-            window.set_fullscreen(false).ok();
+            Self::_remove_fullscreen(window);
         }
         window.hide().ok();
         window.center().ok();
@@ -64,6 +69,18 @@ impl WindowAction {
             match window.is_visible() {
                 Ok(true) => Self::hide(&window, fullscreen),
                 Ok(false) => Self::show(&window, fullscreen),
+                Err(_) => app.exit(1),
+            }
+        }
+    }
+
+    /// Change from full screen to the standard window size
+    pub fn remove_fullscreen(app: &AppHandle) {
+        if let Some(window) = app.get_window(ObliqoroWindow::Main.as_str()) {
+            match window.is_visible() {
+                Ok(_) => {
+                    Self::_remove_fullscreen(&window);
+                }
                 Err(_) => app.exit(1),
             }
         }

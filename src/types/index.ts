@@ -1,17 +1,19 @@
 export enum InvokeMessage {
-	ShowSettings = 'show_settings',
-	Minimize = 'minimize',
+	GetAutoStart = 'get_autostart',
+	GetPackageInfo = 'get_package_info',
 	Init = 'init',
+	Minimize = 'minimize',
+	OpenDatabaseLocation = 'open_database_location',
+	PauseAfterBreak = 'pause_after_break',
 	ResetSettings = 'reset_settings',
-	TogglePause = 'toggle_pause',
+	SetAutoStart = 'set_autostart',
 	SetSettingFullscreen = 'set_setting_fullscreen',
 	SetSettingLongBreak = 'set_setting_longbreak',
 	SetSettingNumberSession = 'set_setting_number_sessions',
-	SetSettingShortBreak = 'set_setting_shortbreak',
 	SetSettingSession = 'set_setting_session',
-	GetPackageInfo = 'get_package_info',
-	GetAutoStart = 'get_autostart',
-	SetAutoStart = 'set_autostart',
+	SetSettingShortBreak = 'set_setting_shortbreak',
+	ShowSettings = 'show_settings',
+	TogglePause = 'toggle_pause',
 }
 
 export enum FrontEndRoutes {

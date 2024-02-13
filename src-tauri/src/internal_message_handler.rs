@@ -375,8 +375,16 @@ fn handle_break(
         BreakMessage::End => {
             state.lock().start_work_session();
             menu_enabled(app, true);
-            WindowAction::hide_window(app, fullscreen);
-            update_menu(app, state, sx);
+            if state.lock().pause_after_break {
+                sx.send(InternalMessage::Pause).ok();
+                // if the app is in fullscreen mode, need to remove the fullscreen, normally this is handled by the hide_window function, but it's not being called here
+                WindowAction::remove_fullscreen(app);
+            } else {
+                WindowAction::hide_window(app, fullscreen);
+                update_menu(app, state, sx);
+            }
+
+            state.lock().pause_after_break = false;
         }
     }
 }

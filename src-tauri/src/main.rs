@@ -104,7 +104,9 @@ async fn main() -> Result<(), ()> {
             std::process::exit(1);
         }
         Ok(app_state) => {
+            // TODO change this to just an Arc<ApplicationState>, and use a message bus everywhere?
             let state = Arc::new(Mutex::new(app_state));
+
             let init_state = Arc::clone(&state);
             let internal_state = Arc::clone(&state);
 
@@ -115,7 +117,7 @@ async fn main() -> Result<(), ()> {
             let tray_sx = sx.clone();
 
             #[allow(unused_variables)]
-            match tauri::Builder::default()
+            let app_builder = tauri::Builder::default()
                 .manage(state)
                 .setup(|app| {
                     #[cfg(debug_assertions)]
@@ -151,6 +153,8 @@ async fn main() -> Result<(), ()> {
                     request_handlers::get_autostart,
                     request_handlers::init,
                     request_handlers::minimize,
+                    request_handlers::open_database_location,
+                    request_handlers::pause_after_break,
                     request_handlers::reset_settings,
                     request_handlers::set_autostart,
                     request_handlers::set_setting_fullscreen,
@@ -165,12 +169,13 @@ async fn main() -> Result<(), ()> {
                         .send(InternalMessage::Window(WindowVisibility::Show))
                         .ok();
                 }))
-                .build(tauri::generate_context!())
-            {
-                Ok(s) => {
+                .build(tauri::generate_context!());
+
+            match app_builder {
+                Ok(app) => {
                     tick_process(&init_state);
-                    start_message_handler(&s, internal_state, rx, handler_sx);
-                    s.run(move |_app, event| {
+                    start_message_handler(&app, internal_state, rx, handler_sx);
+                    app.run(move |_app, event| {
                         if let tauri::RunEvent::ExitRequested { api, .. } = event {
                             close_sx
                                 .send(InternalMessage::Window(WindowVisibility::Hide))

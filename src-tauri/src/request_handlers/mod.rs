@@ -60,11 +60,18 @@ pub fn set_autostart(state: TauriState<'_>, value: bool) {
     get_autostart(state);
 }
 
-/// Toggle the autostart option
+/// Toggle the pause option
 #[tauri::command]
 #[allow(clippy::needless_pass_by_value)]
 pub fn toggle_pause(state: TauriState<'_>) {
     state.lock().sx.send(InternalMessage::Pause).ok();
+}
+
+/// Set the pause after break setting
+#[tauri::command]
+#[allow(clippy::needless_pass_by_value)]
+pub fn pause_after_break(state: TauriState<'_>, pause: bool) {
+    state.lock().pause_after_break = pause;
 }
 
 /// Get the current status of the autostart setting
@@ -90,6 +97,18 @@ pub fn set_setting_fullscreen(state: TauriState<'_>, value: bool) {
         .send(InternalMessage::ChangeSetting(SettingChange::FullScreen(
             value,
         )))
+        .ok();
+}
+
+/// Request to set the full screen setting to the given boolean value
+#[tauri::command]
+#[allow(clippy::needless_pass_by_value)]
+pub fn open_database_location(state: TauriState<'_>) {
+    open::that(state.lock().get_data_location()).ok();
+    state
+        .lock()
+        .sx
+        .send(InternalMessage::Window(WindowVisibility::Hide))
         .ok();
 }
 

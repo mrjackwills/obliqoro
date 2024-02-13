@@ -1,206 +1,184 @@
 <template>
-	<v-container fluid class='ma-0 pa-0 no-gutters fill-height'>
-		<v-row class='ma-0 pa-0 no-gutters fill-height' align='center'>
-			<v-container fluid class='ma-0 pa-0'>
+	<v-row class='ma-0 pa-0 no-gutters fill-height' align='center'>
 
-				<v-row align='center' justify='center' class=''>
-					<v-col cols='9' class='ma-0 pa-0'>
+		<v-row align='center' justify='center' class='ma-0 pa-0'>
+			<v-col cols='9' class='ma-0 pa-0'>
 
-						<!-- TITLE -->
-						<v-row align='center' justify='center'>
-							<v-col cols='auto' class='text-h4 text-primary'>
-								Settings
-							</v-col>
-						</v-row>
+				<!-- TITLE -->
+				<v-row align='center' justify='center' class='ma-0 pa-0'>
+					<v-col cols='auto' class='text-h4 ma-0 pa-0 text-primary'>
+						Settings
+					</v-col>
+				</v-row>
 
-						<hr class='my-4 hr' />
+				<hr class='my-4 hr' />
 
-						<!-- BREAK/PAUSE INFO -->
-						<v-row align='center' justify='space-around' class='ma-0 pa-0'>
+				<!-- BREAK/PAUSE INFO -->
+				<v-row align='center' justify='space-between' class='ma-0 pa-0'>
 
-							<v-col cols='5' class='ma-0 pa-0 text-primary text-left'>
-								<v-row align='center' justify='start' class='ma-0 pa-0'>
-									<template v-if='!paused'>
-										<v-col cols='auto' class='ma-0 pa-0 mr-2'>
-											<v-icon :icon='mdiCoffeeOutline' class='' />
-										</v-col>
-										<v-col cols='auto' class='ma-0 pa-0'>
-											{{ next_in }}
-										</v-col>
-									</template>
-									<template v-else>
-										currently paused
-									</template>
-								</v-row>
-							</v-col>
-
-							<v-col cols='2' class='ma-0 pa-0'>
-								<v-btn @click='toggle_pause' :variant='pauseVariant' color='primary' size='small' block rounded='lg'>
-									<v-row align='center' justify='start' class='ma-0 pa-0'>
-										<v-col cols='auto' class='ma-0 pa-0 mr-1'>
-											<v-icon :icon='pauseIcon' class='' />
-										</v-col>
-										<v-col cols='auto' class='ma-0 pa-0'>
-											{{ pauseText }}
-										</v-col>
-									</v-row>
-								</v-btn>
-							</v-col>
-
-							<v-col cols='5' class='ma-0 pa-0 text-primary'>
-								<v-row align='center' justify='end' class='ma-0 pa-0' v-if='!paused'>
-									<v-col cols='auto' class='ma-0 pa-0'>
-										{{ sessions_before_long }}
-									</v-col>
-									<v-col cols='auto' class='ma-0 pa-0 ml-2'>
-										<v-icon :icon='mdiWeatherNight' class='' />
-									</v-col>
-								</v-row>
-
-							</v-col>
-						</v-row>
-						
-						<hr class='my-4 hr' />
-
-						<!-- SWITCHES -->
-						<v-form v-on:submit.prevent class='mt-4'>
-							<v-row class='ma-0 pa-0' justify='space-between'>
-
-								<v-col v-for='(item, index) in switches' :key='index' cols='auto'>
-									<v-switch
-										v-model='item.model.value'
-										:class='item.model.value ? "text-primary" : "text-offwhite"'
-										:label='item.label'
-										flat
-										color='primary'
-									>
-									</v-switch>
+					<v-col cols='5' class='ma-0 pa-0 text-primary text-left'>
+						<v-row align='center' justify='start' class='ma-0 pa-0'>
+							<template v-if='!paused'>
+								<v-col cols='auto' class='ma-0 pa-0 mr-2'>
+									<v-icon :icon='mdiCoffeeOutline' class='' />
 								</v-col>
+								<v-col cols='auto' class='ma-0 pa-0'>
+									{{ next_in }}
+								</v-col>
+							</template>
+						</v-row>
+					</v-col>
 
+					<v-col cols='2' class='ma-0 pa-0'>
+						<v-btn @click='toggle_pause' color='primary' block rounded='sm' class='ma-0 pa-0' >
+							<v-row align='center' justify='start' class='ma-0 pa-0'>
+								<v-col cols='auto' class='ma-0 pa-0 mr-1'>
+									<v-icon :icon='pauseIcon' class='' />
+								</v-col>
+								<v-col cols='auto' class='ma-0 pa-0'>
+									{{ pauseText }}
+								</v-col>
 							</v-row>
+						</v-btn>
+					</v-col>
 
-							<!-- SLIDERS -->
-							<section v-for='(item, index) in sliders' :key='index'>
-
-								<v-row class='text-primary ma-0 pa-0'>
-									<v-col cols='auto' class='ma-0 pa-0'>
-										{{ item.name }}
-									</v-col>
-									<v-spacer />
-									<v-col cols='auto' class='ma-0 pa-0'>
-										{{ item.label_value }}
-									</v-col>
-								</v-row>
-
-								<v-row class='ma-0 pa-0'>
-									<v-col cols='12' class='ma-0 pa-0'>
-										<v-slider v-model='item.model.value' color='primary' :disabled='paused' :min='item.min'
-											density='compact' :max='item.max' :step='item.step' rounded>
-										</v-slider>
-										<ResumeTooltip :paused='paused' />
-									</v-col>
-								</v-row>
-							</section>
-
-						</v-form>
-
-						<!-- RESET BUTTON -->
-						<v-row class='ma-0 pa-0' justify='center'>
+					<v-col cols='5' class='ma-0 pa-0 text-primary'>
+						<v-row align='center' justify='end' class='ma-0 pa-0' v-if='!paused'>
 							<v-col cols='auto' class='ma-0 pa-0'>
-								<v-btn @click='reset_settings' :disabled='paused' :variant='paused? "outlined" : undefined' color='primary' size='large' rounded='lg'>
-									<v-icon :icon='mdiCogRefresh' class='mr-1' />
-									reset settings
-								</v-btn>
-							
+								{{ sessions_before_long }}
+							</v-col>
+							<v-col cols='auto' class='ma-0 pa-0 ml-2'>
+								<v-icon :icon='mdiWeatherNight' class='' />
 							</v-col>
 						</v-row>
 
 					</v-col>
 				</v-row>
+						
+				<hr class='my-4 hr' />
 
-			</v-container>
+				<!-- SWITCHES -->
+				<v-form v-on:submit.prevent class='mt-4'>
+					<v-row class='ma-0 pa-0' justify='space-between'>
+
+						<v-col v-for='(item, index) in switches' :key='index' cols='auto' class='ma-0 pa-0'>
+							<v-switch
+								v-model='item.model.value'
+								:class='item.model.value ? "text-primary" : "text-offwhite"'
+								:label='item.label'
+								flat
+								color='primary'
+							/>
+						
+						</v-col>
+
+					</v-row>
+					
+					<!-- SLIDERS -->
+					<section v-for='(item, index) in sliders' :key='index'>
+
+						<v-row class='text-primary ma-0 pa-0'>
+							<v-col cols='auto' class='ma-0 pa-0'>
+								{{ item.name }}
+							</v-col>
+							<v-spacer />
+							<v-col cols='auto' class='ma-0 pa-0'>
+								{{ item.label_value }}
+							</v-col>
+						</v-row>
+
+						<v-row class='ma-0 pa-0'>
+							<v-col cols='12' class='ma-0 pa-0'>
+								<v-slider v-model='item.model.value' color='primary' :disabled='paused' :min='item.min'
+									density='compact' :max='item.max' :step='item.step' rounded>
+								</v-slider>
+								<ResumeTooltip :paused='paused' />
+							</v-col>
+						</v-row>
+					</section>
+
+				</v-form>
+
+				<!-- RESET BUTTON -->
+				<v-row class='ma-0 pa-0 mt-6' justify='center'>
+					<v-col cols='auto' class='ma-0 pa-0'>
+						<!-- :variant='paused? undefined:"outlined"' -->
+						<v-btn @click='reset_settings' :disabled='paused' variant='outlined' color='red' block rounded='sm'>
+							<v-icon :icon='mdiCogRefresh' class='mr-1' />
+							reset settings
+						</v-btn>
+					</v-col>
+				
+				</v-row>
+
+			</v-col>
 		</v-row>
-	</v-container>
+
+	</v-row>
 </template>
 <script setup lang="ts">
 import { sec_to_minutes, sec_to_minutes_only } from '../vanillaTS/second';
 import { invoke } from '@tauri-apps/api/tauri';
 import { InvokeMessage } from '../types';
 import { snackError } from '../services/snack';
-import { mdiCogRefresh, mdiCoffeeOutline, mdiWeatherNight, mdiPlay, mdiPause } from '@mdi/js';
+import { mdiCogRefresh, mdiCoffeeOutline, mdiPlay, mdiPause, mdiWeatherNight } from '@mdi/js';
 const settingStore = settingModule();
 
-const next_in = computed((): string => {
-	return nextbreakModule().nextbreak;
-});
+const next_in = computed(() => nextbreakModule().nextbreak);
 
-const sessions_before_long = computed((): string => {
-	return settingStore.session_before_next_long_break;
-});
+const sessions_before_long = computed(() =>	settingStore.session_before_next_long_break);
 
-const paused = computed((): boolean => {
-	return settingStore.paused;
-});
-const pauseIcon = computed((): string => {
-	return paused.value? mdiPlay:mdiPause;
-});
-const pauseVariant = computed((): undefined | 'outlined' => {
-	return paused.value? undefined :'outlined';
-});
-const pauseText = computed((): string => {
-	return paused.value? 'resume':'pause';
-});
+const paused = computed(() => settingStore.paused);
+const pauseIcon = computed(() => paused.value? mdiPlay:mdiPause);
+const pauseText = computed(() => paused.value? 'resume':'pause');
 
-const switches = computed(() => {
-	return [
-		{
-			label: 'fullscreen',
-			model: fullscreen
-		},
-		{
-			label: 'start on boot',
-			model: start_on_boot
-		}
+const switches = computed(() => [
+	{
+		label: 'fullscreen',
+		model: fullscreen
+	},
+	{
+		label: 'start on boot',
+		model: start_on_boot
+	}
 
-	];
-});
+]
+);
 
-const sliders = computed(() => {
-	return [
-		{
-			name: 'session length',
-			model: session_as_sec,
-			min: 60,
-			step: 60,
-			max: 60 * 59,
-			label_value: sec_to_minutes_only(session_as_sec.value)
-		},
-		{
-			name: 'short break length',
-			model: short_break_as_sec,
-			min: 10,
-			step: 10,
-			max: 60 * 2,
-			label_value: sec_to_minutes(short_break_as_sec.value)
-		},
-		{
-			name: 'long break length',
-			model: long_break_as_sec,
-			min: 60,
-			step: 15,
-			max: 60 * 10,
-			label_value: sec_to_minutes(long_break_as_sec.value)
-		},
-		{
-			name: 'sessions before long break',
-			model: number_session_before_break,
-			min: 2,
-			step: 1,
-			max: 10,
-			label_value: number_session_before_break.value
-		}
-	];
-});
+const sliders = computed(() => [
+	{
+		name: 'session length',
+		model: session_as_sec,
+		min: 60,
+		step: 60,
+		max: 60 * 59,
+		label_value: sec_to_minutes_only(session_as_sec.value)
+	},
+	{
+		name: 'short break length',
+		model: short_break_as_sec,
+		min: 10,
+		step: 10,
+		max: 60 * 2,
+		label_value: sec_to_minutes(short_break_as_sec.value)
+	},
+	{
+		name: 'long break length',
+		model: long_break_as_sec,
+		min: 60,
+		step: 15,
+		max: 60 * 10,
+		label_value: sec_to_minutes(long_break_as_sec.value)
+	},
+	{
+		name: 'sessions before long break',
+		model: number_session_before_break,
+		min: 2,
+		step: 1,
+		max: 10,
+		label_value: number_session_before_break.value
+	}
+]);
 
 const start_on_boot = computed({
 	get(): boolean {
