@@ -54,9 +54,7 @@ const visible = computed({
 
 const timeout = ref(0);
 
-const icon = computed(() => {
-	return snackStore.icon;
-});
+const icon = computed(() => snackStore.icon);
 
 const closeSnackbar = (): void => {
 	visible.value = false;

@@ -49,21 +49,13 @@ import { invoke } from '@tauri-apps/api/tauri';
 const store = intervalModule();
 const interval = computed(() => store.interval);
 
-const circ_value = computed(() => {
-	return store.interval * (100 / store.original_interval);
-});
+const circ_value = computed(() => store.interval * (100 / store.original_interval));
 
-const strategy = computed((): string => {
-	return store.strategy;
-});
+const strategy = computed(() => store.strategy);
 
-const circle_size = computed((): string => {
-	return settingModule().fullscreen ? '1000' : '800';
-});
+const circle_size = computed(() => settingModule().fullscreen ? '1000' : '800');
 
-const text_size = computed((): string => {
-	return settingModule().fullscreen ? 'text-h3' : 'text-h4';
-});
+const text_size = computed(() => settingModule().fullscreen ? 'text-h3' : 'text-h4');
 
 const router = useRouter();
 
@@ -87,7 +79,6 @@ watch(interval, async (i) => {
 
 /* This is to account for the the height of the switch row - it might not be perfect */
 .switch_margin {
-	/* margin-top: 18%; */
 	margin-top: 65px;
 }
 

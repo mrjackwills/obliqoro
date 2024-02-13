@@ -22,9 +22,7 @@ const intervalStore = intervalModule();
 const settingStore = settingModule();
 const packageinfoStore = packageinfoModule();
 
-const on_settings = computed(():boolean => {
-	return route.fullPath === FrontEndRoutes.Settings;
-});
+const on_settings = computed(() => route.fullPath === FrontEndRoutes.Settings);
 
 /// Disable refreshing the page, via F5 or rightlick menu
 const disable_reload = (): void => {

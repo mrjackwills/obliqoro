@@ -100,20 +100,14 @@
 				</v-form>
 
 				<!-- RESET BUTTON -->
-				<v-row class='ma-0 pa-0 mt-6' justify='space-between'>
-					<v-col cols='3' offset='auto' class='ma-0 pa-0'>
+				<v-row class='ma-0 pa-0 mt-6' justify='center'>
+					<v-col cols='auto' class='ma-0 pa-0'>
 						<v-btn @click='reset_settings' :disabled='paused' :variant='paused? "outlined" : undefined' color='primary' block rounded='sm'>
 							<v-icon :icon='mdiCogRefresh' class='mr-1' />
 							reset settings
 						</v-btn>
 					</v-col>
-					<!-- <v-spacer /> -->
-					<v-col cols='3' class='ma-0 pa-0 text-black' @click='opendb'>
-						<v-btn @click='opendb' color='primary' rounded='sm' block>
-							database location
-							<v-icon :icon='mdiOpenInNew' class='ml-1' />
-						</v-btn>
-					</v-col>
+				
 				</v-row>
 
 			</v-col>
@@ -126,81 +120,64 @@ import { sec_to_minutes, sec_to_minutes_only } from '../vanillaTS/second';
 import { invoke } from '@tauri-apps/api/tauri';
 import { InvokeMessage } from '../types';
 import { snackError } from '../services/snack';
-import { mdiCogRefresh, mdiCoffeeOutline, mdiOpenInNew, mdiPlay, mdiPause, mdiWeatherNight } from '@mdi/js';
+import { mdiCogRefresh, mdiCoffeeOutline, mdiPlay, mdiPause, mdiWeatherNight } from '@mdi/js';
 const settingStore = settingModule();
 
-const next_in = computed((): string => {
-	return nextbreakModule().nextbreak;
-});
+const next_in = computed(() => nextbreakModule().nextbreak);
 
-const sessions_before_long = computed((): string => {
-	return settingStore.session_before_next_long_break;
-});
+const sessions_before_long = computed(() =>	settingStore.session_before_next_long_break);
 
-const paused = computed((): boolean => {
-	return settingStore.paused;
-});
-const pauseIcon = computed((): string => {
-	return paused.value? mdiPlay:mdiPause;
-});
-const pauseText = computed((): string => {
-	return paused.value? 'resume':'pause';
-});
+const paused = computed(() => settingStore.paused);
+const pauseIcon = computed(() => paused.value? mdiPlay:mdiPause);
+const pauseText = computed(() => paused.value? 'resume':'pause');
 
-const switches = computed(() => {
-	return [
-		{
-			label: 'fullscreen',
-			model: fullscreen
-		},
-		{
-			label: 'start on boot',
-			model: start_on_boot
-		}
+const switches = computed(() => [
+	{
+		label: 'fullscreen',
+		model: fullscreen
+	},
+	{
+		label: 'start on boot',
+		model: start_on_boot
+	}
 
-	];
-});
+]
+);
 
-const sliders = computed(() => {
-	return [
-		{
-			name: 'session length',
-			model: session_as_sec,
-			min: 60,
-			step: 60,
-			max: 60 * 59,
-			label_value: sec_to_minutes_only(session_as_sec.value)
-		},
-		{
-			name: 'short break length',
-			model: short_break_as_sec,
-			min: 10,
-			step: 10,
-			max: 60 * 2,
-			label_value: sec_to_minutes(short_break_as_sec.value)
-		},
-		{
-			name: 'long break length',
-			model: long_break_as_sec,
-			min: 60,
-			step: 15,
-			max: 60 * 10,
-			label_value: sec_to_minutes(long_break_as_sec.value)
-		},
-		{
-			name: 'sessions before long break',
-			model: number_session_before_break,
-			min: 2,
-			step: 1,
-			max: 10,
-			label_value: number_session_before_break.value
-		}
-	];
-});
-
-const opendb = async (): Promise<void> => {
-	await invoke(InvokeMessage.OpenDatabaseLocation);
-};
+const sliders = computed(() => [
+	{
+		name: 'session length',
+		model: session_as_sec,
+		min: 60,
+		step: 60,
+		max: 60 * 59,
+		label_value: sec_to_minutes_only(session_as_sec.value)
+	},
+	{
+		name: 'short break length',
+		model: short_break_as_sec,
+		min: 10,
+		step: 10,
+		max: 60 * 2,
+		label_value: sec_to_minutes(short_break_as_sec.value)
+	},
+	{
+		name: 'long break length',
+		model: long_break_as_sec,
+		min: 60,
+		step: 15,
+		max: 60 * 10,
+		label_value: sec_to_minutes(long_break_as_sec.value)
+	},
+	{
+		name: 'sessions before long break',
+		model: number_session_before_break,
+		min: 2,
+		step: 1,
+		max: 10,
+		label_value: number_session_before_break.value
+	}
+]);
 
 const start_on_boot = computed({
 	get(): boolean {
