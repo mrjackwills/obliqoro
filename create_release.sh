@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# rust create_release
-# v0.3.0
+# rust create_release v0.5.5
 
 STAR_LINE='****************************************'
 CWD=$(pwd)
@@ -12,15 +11,19 @@ YELLOW='\033[0;33m'
 PURPLE='\033[0;35m'
 RESET='\033[0m'
 
-
 # $1 string - error message
 error_close() {
-	echo -e "\n${RED}ERROR - EXITED: ${YELLOW}$1${RESET}\n";
+	echo -e "\n${RED}ERROR - EXITED: ${YELLOW}$1${RESET}\n"
 	exit 1
 }
 
+# Check that dialog is installed
+if ! [ -x "$(command -v dialog)" ]; then
+	error_close "dialog is not installed"
+fi
+
 # $1 string - question to ask
-ask_yn () {
+ask_yn() {
 	printf "%b%s? [y/N]:%b " "${GREEN}" "$1" "${RESET}"
 }
 
@@ -30,25 +33,38 @@ user_input() {
 	echo "$data"
 }
 
-update_major () {
+# ask continue, or quit
+ask_continue() {
+	ask_yn "continue"
+	if [[ ! "$(user_input)" =~ ^y$ ]]; then
+		exit
+	fi
+}
+
+# semver major update
+update_major() {
 	local bumped_major
 	bumped_major=$((MAJOR + 1))
 	echo "${bumped_major}.0.0"
 }
 
-update_minor () {
+# semver minor update
+update_minor() {
 	local bumped_minor
 	bumped_minor=$((MINOR + 1))
+	MINOR=bumped_minor
 	echo "${MAJOR}.${bumped_minor}.0"
 }
 
-update_patch () {
+# semver patch update
+update_patch() {
 	local bumped_patch
 	bumped_patch=$((PATCH + 1))
+	PATCH=bumped_patch
 	echo "${MAJOR}.${MINOR}.${bumped_patch}"
 }
 
-# Get the url of the github repo, strip .git (i.e. the last 4 chars) from the end of it
+# Get the url of the github repo, strip .git from the end of it
 get_git_remote_url() {
 	GIT_REPO_URL="$(git config --get remote.origin.url | sed 's/\.git$//')"
 }
@@ -56,8 +72,7 @@ get_git_remote_url() {
 # Check that git status is clean
 check_git_clean() {
 	GIT_CLEAN=$(git status --porcelain)
-	if [[ -n $GIT_CLEAN ]]
-	then
+	if [[ -n $GIT_CLEAN ]]; then
 		error_close "git dirty"
 	fi
 }
@@ -66,8 +81,7 @@ check_git_clean() {
 check_git() {
 	CURRENT_GIT_BRANCH=$(git branch --show-current)
 	check_git_clean
-	if [[ ! "$CURRENT_GIT_BRANCH" =~ ^dev$ ]]
-	then
+	if [[ ! "$CURRENT_GIT_BRANCH" =~ ^dev$ ]]; then
 		error_close "not on dev branch"
 	fi
 }
@@ -79,8 +93,7 @@ ask_changelog_update() {
 	printf "%s" "$RELEASE_BODY_TEXT"
 	printf "\n%s\n" "${STAR_LINE}"
 	ask_yn "accept release body"
-	if [[ "$(user_input)" =~ ^y$ ]] 
-	then
+	if [[ "$(user_input)" =~ ^y$ ]]; then
 		update_release_body_and_changelog "$RELEASE_BODY_TEXT"
 	else
 		exit
@@ -165,15 +178,6 @@ check_tag () {
 	done
 }
 
-# ask continue, or quit
-ask_continue () {
-	ask_yn "continue"
-	if [[ ! "$(user_input)" =~ ^y$ ]]
-	then 
-		exit
-	fi
-}
-
 # $1 text to colourise
 release_continue () {
 	echo -e "\n${PURPLE}$1${RESET}"
@@ -199,9 +203,22 @@ check_typos () {
 	ask_continue
 }
 
+# Make sure the unused lint isn't used
+check_allow_unused() {
+	matches_any=$(find . -type d \( -name .git -o -name target \) -prune -o -type f -exec grep -lE '^#!\[allow\(unused\)\]$' {} +)
+	matches_cargo=$(grep "^unused = \"allow\"" ./Cargo.toml)
+	if [ -n "$matches_any" ]; then
+		echo "\"#[allow(unused)]\" in ${matches_any}"
+		ask_continue
+	elif [ -n "$matches_cargo" ]; then
+		echo "\"unused = \"allow\"\" in Cargo.toml"
+		ask_continue
+	fi
+}
+
 # Full flow to create a new release
 release_flow() {
-	
+	check_allow_unused
 	check_typos
 
 	check_git
