@@ -105,6 +105,8 @@ async fn main() -> Result<(), ()> {
         }
         Ok(app_state) => {
             let state = Arc::new(Mutex::new(app_state));
+			// TODO change this to just an Arc<ApplicationState>, and use a message bus everywhere?
+
             let init_state = Arc::clone(&state);
             let internal_state = Arc::clone(&state);
 
@@ -151,6 +153,7 @@ async fn main() -> Result<(), ()> {
                     request_handlers::get_autostart,
                     request_handlers::init,
                     request_handlers::minimize,
+                    request_handlers::open_database_location,
                     request_handlers::pause_after_break,
                     request_handlers::reset_settings,
                     request_handlers::set_autostart,

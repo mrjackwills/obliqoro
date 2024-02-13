@@ -100,6 +100,18 @@ pub fn set_setting_fullscreen(state: TauriState<'_>, value: bool) {
         .ok();
 }
 
+/// Request to set the full screen setting to the given boolean value
+#[tauri::command]
+#[allow(clippy::needless_pass_by_value)]
+pub fn open_database_location(state: TauriState<'_>) {
+    open::that(state.lock().get_data_location()).ok();
+    state
+        .lock()
+        .sx
+        .send(InternalMessage::Window(WindowVisibility::Hide))
+        .ok();
+}
+
 /// Request to set the session length to the given i64 value
 #[tauri::command]
 #[allow(clippy::needless_pass_by_value)]

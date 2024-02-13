@@ -1,13 +1,13 @@
 <template>
-	<v-snackbar v-model='visible' timeout='-1'>
+	<v-snackbar v-model='visible' timeout='-1' class='mb-12' color='red' location='bottom'>
 		<v-row justify='center' align='center' no-gutters class='ma-0 pa-0'>
 			<v-col v-if='icon && !loading' cols='auto' class=''>
-				<v-icon color='red' :icon='icon' />
+				<v-icon color='black' :icon='icon' />
 			</v-col>
 			<v-col v-if='loading' cols='auto' class=''>
-				<v-progress-circular :size='18' :width='3' color='white' indeterminate />
+				<v-progress-circular :size='18' :width='3' color='black' indeterminate />
 			</v-col>
-			<v-col cols='auto' class='mx-3 ma-0 pa-0'>
+			<v-col cols='auto' class='mx-3 ma-0 pa-0 text-black'>
 				{{ message }}
 			</v-col>
 		</v-row>

@@ -1,13 +1,12 @@
 <template>
 	<v-row class='ma-0 pa-0 no-gutters fill-height' align='center'>
-		<!-- <v-container fluid class='ma-0 pa-0'> -->
 
-		<v-row align='center' justify='center' class=''>
+		<v-row align='center' justify='center' class='ma-0 pa-0'>
 			<v-col cols='9' class='ma-0 pa-0'>
 
 				<!-- TITLE -->
-				<v-row align='center' justify='center'>
-					<v-col cols='auto' class='text-h4 text-primary'>
+				<v-row align='center' justify='center' class='ma-0 pa-0'>
+					<v-col cols='auto' class='text-h4 ma-0 pa-0 text-primary'>
 						Settings
 					</v-col>
 				</v-row>
@@ -15,7 +14,7 @@
 				<hr class='my-4 hr' />
 
 				<!-- BREAK/PAUSE INFO -->
-				<v-row align='center' justify='space-around' class='ma-0 pa-0'>
+				<v-row align='center' justify='space-between' class='ma-0 pa-0'>
 
 					<v-col cols='5' class='ma-0 pa-0 text-primary text-left'>
 						<v-row align='center' justify='start' class='ma-0 pa-0'>
@@ -27,14 +26,11 @@
 									{{ next_in }}
 								</v-col>
 							</template>
-							<template v-else>
-								currently paused
-							</template>
 						</v-row>
 					</v-col>
 
 					<v-col cols='2' class='ma-0 pa-0'>
-						<v-btn @click='toggle_pause' :variant='pauseVariant' color='primary' size='small' block rounded='lg'>
+						<v-btn @click='toggle_pause'  color='primary' block rounded='sm' class='ma-0 pa-0'>
 							<v-row align='center' justify='start' class='ma-0 pa-0'>
 								<v-col cols='auto' class='ma-0 pa-0 mr-1'>
 									<v-icon :icon='pauseIcon' class='' />
@@ -65,7 +61,7 @@
 				<v-form v-on:submit.prevent class='mt-4'>
 					<v-row class='ma-0 pa-0' justify='space-between'>
 
-						<v-col v-for='(item, index) in switches' :key='index' cols='auto'>
+						<v-col v-for='(item, index) in switches' :key='index' cols='auto' class='ma-0 pa-0'>
 							<v-switch
 								v-model='item.model.value'
 								:class='item.model.value ? "text-primary" : "text-offwhite"'
@@ -77,7 +73,7 @@
 						</v-col>
 
 					</v-row>
-
+					
 					<!-- SLIDERS -->
 					<section v-for='(item, index) in sliders' :key='index'>
 
@@ -104,29 +100,33 @@
 				</v-form>
 
 				<!-- RESET BUTTON -->
-				<v-row class='ma-0 pa-0' justify='center'>
-					<v-col cols='auto' class='ma-0 pa-0'>
-						<v-btn @click='reset_settings' :disabled='paused' :variant='paused? "outlined" : undefined' color='primary' size='large' rounded='lg'>
+				<v-row class='ma-0 pa-0 mt-6' justify='space-between'>
+					<v-col cols='3' offset='auto' class='ma-0 pa-0'>
+						<v-btn @click='reset_settings' :disabled='paused' :variant='paused? "outlined" : undefined' color='primary' block rounded='sm'>
 							<v-icon :icon='mdiCogRefresh' class='mr-1' />
 							reset settings
 						</v-btn>
-							
+					</v-col>
+					<!-- <v-spacer /> -->
+					<v-col cols='3' class='ma-0 pa-0 text-black' @click='opendb'>
+						<v-btn @click='opendb' color='primary' rounded='sm' block>
+							database location
+							<v-icon :icon='mdiOpenInNew' class='ml-1' />
+						</v-btn>
 					</v-col>
 				</v-row>
 
 			</v-col>
 		</v-row>
 
-		<!-- </v-container> -->
 	</v-row>
-	<!-- </v-container> -->
 </template>
 <script setup lang="ts">
 import { sec_to_minutes, sec_to_minutes_only } from '../vanillaTS/second';
 import { invoke } from '@tauri-apps/api/tauri';
 import { InvokeMessage } from '../types';
 import { snackError } from '../services/snack';
-import { mdiCogRefresh, mdiCoffeeOutline, mdiWeatherNight, mdiPlay, mdiPause } from '@mdi/js';
+import { mdiCogRefresh, mdiCoffeeOutline, mdiOpenInNew, mdiPlay, mdiPause, mdiWeatherNight } from '@mdi/js';
 const settingStore = settingModule();
 
 const next_in = computed((): string => {
@@ -142,9 +142,6 @@ const paused = computed((): boolean => {
 });
 const pauseIcon = computed((): string => {
 	return paused.value? mdiPlay:mdiPause;
-});
-const pauseVariant = computed((): undefined | 'outlined' => {
-	return paused.value? undefined :'outlined';
 });
 const pauseText = computed((): string => {
 	return paused.value? 'resume':'pause';
@@ -200,6 +197,10 @@ const sliders = computed(() => {
 		}
 	];
 });
+
+const opendb = async (): Promise<void> => {
+	await invoke(InvokeMessage.OpenDatabaseLocation);
+};
 
 const start_on_boot = computed({
 	get(): boolean {

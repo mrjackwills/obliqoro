@@ -6,7 +6,7 @@
 				<v-container fluid class='pa-0'>
 								
 					<v-row align='center' justify='center' class='mx-1 mb-12 switch_margin'>
-						<v-col cols='11' class='text-primary text-center ma-0 pa-0 px-2 mb-6' :class='text_size'>
+						<v-col cols='11' class='text-primary text-center ma-0 pa-0 px-2 ' :class='text_size'>
 							{{ strategy }}
 						</v-col>
 								
@@ -71,6 +71,7 @@ const pauseAfterBreak = ref(false);
 
 watch(pauseAfterBreak, async (pause) => {
 	await invoke(InvokeMessage.PauseAfterBreak, { pause });
+	settingModule().set_paused(pause);
 });
 
 watch(interval, async (i) => {
@@ -86,7 +87,8 @@ watch(interval, async (i) => {
 
 /* This is to account for the the height of the switch row - it might not be perfect */
 .switch_margin {
-	margin-top: 18%;
+	/* margin-top: 18%; */
+	margin-top: 65px;
 }
 
 </style>

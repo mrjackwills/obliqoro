@@ -66,7 +66,7 @@ pub struct ApplicationState {
     pub tick_process: Option<JoinHandle<()>>,
     pub pause_after_break: bool,
     // TODO button on frontend to open this location?
-    _data_location: PathBuf,
+    data_location: PathBuf,
     session_count: u8,
     settings: ModelSettings,
     strategies: Vec<String>,
@@ -92,7 +92,7 @@ impl ApplicationState {
                 .map(std::borrow::ToOwned::to_owned)
                 .collect::<Vec<_>>();
             Ok(Self {
-                _data_location: local_dir,
+                data_location: local_dir,
                 pause_after_break: false,
                 session_count: 0,
                 session_status: SessionStatus::Work,
@@ -134,6 +134,11 @@ impl ApplicationState {
     /// Get the settings for starting a break
     pub fn get_break_settings(&self) -> (u16, String) {
         (self.current_timer_left(), self.random_strategy())
+    }
+
+    /// Get the directory where the database is stored
+    pub const fn get_data_location(&self) -> &PathBuf {
+        &self.data_location
     }
 
     /// Return, in seconds, the current amount left of the onoing work - or break - session
