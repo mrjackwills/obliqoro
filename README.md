@@ -64,7 +64,6 @@ See the <a href='https://github.com/mrjackwills/obliqoro/releases/latest' target
 + [ ] Statistics for the number of sessions worked
 + [ ] Ability to display on multiple monitors
 + [ ] General code refactoring
-+ [ ] Frontend link to the location of the SQLite file on disk
 + [ ] Testing on Mac
 + [ ] Password for exiting a long break?
 + [ ] Setting to enable writing logs to file when on production version

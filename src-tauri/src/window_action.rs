@@ -34,6 +34,7 @@ impl WindowAction {
         window.center().ok();
     }
 
+	/// Change from full screen to the standard window size
     fn _remove_fullscreen(window: &tauri::Window) {
         window.set_resizable(true).ok();
         window.set_fullscreen(false).ok();
@@ -73,7 +74,7 @@ impl WindowAction {
         }
     }
 
-    /// Change from full screen to set window size
+    /// Change from full screen to the standard window size
     pub fn remove_fullscreen(app: &AppHandle) {
         if let Some(window) = app.get_window(ObliqoroWindow::Main.as_str()) {
             match window.is_visible() {

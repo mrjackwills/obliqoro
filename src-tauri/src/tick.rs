@@ -18,7 +18,6 @@ pub fn tick_process(state: &Arc<Mutex<ApplicationState>>) {
             tokio::spawn(async move {
                 spawn_state.lock().tick_process();
             });
-            // 500ms?
             tokio::time::sleep(std::time::Duration::from_millis(500)).await;
         }
     }));
