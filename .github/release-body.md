@@ -1,12 +1,11 @@
-### 2023-11-21
+### 2024-01-04
 
 ### Chores
-+ Rust 1.74.0 linting, [aef90421](https://www.github.com/mrjackwills/obliqoro/commit/aef904215f2c9833b8f7c4675a5486f332578baa)
-+ .devcontainer updated, [0fc86d12](https://www.github.com/mrjackwills/obliqoro/commit/0fc86d1292ebf25e1655672a11bc0f685fb80a97)
-+ lints moved from main.rs to Cargo.toml, [99e9ff21](https://www.github.com/mrjackwills/obliqoro/commit/99e9ff212869e2ce893cf72402042d1b2c06184c)
-+ dependencies updated, [92656b79](https://www.github.com/mrjackwills/obliqoro/commit/92656b7982fa2794f333df60c968e740b3be28f1)
++ dependencies updated, [14ee3caf4129e796a5f1536b7cecbfb1b85c6c28], [0985cf85db5fffe28f9b0184104c7523a4b22423]
++ Rust 1.75.0 linting, [70214a84798b3826790655f9205f7048070d75bd]
 
 ### Fixes
-+ reduce tick sleep rate from 1000ms to 500ms, [216eb199](https://www.github.com/mrjackwills/obliqoro/commit/216eb1990d533a0803666ab6ecbebcb29cd7e255)
++ GitHub action workflow, [73669e8c752027bc08f849d535cf3e2ce4885abc]
++ tauri.conf description, and allowlist issue, [a3d6ea37c2e5bb0892640b4fcaea45a1e9f75ac0]
 
-see <a href='https://www.github.com/mrjackwills/obliqoro/blob/main/CHANGELOG.md'>CHANGELOG.md</a> for more details
+see <a href='https://github.com/mrjackwills/obliqoro/blob/main/CHANGELOG.md'>CHANGELOG.md</a> for more details
