@@ -30,7 +30,7 @@
 					</v-col>
 
 					<v-col cols='2' class='ma-0 pa-0'>
-						<v-btn @click='toggle_pause'  color='primary' block rounded='sm' class='ma-0 pa-0'>
+						<v-btn @click='toggle_pause' color='primary' block rounded='sm' class='ma-0 pa-0' >
 							<v-row align='center' justify='start' class='ma-0 pa-0'>
 								<v-col cols='auto' class='ma-0 pa-0 mr-1'>
 									<v-icon :icon='pauseIcon' class='' />
@@ -102,7 +102,8 @@
 				<!-- RESET BUTTON -->
 				<v-row class='ma-0 pa-0 mt-6' justify='center'>
 					<v-col cols='auto' class='ma-0 pa-0'>
-						<v-btn @click='reset_settings' :disabled='paused' :variant='paused? "outlined" : undefined' color='primary' block rounded='sm'>
+						<!-- :variant='paused? undefined:"outlined"' -->
+						<v-btn @click='reset_settings' :disabled='paused' variant='outlined' color='red' block rounded='sm'>
 							<v-icon :icon='mdiCogRefresh' class='mr-1' />
 							reset settings
 						</v-btn>

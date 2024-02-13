@@ -5,7 +5,7 @@
 
 			</v-col>
 
-			<v-col cols='auto' class='no-gutters unselectable ma-0 pa-0'>
+			<v-col cols='auto' class='no-gutters unselectable ma-0 pa-0 cl'>
 
 				<v-chip :ripple='false' color='offwhite' text-color='black' variant='flat' outlined pill>
 					<section v-if='showBuild' class='' @click='buildInfo'>
@@ -34,6 +34,9 @@
 							<v-icon :icon='mdiOpenInNew' color='primary' size='x-small' />
 						</v-col>
 					</v-row>
+					<v-tooltip activator='parent' location='top center' content-class='tooltip'>
+						open database location in file explorer
+					</v-tooltip>
 					
 				</section>
 			</v-col>
