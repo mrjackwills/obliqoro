@@ -151,6 +151,7 @@ async fn main() -> Result<(), ()> {
                     request_handlers::get_autostart,
                     request_handlers::init,
                     request_handlers::minimize,
+                    request_handlers::pause_after_break,
                     request_handlers::reset_settings,
                     request_handlers::set_autostart,
                     request_handlers::set_setting_fullscreen,

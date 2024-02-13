@@ -1,126 +1,125 @@
 <template>
-	<v-container fluid class='ma-0 pa-0 no-gutters fill-height'>
-		<v-row class='ma-0 pa-0 no-gutters fill-height' align='center'>
-			<v-container fluid class='ma-0 pa-0'>
+	<v-row class='ma-0 pa-0 no-gutters fill-height' align='center'>
+		<!-- <v-container fluid class='ma-0 pa-0'> -->
 
-				<v-row align='center' justify='center' class=''>
-					<v-col cols='9' class='ma-0 pa-0'>
+		<v-row align='center' justify='center' class=''>
+			<v-col cols='9' class='ma-0 pa-0'>
 
-						<!-- TITLE -->
-						<v-row align='center' justify='center'>
-							<v-col cols='auto' class='text-h4 text-primary'>
-								Settings
-							</v-col>
-						</v-row>
+				<!-- TITLE -->
+				<v-row align='center' justify='center'>
+					<v-col cols='auto' class='text-h4 text-primary'>
+						Settings
+					</v-col>
+				</v-row>
 
-						<hr class='my-4 hr' />
+				<hr class='my-4 hr' />
 
-						<!-- BREAK/PAUSE INFO -->
-						<v-row align='center' justify='space-around' class='ma-0 pa-0'>
+				<!-- BREAK/PAUSE INFO -->
+				<v-row align='center' justify='space-around' class='ma-0 pa-0'>
 
-							<v-col cols='5' class='ma-0 pa-0 text-primary text-left'>
-								<v-row align='center' justify='start' class='ma-0 pa-0'>
-									<template v-if='!paused'>
-										<v-col cols='auto' class='ma-0 pa-0 mr-2'>
-											<v-icon :icon='mdiCoffeeOutline' class='' />
-										</v-col>
-										<v-col cols='auto' class='ma-0 pa-0'>
-											{{ next_in }}
-										</v-col>
-									</template>
-									<template v-else>
-										currently paused
-									</template>
-								</v-row>
-							</v-col>
-
-							<v-col cols='2' class='ma-0 pa-0'>
-								<v-btn @click='toggle_pause' :variant='pauseVariant' color='primary' size='small' block rounded='lg'>
-									<v-row align='center' justify='start' class='ma-0 pa-0'>
-										<v-col cols='auto' class='ma-0 pa-0 mr-1'>
-											<v-icon :icon='pauseIcon' class='' />
-										</v-col>
-										<v-col cols='auto' class='ma-0 pa-0'>
-											{{ pauseText }}
-										</v-col>
-									</v-row>
-								</v-btn>
-							</v-col>
-
-							<v-col cols='5' class='ma-0 pa-0 text-primary'>
-								<v-row align='center' justify='end' class='ma-0 pa-0' v-if='!paused'>
-									<v-col cols='auto' class='ma-0 pa-0'>
-										{{ sessions_before_long }}
-									</v-col>
-									<v-col cols='auto' class='ma-0 pa-0 ml-2'>
-										<v-icon :icon='mdiWeatherNight' class='' />
-									</v-col>
-								</v-row>
-
-							</v-col>
-						</v-row>
-						
-						<hr class='my-4 hr' />
-
-						<!-- SWITCHES -->
-						<v-form v-on:submit.prevent class='mt-4'>
-							<v-row class='ma-0 pa-0' justify='space-between'>
-
-								<v-col v-for='(item, index) in switches' :key='index' cols='auto'>
-									<v-switch
-										v-model='item.model.value'
-										:class='item.model.value ? "text-primary" : "text-offwhite"'
-										:label='item.label'
-										flat
-										color='primary'
-									>
-									</v-switch>
+					<v-col cols='5' class='ma-0 pa-0 text-primary text-left'>
+						<v-row align='center' justify='start' class='ma-0 pa-0'>
+							<template v-if='!paused'>
+								<v-col cols='auto' class='ma-0 pa-0 mr-2'>
+									<v-icon :icon='mdiCoffeeOutline' class='' />
 								</v-col>
+								<v-col cols='auto' class='ma-0 pa-0'>
+									{{ next_in }}
+								</v-col>
+							</template>
+							<template v-else>
+								currently paused
+							</template>
+						</v-row>
+					</v-col>
 
+					<v-col cols='2' class='ma-0 pa-0'>
+						<v-btn @click='toggle_pause' :variant='pauseVariant' color='primary' size='small' block rounded='lg'>
+							<v-row align='center' justify='start' class='ma-0 pa-0'>
+								<v-col cols='auto' class='ma-0 pa-0 mr-1'>
+									<v-icon :icon='pauseIcon' class='' />
+								</v-col>
+								<v-col cols='auto' class='ma-0 pa-0'>
+									{{ pauseText }}
+								</v-col>
 							</v-row>
+						</v-btn>
+					</v-col>
 
-							<!-- SLIDERS -->
-							<section v-for='(item, index) in sliders' :key='index'>
-
-								<v-row class='text-primary ma-0 pa-0'>
-									<v-col cols='auto' class='ma-0 pa-0'>
-										{{ item.name }}
-									</v-col>
-									<v-spacer />
-									<v-col cols='auto' class='ma-0 pa-0'>
-										{{ item.label_value }}
-									</v-col>
-								</v-row>
-
-								<v-row class='ma-0 pa-0'>
-									<v-col cols='12' class='ma-0 pa-0'>
-										<v-slider v-model='item.model.value' color='primary' :disabled='paused' :min='item.min'
-											density='compact' :max='item.max' :step='item.step' rounded>
-										</v-slider>
-										<ResumeTooltip :paused='paused' />
-									</v-col>
-								</v-row>
-							</section>
-
-						</v-form>
-
-						<!-- RESET BUTTON -->
-						<v-row class='ma-0 pa-0' justify='center'>
+					<v-col cols='5' class='ma-0 pa-0 text-primary'>
+						<v-row align='center' justify='end' class='ma-0 pa-0' v-if='!paused'>
 							<v-col cols='auto' class='ma-0 pa-0'>
-								<v-btn @click='reset_settings' :disabled='paused' :variant='paused? "outlined" : undefined' color='primary' size='large' rounded='lg'>
-									<v-icon :icon='mdiCogRefresh' class='mr-1' />
-									reset settings
-								</v-btn>
-							
+								{{ sessions_before_long }}
+							</v-col>
+							<v-col cols='auto' class='ma-0 pa-0 ml-2'>
+								<v-icon :icon='mdiWeatherNight' class='' />
 							</v-col>
 						</v-row>
 
 					</v-col>
 				</v-row>
+						
+				<hr class='my-4 hr' />
 
-			</v-container>
+				<!-- SWITCHES -->
+				<v-form v-on:submit.prevent class='mt-4'>
+					<v-row class='ma-0 pa-0' justify='space-between'>
+
+						<v-col v-for='(item, index) in switches' :key='index' cols='auto'>
+							<v-switch
+								v-model='item.model.value'
+								:class='item.model.value ? "text-primary" : "text-offwhite"'
+								:label='item.label'
+								flat
+								color='primary'
+							/>
+						
+						</v-col>
+
+					</v-row>
+
+					<!-- SLIDERS -->
+					<section v-for='(item, index) in sliders' :key='index'>
+
+						<v-row class='text-primary ma-0 pa-0'>
+							<v-col cols='auto' class='ma-0 pa-0'>
+								{{ item.name }}
+							</v-col>
+							<v-spacer />
+							<v-col cols='auto' class='ma-0 pa-0'>
+								{{ item.label_value }}
+							</v-col>
+						</v-row>
+
+						<v-row class='ma-0 pa-0'>
+							<v-col cols='12' class='ma-0 pa-0'>
+								<v-slider v-model='item.model.value' color='primary' :disabled='paused' :min='item.min'
+									density='compact' :max='item.max' :step='item.step' rounded>
+								</v-slider>
+								<ResumeTooltip :paused='paused' />
+							</v-col>
+						</v-row>
+					</section>
+
+				</v-form>
+
+				<!-- RESET BUTTON -->
+				<v-row class='ma-0 pa-0' justify='center'>
+					<v-col cols='auto' class='ma-0 pa-0'>
+						<v-btn @click='reset_settings' :disabled='paused' :variant='paused? "outlined" : undefined' color='primary' size='large' rounded='lg'>
+							<v-icon :icon='mdiCogRefresh' class='mr-1' />
+							reset settings
+						</v-btn>
+							
+					</v-col>
+				</v-row>
+
+			</v-col>
 		</v-row>
-	</v-container>
+
+		<!-- </v-container> -->
+	</v-row>
+	<!-- </v-container> -->
 </template>
 <script setup lang="ts">
 import { sec_to_minutes, sec_to_minutes_only } from '../vanillaTS/second';

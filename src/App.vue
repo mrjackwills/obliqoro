@@ -1,11 +1,11 @@
 <template>
 	<v-app class='ma-0 pa-0 fill-height unselectable' id='obliqoro'>
-		<AppBar v-if='on_settings' />
 		<v-main>
+			<AppBar v-if='on_settings' />
 			<router-view />
+			<SnackBar />
+			<TheFooter v-if='on_settings' />
 		</v-main>
-		<TheSnackbar />
-		<TheFooter v-if='on_settings' />
 	</v-app>
 </template>
 

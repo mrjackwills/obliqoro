@@ -64,7 +64,7 @@ pub fn menu_enabled(app: &tauri::AppHandle, enable: bool) {
     }
 }
 
-// refactor into own mod
+/// todo refactor into own mod?
 pub fn create_system_tray() -> SystemTray {
     let mut tray_menu = SystemTrayMenu::new();
     for i in [

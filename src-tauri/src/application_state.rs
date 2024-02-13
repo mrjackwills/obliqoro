@@ -1,7 +1,7 @@
 use std::{fmt, path::PathBuf, time::Instant};
 
 use rand::seq::SliceRandom;
-use sqlx::{Pool, Sqlite};
+use sqlx::SqlitePool;
 use tokio::{sync::broadcast::Sender, task::JoinHandle};
 
 use crate::{
@@ -61,10 +61,11 @@ impl Timer {
 #[derive(Debug)]
 pub struct ApplicationState {
     pub session_status: SessionStatus,
-    pub sqlite: Pool<Sqlite>,
+    pub sqlite: SqlitePool,
     pub sx: Sender<InternalMessage>,
     pub tick_process: Option<JoinHandle<()>>,
-    // TODO button on frontend to open this location
+    pub pause_after_break: bool,
+    // TODO button on frontend to open this location?
     _data_location: PathBuf,
     session_count: u8,
     settings: ModelSettings,
@@ -92,14 +93,15 @@ impl ApplicationState {
                 .collect::<Vec<_>>();
             Ok(Self {
                 _data_location: local_dir,
+                pause_after_break: false,
                 session_count: 0,
-                strategies,
-                timer: Timer::default(),
                 session_status: SessionStatus::Work,
                 settings,
                 sqlite,
+                strategies,
                 sx: sx.clone(),
                 tick_process: None,
+                timer: Timer::default(),
             })
         } else {
             Err(AppError::FS("Can't read or write app data".to_owned()))
@@ -161,15 +163,13 @@ impl ApplicationState {
 
     /// Check if the timer (tick process) is paused
     pub const fn get_paused(&self) -> bool {
-        match self.timer {
-            Timer::Paused(_) => true,
-            Timer::Work(_) => false,
-        }
+        matches!(self.timer, Timer::Paused(_))
     }
 
     pub fn reset_timer(&mut self) {
         self.timer = self.timer.reset();
     }
+
     /// Start the timer, by saetting the next_break_in value
     pub fn start_work_session(&mut self) {
         self.session_status = SessionStatus::Work;

@@ -1,6 +1,5 @@
-#![allow(unused)]
 use serde::{Deserialize, Serialize};
-use sqlx::{types::time::PrimitiveDateTime, FromRow, Pool, Sqlite};
+use sqlx::{types::time::PrimitiveDateTime, FromRow, SqlitePool};
 
 use crate::app_error::AppError;
 
@@ -12,8 +11,9 @@ pub struct ModelStats {
 }
 
 impl ModelStats {
-    pub async fn get(sqlite: &Pool<Sqlite>) -> Result<Vec<Self>, AppError> {
+    #[allow(unused)]
+    pub async fn get(sqlite: SqlitePool) -> Result<Vec<Self>, AppError> {
         let query = "SELECT * FROM stats";
-        Ok(sqlx::query_as::<_, Self>(query).fetch_all(sqlite).await?)
+        Ok(sqlx::query_as::<_, Self>(query).fetch_all(&sqlite).await?)
     }
 }

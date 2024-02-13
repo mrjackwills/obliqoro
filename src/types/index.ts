@@ -4,6 +4,7 @@ export enum InvokeMessage {
 	Init = 'init',
 	ResetSettings = 'reset_settings',
 	TogglePause = 'toggle_pause',
+	PauseAfterBreak = 'pause_after_break',
 	SetSettingFullscreen = 'set_setting_fullscreen',
 	SetSettingLongBreak = 'set_setting_longbreak',
 	SetSettingNumberSession = 'set_setting_number_sessions',
