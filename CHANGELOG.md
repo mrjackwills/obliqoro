@@ -1,5 +1,4 @@
 ### Chores
-+ dependencies updated, []
 + create_release v0.5.5, [4fb5e210860d7f9b00fe97532384000be83431ea], [fd7dd8496eacdb9c68bff0f1f87ff6016906dec2]
 + GitHub workflow updated, [90ecefb985171a92c631b0a38d244511678c41d4]
 + dependencies updated, [93d4901181187e15bdd59b8413ffbcc4d2387d95], [6f1473cfeed5ad9857ac09193f90e2af412ea7d3], [71e1713e05e1a22b420f9d5062d130e28ed24eff]
