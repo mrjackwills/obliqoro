@@ -27,28 +27,44 @@ impl ModelSettings {
 
     /// Update the settings
     pub async fn update_fullscreen(sqlite: &SqlitePool, fullscreen: bool) -> Result<(), AppError> {
-        let query = "UPDATE Settings SET fullscreen = $1";
+        let query = "
+UPDATE
+	Settings
+SET
+	fullscreen = $1";
         sqlx::query(query).bind(fullscreen).execute(sqlite).await?;
         Ok(())
     }
 
     /// Update shortbreak setting
     pub async fn update_shortbreak(sqlite: &SqlitePool, shortbreak: u8) -> Result<(), AppError> {
-        let query = "UPDATE Settings SET short_break_as_sec = $1";
+        let query = "
+UPDATE
+	Settings
+SET
+	short_break_as_sec = $1";
         sqlx::query(query).bind(shortbreak).execute(sqlite).await?;
         Ok(())
     }
 
     /// Update long break setting
     pub async fn update_longbreak(sqlite: &SqlitePool, longbreak: u16) -> Result<(), AppError> {
-        let query = "UPDATE Settings SET long_break_as_sec = $1";
+        let query = "
+UPDATE
+	Settings
+SET
+	long_break_as_sec = $1";
         sqlx::query(query).bind(longbreak).execute(sqlite).await?;
         Ok(())
     }
 
     /// Update session length
     pub async fn update_session(sqlite: &SqlitePool, session: u16) -> Result<(), AppError> {
-        let query = "UPDATE Settings SET session_as_sec = $1";
+        let query = "
+UPDATE
+	Settings
+SET
+	session_as_sec = $1";
         sqlx::query(query).bind(session).execute(sqlite).await?;
         Ok(())
     }
@@ -58,7 +74,11 @@ impl ModelSettings {
         sqlite: &SqlitePool,
         number_session_before_break: u8,
     ) -> Result<(), AppError> {
-        let query = "UPDATE Settings SET number_session_before_break = $1";
+        let query = "
+UPDATE
+	Settings
+SET
+	number_session_before_break = $1";
         sqlx::query(query)
             .bind(number_session_before_break)
             .execute(sqlite)
@@ -78,7 +98,16 @@ impl ModelSettings {
     /// Insert settings row in database, this WILL crash if a settings row is already in the database, as is limited by settings_id = 1!
     async fn set_default(sqlite: &SqlitePool) -> Result<Self, AppError> {
         let settings = Self::default();
-        let query = "INSERT INTO Settings(short_break_as_sec, long_break_as_sec, session_as_sec, number_session_before_break, fullscreen) VALUES($1, $2, $3, $4, $5)";
+        let query = "
+INSERT INTO 
+	Settings(
+		short_break_as_sec,
+		long_break_as_sec,
+		session_as_sec,
+		number_session_before_break,
+		fullscreen
+	)
+VALUES($1, $2, $3, $4, $5)";
         sqlx::query(query)
             .bind(settings.short_break_as_sec)
             .bind(settings.long_break_as_sec)
@@ -93,7 +122,15 @@ impl ModelSettings {
     /// Update the settings to a default state
     pub async fn reset_settings(sqlite: &SqlitePool) -> Result<Self, AppError> {
         let settings = Self::default();
-        let query = "UPDATE Settings SET short_break_as_sec = $1, long_break_as_sec = $2, session_as_sec = $3, number_session_before_break = $4, fullscreen = $5";
+        let query = "
+UPDATE
+	Settings
+SET
+	short_break_as_sec = $1,
+	long_break_as_sec = $2,
+	session_as_sec = $3,
+	number_session_before_break = $4,
+	fullscreen = $5";
         sqlx::query(query)
             .bind(settings.short_break_as_sec)
             .bind(settings.long_break_as_sec)
@@ -107,7 +144,11 @@ impl ModelSettings {
 
     /// Return an optional Settings struct, to check whether need to insert one or not
     async fn get(sqlite: &SqlitePool) -> Result<Option<Self>, AppError> {
-        let query = "SELECT * FROM settings";
+        let query = "
+SELECT
+	*
+FROM
+	settings";
         Ok(sqlx::query_as::<_, Self>(query)
             .fetch_optional(sqlite)
             .await?)
