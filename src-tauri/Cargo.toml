@@ -1,6 +1,6 @@
 [package]
 name = "obliqoro"
-version = "0.1.11"
+version = "0.1.12"
 description = "Oblique strategies meets pomodoro"
 authors = ["Jack Wills <email@mrjackwills.com>"]
 license = "MIT"
