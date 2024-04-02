@@ -35,7 +35,8 @@
 				"serayuzgur.crates",
 				"tamasfe.even-better-toml",
 				"timonwong.shellcheck",
-				"vadimcn.vscode-lldb"
+				"vadimcn.vscode-lldb",
+				"vue.volar"
 			],
 
 			"settings": {
