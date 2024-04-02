@@ -2516,7 +2516,7 @@ dependencies = [
 
 [[package]]
 name = "obliqoro"
-version = "0.1.11"
+version = "0.1.12"
 dependencies = [
  "auto-launch",
  "dunce",
