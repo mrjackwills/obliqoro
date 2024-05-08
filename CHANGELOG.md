@@ -1,3 +1,10 @@
+# <a href='https://github.com/mrjackwills/obliqoro/releases/tag/v0.1.13'>v0.1.13</a>
+### 2024-05-08
+
+### Chores
++ dependencies updated, [eeeda33b](https://github.com/mrjackwills/obliqoro/commit/eeeda33b563f8916f3cc69882e1313166e47069f), [5ffa94fa](https://github.com/mrjackwills/obliqoro/commit/5ffa94faf56933909cac9ef760321fbfb4a95eea)
++ .devcontainer dependencies updated, [acd1dc73](https://github.com/mrjackwills/obliqoro/commit/acd1dc73ee4f67cd3972a5bc2e04ac41327f358d)
+
 # <a href='https://github.com/mrjackwills/obliqoro/releases/tag/v0.1.12'>v0.1.12</a>
 ### 2024-04-02
 

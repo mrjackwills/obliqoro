@@ -141,7 +141,6 @@ const switches = computed(() => [
 		label: 'start on boot',
 		model: start_on_boot
 	}
-
 ]
 );
 

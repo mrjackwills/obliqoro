@@ -1,6 +1,6 @@
 [package]
 name = "obliqoro"
-version = "0.1.12"
+version = "0.1.13"
 description = "Oblique strategies meets pomodoro"
 authors = ["Jack Wills <email@mrjackwills.com>"]
 license = "MIT"
@@ -15,9 +15,9 @@ keywords = ["pomodoro", "timer", "tauri", "gui", "oblique"]
 unsafe_code = "forbid"
 
 [lints.clippy]
+nursery = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
 expect_used = "warn"
-nursery = "warn"
-pedantic = "warn"
 todo = "warn"
 unused_async = "warn"
 unwrap_used = "warn"
