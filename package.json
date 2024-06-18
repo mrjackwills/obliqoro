@@ -11,34 +11,34 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
-    "@tauri-apps/api": "^1.5.4",
+    "@tauri-apps/api": "^1.5.6",
     "@vuelidate/core": "^2.0.3",
     "@vuelidate/validators": "^2.0.4",
-    "@vueuse/core": "^10.9.0",
+    "@vueuse/core": "^10.11.0",
     "@vueuse/head": "^2.0.0",
     "pinia": "^2.1.7",
-    "vue": "^3.4.27",
-    "vue-router": "^4.3.2",
-    "vuetify": "^3.6.4"
+    "vue": "^3.4.29",
+    "vue-router": "^4.3.3",
+    "vuetify": "^3.6.9"
   },
   "devDependencies": {
-    "@eslint/js": "^9.2.0",
+    "@eslint/js": "^9.5.0",
     "@mdi/js": "^7.4.47",
-    "@tauri-apps/cli": "^1.5.13",
-    "@types/node": "^20.12.10",
+    "@tauri-apps/cli": "^1.5.14",
+    "@types/node": "^20.14.5",
     "@types/secure-json-parse": "^1.0.5",
-    "@vitejs/plugin-vue": "^5.0.4",
+    "@vitejs/plugin-vue": "^5.0.5",
     "@vue/eslint-config-typescript": "^13.0.0",
     "@vue/tsconfig": "^0.5.1",
     "eslint": "^8.57.0",
-    "eslint-plugin-vue": "^9.25.0",
-    "sass": "^1.77.0",
+    "eslint-plugin-vue": "^9.26.0",
+    "sass": "^1.77.6",
     "typescript": "^5.4.5",
-    "typescript-eslint": "^7.8.0",
-    "unplugin-auto-import": "^0.17.5",
+    "typescript-eslint": "^7.13.1",
+    "unplugin-auto-import": "^0.17.6",
     "unplugin-vue-components": "^0.27.0",
-    "vite": "^5.2.11",
+    "vite": "^5.3.1",
     "vite-plugin-vuetify": "^2.0.3",
-    "vue-tsc": "^2.0.16"
+    "vue-tsc": "^2.0.21"
   }
 }

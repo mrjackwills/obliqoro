@@ -40,7 +40,7 @@ tauri = { version = "1.6", features = [ "shell-open", "native-tls-vendored", "sy
 tauri-plugin-single-instance = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 thiserror = "1.0"
 time = { version="0.3", features= ["serde", "parsing", "local-offset"] }
-tokio = { version = "1.37", features = ["full"] }
+tokio = { version = "1.38", features = ["full"] }
 tracing = "0.1"
 tracing-appender = "0.2"
 tracing-subscriber = {version="0.3", features = ["json"] }
