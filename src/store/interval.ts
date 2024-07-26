@@ -1,4 +1,3 @@
-/* eslint-disable space-before-function-paren */
 import { defineStore } from 'pinia';
 import { BreakTypes, ModuleName } from '../types';
 
