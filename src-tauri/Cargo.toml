@@ -1,6 +1,6 @@
 [package]
 name = "obliqoro"
-version = "0.1.13"
+version = "0.1.14"
 description = "Oblique strategies meets pomodoro"
 authors = ["Jack Wills <email@mrjackwills.com>"]
 license = "MIT"
@@ -30,17 +30,17 @@ tauri-build = { version = "1.5", features = [] }
 [dependencies]
 auto-launch = "0.5"
 dunce = "1.0"
-open = "5.1"
+open = "5.3"
 parking_lot = "0.12"
 rand = "0.8"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-sqlx = { version = "0.7", default-features = false, features = [ "runtime-tokio", "sqlite", "macros", "time"] }
-tauri = { version = "1.6", features = [ "shell-open", "native-tls-vendored", "system-tray"] }
+sqlx = { version = "0.8", default-features = false, features = [ "runtime-tokio", "sqlite", "macros", "time"] }
+tauri = { version = "1.7", features = [ "shell-open", "native-tls-vendored", "system-tray"] }
 tauri-plugin-single-instance = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 thiserror = "1.0"
 time = { version="0.3", features= ["serde", "parsing", "local-offset"] }
-tokio = { version = "1.37", features = ["full"] }
+tokio = { version = "1.39", features = ["full"] }
 tracing = "0.1"
 tracing-appender = "0.2"
 tracing-subscriber = {version="0.3", features = ["json"] }

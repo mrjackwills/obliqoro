@@ -102,7 +102,6 @@
 				<!-- RESET BUTTON -->
 				<v-row class='ma-0 pa-0 mt-6' justify='center'>
 					<v-col cols='auto' class='ma-0 pa-0'>
-						<!-- :variant='paused? undefined:"outlined"' -->
 						<v-btn @click='reset_settings' :disabled='paused' variant='outlined' color='red' block rounded='sm'>
 							<v-icon :icon='mdiCogRefresh' class='mr-1' />
 							reset settings
