@@ -1,5 +1,3 @@
-// Only allow when debugging
-// #![allow(unused)]
 #![cfg_attr(
     all(not(debug_assertions), target_os = "windows"),
     windows_subsystem = "windows"
@@ -116,7 +114,7 @@ async fn main() -> Result<(), ()> {
             let handler_sx = sx.clone();
             let tray_sx = sx.clone();
 
-            #[allow(unused_variables)]
+            #[expect(unused_variables)]
             let app_builder = tauri::Builder::default()
                 .manage(state)
                 .setup(|app| {

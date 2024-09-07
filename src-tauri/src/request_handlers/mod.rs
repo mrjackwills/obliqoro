@@ -22,7 +22,6 @@ fn auto_launch() -> Option<AutoLaunch> {
 
 /// Initialise the fontend store & settings
 #[tauri::command]
-#[allow(clippy::needless_pass_by_value)]
 pub fn init(state: TauriState<'_>) {
     for message in [
         Emitter::Settings,
@@ -37,7 +36,7 @@ pub fn init(state: TauriState<'_>) {
 
 /// Request to reset settings to default
 #[tauri::command]
-#[allow(clippy::needless_pass_by_value)]
+#[expect(clippy::needless_pass_by_value)]
 pub fn reset_settings(state: TauriState<'_>) {
     state
         .lock()
@@ -48,7 +47,6 @@ pub fn reset_settings(state: TauriState<'_>) {
 
 /// Toggle the autostart option
 #[tauri::command]
-#[allow(clippy::needless_pass_by_value)]
 pub fn set_autostart(state: TauriState<'_>, value: bool) {
     if let Some(i) = auto_launch() {
         if value {
@@ -62,21 +60,21 @@ pub fn set_autostart(state: TauriState<'_>, value: bool) {
 
 /// Toggle the pause option
 #[tauri::command]
-#[allow(clippy::needless_pass_by_value)]
+#[expect(clippy::needless_pass_by_value)]
 pub fn toggle_pause(state: TauriState<'_>) {
     state.lock().sx.send(InternalMessage::Pause).ok();
 }
 
 /// Set the pause after break setting
 #[tauri::command]
-#[allow(clippy::needless_pass_by_value)]
+#[expect(clippy::needless_pass_by_value)]
 pub fn pause_after_break(state: TauriState<'_>, pause: bool) {
     state.lock().pause_after_break = pause;
 }
 
 /// Get the current status of the autostart setting
 #[tauri::command]
-#[allow(clippy::needless_pass_by_value)]
+#[expect(clippy::needless_pass_by_value)]
 pub fn get_autostart(state: TauriState<'_>) {
     state
         .lock()
@@ -89,7 +87,7 @@ pub fn get_autostart(state: TauriState<'_>) {
 
 /// Request to set the full screen setting to the given boolean value
 #[tauri::command]
-#[allow(clippy::needless_pass_by_value)]
+#[expect(clippy::needless_pass_by_value)]
 pub fn set_setting_fullscreen(state: TauriState<'_>, value: bool) {
     state
         .lock()
@@ -102,7 +100,7 @@ pub fn set_setting_fullscreen(state: TauriState<'_>, value: bool) {
 
 /// Request to set the full screen setting to the given boolean value
 #[tauri::command]
-#[allow(clippy::needless_pass_by_value)]
+#[expect(clippy::needless_pass_by_value)]
 pub fn open_database_location(state: TauriState<'_>) {
     open::that(state.lock().get_data_location()).ok();
     state
@@ -114,7 +112,7 @@ pub fn open_database_location(state: TauriState<'_>) {
 
 /// Request to set the session length to the given i64 value
 #[tauri::command]
-#[allow(clippy::needless_pass_by_value)]
+#[expect(clippy::needless_pass_by_value)]
 pub fn set_setting_session(state: TauriState<'_>, value: u16) {
     state
         .lock()
@@ -127,7 +125,7 @@ pub fn set_setting_session(state: TauriState<'_>, value: u16) {
 
 /// Request to set the long_break length to the given i64 value
 #[tauri::command]
-#[allow(clippy::needless_pass_by_value)]
+#[expect(clippy::needless_pass_by_value)]
 pub fn set_setting_longbreak(state: TauriState<'_>, value: u16) {
     state
         .lock()
@@ -140,7 +138,7 @@ pub fn set_setting_longbreak(state: TauriState<'_>, value: u16) {
 
 /// Request to set the short_break length to the given i64 value
 #[tauri::command]
-#[allow(clippy::needless_pass_by_value)]
+#[expect(clippy::needless_pass_by_value)]
 pub fn set_setting_shortbreak(state: TauriState<'_>, value: u8) {
     state
         .lock()
@@ -153,7 +151,7 @@ pub fn set_setting_shortbreak(state: TauriState<'_>, value: u8) {
 
 /// Request to set the number of sessions before long_break to the given u8 value
 #[tauri::command]
-#[allow(clippy::needless_pass_by_value)]
+#[expect(clippy::needless_pass_by_value)]
 pub fn set_setting_number_sessions(state: TauriState<'_>, value: u8) {
     state
         .lock()
@@ -166,7 +164,7 @@ pub fn set_setting_number_sessions(state: TauriState<'_>, value: u8) {
 
 /// Request to minimize the application window
 #[tauri::command]
-#[allow(clippy::needless_pass_by_value)]
+#[expect(clippy::needless_pass_by_value)]
 pub fn minimize(state: TauriState<'_>) {
     state
         .lock()

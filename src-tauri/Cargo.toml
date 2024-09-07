@@ -1,13 +1,13 @@
 [package]
 name = "obliqoro"
-version = "0.1.14"
+version = "0.1.15"
 description = "Oblique strategies meets pomodoro"
 authors = ["Jack Wills <email@mrjackwills.com>"]
 license = "MIT"
 homepage = "https://www.github.com/mrjackwills/obliqoro"
 repository = "https://www.github.com/mrjackwills/obliqoro"
 edition = "2021"
-rust-version = "1.65"
+rust-version = "1.81"
 keywords = ["pomodoro", "timer", "tauri", "gui", "oblique"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -40,7 +40,7 @@ tauri = { version = "1.7", features = [ "shell-open", "native-tls-vendored", "sy
 tauri-plugin-single-instance = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 thiserror = "1.0"
 time = { version="0.3", features= ["serde", "parsing", "local-offset"] }
-tokio = { version = "1.39", features = ["full"] }
+tokio = { version = "1.40", features = ["full"] }
 tracing = "0.1"
 tracing-appender = "0.2"
 tracing-subscriber = {version="0.3", features = ["json"] }

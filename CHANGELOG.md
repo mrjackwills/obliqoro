@@ -1,3 +1,16 @@
+# <a href='https://github.com/mrjackwills/obliqoro/releases/tag/v0.1.15'>v0.1.15</a>
+### 2024-09-07
+
+### Chores
++ switch from `allow(x)` to `expect(x)`, [31045530](https://github.com/mrjackwills/obliqoro/commit/310455305f54c3d68ddc4399d68f70c0ade6a95a)
++ dependencies updated, [2def1b09](https://github.com/mrjackwills/obliqoro/commit/2def1b09431507bd7cf2c6ec1c8a4c77e48b6328)
+
+### Fixes
++ use `fs::exists`, [dc2203c2](https://github.com/mrjackwills/obliqoro/commit/dc2203c2be11e2ad8edf9159beb5c86bbd8c29e9)
+
+### Refactors
++ remove unused assets, [cc19370f](https://github.com/mrjackwills/obliqoro/commit/cc19370f9db0317b048bbd335e0befae328cb0ac)
+
 # <a href='https://github.com/mrjackwills/obliqoro/releases/tag/v0.1.14'>v0.1.14</a>
 ### 2024-07-26
 
