@@ -1,3 +1,10 @@
+### Chores
++ switch from `allow(x)` to `expect(x)`, [310455305f54c3d68ddc4399d68f70c0ade6a95a]
++ dependencies updated, [2def1b09431507bd7cf2c6ec1c8a4c77e48b6328]
+
+### Fixes
++ use `fs::exists`, [dc2203c2be11e2ad8edf9159beb5c86bbd8c29e9]
+
 # <a href='https://github.com/mrjackwills/obliqoro/releases/tag/v0.1.14'>v0.1.14</a>
 ### 2024-07-26
 
