@@ -11,7 +11,7 @@ pub struct ModelStats {
 }
 
 impl ModelStats {
-    #[allow(unused)]
+    #[expect(unused)]
     pub async fn get(sqlite: SqlitePool) -> Result<Vec<Self>, AppError> {
         let query = "SELECT * FROM stats";
         Ok(sqlx::query_as::<_, Self>(query).fetch_all(&sqlite).await?)
