@@ -5,6 +5,9 @@
 ### Fixes
 + use `fs::exists`, [dc2203c2be11e2ad8edf9159beb5c86bbd8c29e9]
 
+### Refactors
++ remove unused assets, [cc19370f9db0317b048bbd335e0befae328cb0ac]
+
 # <a href='https://github.com/mrjackwills/obliqoro/releases/tag/v0.1.14'>v0.1.14</a>
 ### 2024-07-26
 
