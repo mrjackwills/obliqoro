@@ -79,7 +79,9 @@ impl ApplicationState {
         sx: &Sender<InternalMessage>,
     ) -> Result<Self, AppError> {
         if let Some(local_dir) = app_dir {
-            if !std::fs::exists(&local_dir).unwrap_or_default() && std::fs::create_dir(&local_dir).is_err() {
+            if !std::fs::exists(&local_dir).unwrap_or_default()
+                && std::fs::create_dir(&local_dir).is_err()
+            {
                 return Err(AppError::FS("Can't read or write app data".to_owned()));
             }
             setup_tracing(&local_dir)?;
