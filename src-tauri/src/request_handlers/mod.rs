@@ -1,5 +1,7 @@
 use crate::{
-    check_version, internal_message_handler::{InternalMessage, PackageInfo, WindowVisibility}, TauriState
+    check_version,
+    internal_message_handler::{InternalMessage, PackageInfo, WindowVisibility},
+    TauriState,
 };
 
 mod messages;
@@ -13,7 +15,7 @@ pub fn init(state: TauriState<'_>) {
         FrontEnd::GetSettings,
         FrontEnd::NextBreak,
         FrontEnd::SessionsBeforeLong,
-		FrontEnd::PackageInfo(PackageInfo::default())
+        FrontEnd::PackageInfo(PackageInfo::default()),
     ] {
         state
             .lock()
@@ -21,7 +23,7 @@ pub fn init(state: TauriState<'_>) {
             .send(InternalMessage::ToFrontEnd(message))
             .ok();
     }
-	check_version::check_version(state.lock().sx.clone());
+    check_version::check_version(state.lock().sx.clone());
 }
 
 /// Request to reset settings to default

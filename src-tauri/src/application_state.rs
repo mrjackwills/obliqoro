@@ -110,7 +110,7 @@ impl ApplicationState {
                 sx: sx.clone(),
                 heartbeat_process: None,
                 timer: Timer::default(),
-                cpu_usage: VecDeque::with_capacity(60),
+                cpu_usage: VecDeque::with_capacity(60 * 15),
             })
         } else {
             Err(AppError::FS("Can't read or write app data".to_owned()))
@@ -262,13 +262,17 @@ impl ApplicationState {
     }
 
     /// Update all the settings
-    pub fn update_all_settings(&mut self, current_state: &FrontEndState) {
-        self.settings = ModelSettings::from(current_state);
-        if current_state.start_on_boot {
-            Self::auto_launch().and_then(|i| i.enable().ok());
+    /// Check if session length has changed, and reset timer if so
+    pub fn update_all_settings(&mut self, frontend_state: &FrontEndState) {
+		if frontend_state.start_on_boot {
+			Self::auto_launch().and_then(|i| i.enable().ok());
         } else {
-            Self::auto_launch().and_then(|i| i.disable().ok());
+			Self::auto_launch().and_then(|i| i.disable().ok());
         }
+        if frontend_state.session_as_sec != self.settings.session_as_sec {
+            self.sx.send(InternalMessage::ResetTimer).ok();
+        }
+		self.settings = ModelSettings::from(frontend_state);
     }
 
     /// Reset settings to default state
@@ -282,8 +286,7 @@ impl ApplicationState {
         self.settings.fullscreen
     }
 
-    /// Calculate the average cpu usage over the past 60 seconds
-    /// Will return 0.0 if don't have 60 entries in the vecdqeue
+    /// Calculate the average cpu usage over the previous `limit` seconds
     pub fn calc_cpu_average(&self, limit: u16) -> Option<f32> {
         if self.cpu_usage.len() < limit.into() {
             return None;
@@ -307,7 +310,7 @@ impl ApplicationState {
 
             let is_paused = self.get_paused();
 
-			// Only pause/resume in in work mode, does that make sense?
+            // Only pause/resume in in work mode, does that make sense?
             if self.session_status == SessionStatus::Work {
                 if is_paused && self.settings.auto_resume {
                     if let Some(avg) = cpu_mesasure.resume {

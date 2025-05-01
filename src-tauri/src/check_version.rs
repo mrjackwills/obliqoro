@@ -40,13 +40,13 @@ pub fn check_version(sx: Sender<InternalMessage>) {
             return;
         };
         let latest_version = body.tag_name.replace('v', "");
-            let info = PackageInfo {
-                github_version: Some(latest_version),
-                ..Default::default()
-            };
-            sx.send(InternalMessage::ToFrontEnd(
-                crate::request_handlers::FrontEnd::PackageInfo(info),
-            ))
-            .ok();
+        let info = PackageInfo {
+            github_version: Some(latest_version),
+            ..Default::default()
+        };
+        sx.send(InternalMessage::ToFrontEnd(
+            crate::request_handlers::FrontEnd::PackageInfo(info),
+        ))
+        .ok();
     });
 }

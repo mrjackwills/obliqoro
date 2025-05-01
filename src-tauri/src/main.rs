@@ -97,8 +97,6 @@ async fn main() -> Result<(), ()> {
 
     let ctx = tauri::generate_context!();
 
-	
-
     match ApplicationState::new(tauri::api::path::app_data_dir(ctx.config()), &sx).await {
         Err(e) => {
             error!("{e:?}");

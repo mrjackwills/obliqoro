@@ -23,7 +23,7 @@ pub struct PackageInfo {
     pub homepage: String,
     pub version: String,
     pub build_date: String,
-	pub github_version: Option<String>
+    pub github_version: Option<String>,
 }
 impl Default for PackageInfo {
     fn default() -> Self {
@@ -34,7 +34,7 @@ impl Default for PackageInfo {
             homepage: homepage.to_owned(),
             version: env!("CARGO_PKG_VERSION").to_owned(),
             build_date: env!("BUILD_DATE").to_owned(),
-			github_version: None,
+            github_version: None,
         }
     }
 }
@@ -59,6 +59,7 @@ pub enum InternalMessage {
     Break(BreakMessage),
     Pause,
     ResetSettings,
+    ResetTimer,
     SetSetting(FrontEndState),
     ToFrontEnd(FrontEnd),
     UpdateMenuTimer,
@@ -154,7 +155,6 @@ async fn reset_settings(
     let sqlite = state.lock().sqlite.clone();
     let settings = ModelSettings::reset_settings(&sqlite).await?;
     state.lock().reset_settings(settings);
-
     reset_timer(state);
     sx.send(InternalMessage::ToFrontEnd(FrontEnd::GetSettings))
         .ok();
@@ -162,14 +162,14 @@ async fn reset_settings(
     Ok(())
 }
 async fn update_settings(
-    current_state: FrontEndState,
+    frontend_state: FrontEndState,
     state: &Arc<Mutex<ApplicationState>>,
 ) -> Result<(), AppError> {
     let sqlite = state.lock().sqlite.clone();
 
-    let new_settings = ModelSettings::from(&current_state);
+    let new_settings = ModelSettings::from(&frontend_state);
     ModelSettings::update(&sqlite, &new_settings).await?;
-    state.lock().update_all_settings(&current_state);
+    state.lock().update_all_settings(&frontend_state);
     Ok(())
 }
 
@@ -278,12 +278,8 @@ fn handle_emitter(app: &AppHandle, front_end_msg: FrontEnd, state: &Arc<Mutex<Ap
             .ok();
         }
         FrontEnd::PackageInfo(info) => {
-            app.emit_to(
-                ObliqoroWindow::Main.as_str(),
-                event_name,
-                info
-            )
-            .ok();
+            app.emit_to(ObliqoroWindow::Main.as_str(), event_name, info)
+                .ok();
         }
         FrontEnd::Paused => {
             app.emit_to(
@@ -343,8 +339,8 @@ pub fn start_message_handler(
                 InternalMessage::ToFrontEnd(emitter) => {
                     handle_emitter(&app_handle, emitter, &state);
                 }
-                InternalMessage::SetSetting(current_state) => {
-                    if let Err(e) = update_settings(current_state, &state).await {
+                InternalMessage::SetSetting(frontend_state) => {
+                    if let Err(e) = update_settings(frontend_state, &state).await {
                         error!("{:#?}", e);
                         sx.send(InternalMessage::ToFrontEnd(FrontEnd::Error)).ok();
                     }
@@ -356,6 +352,9 @@ pub fn start_message_handler(
                         sx.send(InternalMessage::ToFrontEnd(FrontEnd::Error)).ok();
                     }
                     update_menu(&app_handle, &state, &sx);
+                }
+                InternalMessage::ResetTimer => {
+                    reset_timer(&state);
                 }
 
                 InternalMessage::UpdateMenuTimer => update_menu(&app_handle, &state, &sx),
