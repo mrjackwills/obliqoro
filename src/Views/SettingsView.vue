@@ -9,7 +9,6 @@
 						Settings
 					</v-col>
 				</v-row>
-
 			
 				<HR />
 

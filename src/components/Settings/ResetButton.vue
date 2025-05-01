@@ -1,7 +1,6 @@
 <template>
 	<v-row class='ma-0 pa-0 mt-12' justify='center'>
 		<v-col cols='auto' class='ma-0 pa-0 mt-12'>
-			<!-- :disabled='paused' -->
 			<v-btn @click='reset_settings'  variant='outlined' color='red' block rounded='sm'>
 				<v-icon :icon='mdiCogRefresh' class='mr-1' />
 				reset settings

@@ -41,13 +41,12 @@
 	</v-row>
 </template>
 
-
 <script setup lang="ts">
-
 import { invoke } from '@tauri-apps/api/tauri';
 import { mdiCoffeeOutline, mdiPlay, mdiPause, mdiWeatherNight } from '@mdi/js';
 import { snackError } from '../../services/snack';
 import { InvokeMessage } from '../../types';
+
 const settingStore = settingModule();
 
 const next_in = computed(() => nextbreakModule().nextbreak);
@@ -63,7 +62,6 @@ const paused = computed({
 	}
 });
 
-
 const toggle_pause = async (): Promise<void> => {
 	paused.value = !paused.value;
 	try {
@@ -73,7 +71,6 @@ const toggle_pause = async (): Promise<void> => {
 	}
 };
 
-// this should update?
 const pauseIcon = computed(() => paused.value ? mdiPlay : mdiPause);
 const pauseText = computed(() => paused.value ? 'resume' : 'pause');
 </script>

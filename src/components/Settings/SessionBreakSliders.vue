@@ -1,6 +1,6 @@
 <template>
 	<v-row align='center' justify='space-between' class='ma-0 pa-0'>
-					
+
 		<v-col cols='5' v-for='(item, index) in sliders_settings' :key='index' class='ma-0 pa-0 my-n1' :class='{"disabled-opacity":paused}'>
 
 			<v-row class='text-primary ma-0 pa-0'>
@@ -28,7 +28,7 @@
 
 <script setup lang="ts">
 
-import { secondsToText } from '../../vanillaTS/second';
+import { secondsToText } from '../../vanillaTS/helpers';
 
 const settingStore = settingModule();
 

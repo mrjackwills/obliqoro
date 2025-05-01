@@ -11,7 +11,7 @@ pub enum FrontEnd {
     PackageInfo(PackageInfo),
     NextBreak,
     OnBreak,
-    Paused,
+    Paused(bool),
     Error,
     SessionsBeforeLong,
     Cpu(CpuMeasure),
@@ -67,7 +67,7 @@ impl FrontEnd {
             Self::Error => "error",
             Self::SessionsBeforeLong => "sessions-before-long",
             Self::PackageInfo(_) => "package-info",
-            Self::Paused => "paused",
+            Self::Paused(_) => "paused",
             Self::Cpu(_) => "cpu",
         }
     }

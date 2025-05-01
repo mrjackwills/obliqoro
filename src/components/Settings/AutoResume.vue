@@ -82,13 +82,12 @@
 </template>
 
 <script setup lang="ts">
-import { formatPercentage, secondsToText, zeroPad } from '../../vanillaTS/second';
-
-const cpuUsageStore = cpuUsageModule();
-const average_resume = computed(() => cpuUsageStore.average_resume);
-
+import { formatPercentage, secondsToText, zeroPad } from '../../vanillaTS/helpers';
 
 const settingStore = settingModule();
+const cpuUsageStore = cpuUsageModule();
+
+const average_resume = computed(() => cpuUsageStore.average_resume);
 
 const auto_pause = computed(() => settingStore.auto_pause);
 
@@ -138,7 +137,6 @@ const auto_resume_timespan_sec = computed({
 	}
 });
 
-// this should be setting the flast auto_resume value in the rust backend
 watch(auto_pause, (i) => {
 	if (!i) auto_resume.value = false;
 });
@@ -149,5 +147,4 @@ watch(auto_pause, (i) => {
 	.diss {
 		opacity:  0.38
 	}
-
-	</style>
+</style>

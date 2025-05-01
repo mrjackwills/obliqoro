@@ -141,7 +141,6 @@ async fn main() -> Result<(), ()> {
                     }
                     _ => (),
                 })
-                // put all this in the handlers mod, then just import one thing?
                 .invoke_handler(tauri::generate_handler![
                     request_handlers::init,
                     request_handlers::minimize,

@@ -105,8 +105,8 @@ fn update_menu_next_break(
 }
 
 /// Update the systemtray `Puased/Resume` item
-fn update_menu_pause(app: &AppHandle, state: &Arc<Mutex<ApplicationState>>) {
-    let paused = state.lock().get_paused();
+fn update_menu_pause(app: &AppHandle, paused: bool) {
+    // let paused = state.lock().get_paused();
     let title = if paused {
         "Resume"
     } else {
@@ -154,11 +154,11 @@ async fn reset_settings(
 ) -> Result<(), AppError> {
     let sqlite = state.lock().sqlite.clone();
     let settings = ModelSettings::reset_settings(&sqlite).await?;
-    state.lock().reset_settings(settings);
+    state.lock().set_settings(settings);
     reset_timer(state);
     sx.send(InternalMessage::ToFrontEnd(FrontEnd::GetSettings))
         .ok();
-    sx.send(InternalMessage::ToFrontEnd(FrontEnd::Paused)).ok();
+    sx.send(InternalMessage::ToFrontEnd(FrontEnd::Paused(state.lock().get_paused()))).ok();
     Ok(())
 }
 async fn update_settings(
@@ -166,7 +166,6 @@ async fn update_settings(
     state: &Arc<Mutex<ApplicationState>>,
 ) -> Result<(), AppError> {
     let sqlite = state.lock().sqlite.clone();
-
     let new_settings = ModelSettings::from(&frontend_state);
     ModelSettings::update(&sqlite, &new_settings).await?;
     state.lock().update_all_settings(&frontend_state);
@@ -183,7 +182,6 @@ fn handle_visibility(
     match window_visibility {
         WindowVisibility::Close => {
             if !on_break {
-                // remove lock file!
                 app.exit(0);
             }
         }
@@ -192,7 +190,6 @@ fn handle_visibility(
                 WindowAction::hide_window(app, false);
             }
         }
-
         WindowVisibility::Minimize => {
             WindowAction::hide_window(app, false);
         }
@@ -207,9 +204,9 @@ fn handle_visibility(
     }
 }
 
-/// Handle all internal messages about emitting messages to the frontend
+/// Handle all internal messages about emitting messages to the frontend, and send to the frontend
 #[allow(clippy::too_many_lines)]
-fn handle_emitter(app: &AppHandle, front_end_msg: FrontEnd, state: &Arc<Mutex<ApplicationState>>) {
+fn emit_to_frontend(app: &AppHandle, front_end_msg: FrontEnd, state: &Arc<Mutex<ApplicationState>>) {
     let event_name = front_end_msg.as_str();
     match front_end_msg {
         FrontEnd::GoToSettings => {
@@ -281,11 +278,11 @@ fn handle_emitter(app: &AppHandle, front_end_msg: FrontEnd, state: &Arc<Mutex<Ap
             app.emit_to(ObliqoroWindow::Main.as_str(), event_name, info)
                 .ok();
         }
-        FrontEnd::Paused => {
+        FrontEnd::Paused(paused) => {
             app.emit_to(
                 ObliqoroWindow::Main.as_str(),
                 event_name,
-                state.lock().get_paused(),
+                paused,
             )
             .ok();
         }
@@ -325,7 +322,7 @@ fn handle_break(
     }
 }
 
-/// On a tokio thread, handle all internal messages
+/// Spawn into a tokio thread, handle all internal messages
 pub fn start_message_handler(
     app: &tauri::App,
     state: Arc<Mutex<ApplicationState>>,
@@ -337,7 +334,7 @@ pub fn start_message_handler(
         while let Ok(message) = rx.recv().await {
             match message {
                 InternalMessage::ToFrontEnd(emitter) => {
-                    handle_emitter(&app_handle, emitter, &state);
+                    emit_to_frontend(&app_handle, emitter, &state);
                 }
                 InternalMessage::SetSetting(frontend_state) => {
                     if let Err(e) = update_settings(frontend_state, &state).await {
@@ -369,10 +366,9 @@ pub fn start_message_handler(
 
                 InternalMessage::Pause => {
                     let paused = state.lock().toggle_pause();
-
-                    update_menu_pause(&app_handle, &state);
+                    update_menu_pause(&app_handle, paused);
                     set_icon(&app_handle, paused);
-                    sx.send(InternalMessage::ToFrontEnd(FrontEnd::Paused)).ok();
+                    sx.send(InternalMessage::ToFrontEnd(FrontEnd::Paused(paused))).ok();
                 }
             }
         }

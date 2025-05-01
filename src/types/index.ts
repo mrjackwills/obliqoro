@@ -1,23 +1,15 @@
 export type ConstT<T> = T[keyof T];
 
 export const InvokeMessage = {
-	// GetAutoStart: 'get_autostart',
 	GetPackageInfo: 'get_package_info',
 	Init: 'init',
 	Minimize: 'minimize',
 	OpenDatabaseLocation: 'open_database_location',
 	PauseAfterBreak: 'pause_after_break',
 	ResetSettings: 'reset_settings',
-	SetAutoStart: 'set_autostart',
-	SetAutoPause: 'set_setting_auto_pause',
-	SetSettingFullscreen: 'set_setting_fullscreen',
-	SetSettingLongBreak: 'set_setting_longbreak',
-	SetSettingNumberSession: 'set_setting_number_sessions',
-	SetSettingSession: 'set_setting_session',
-	SetSettingShortBreak: 'set_setting_shortbreak',
+	SetSettings: 'set_settings',
 	ShowSettings: 'show_settings',
-	TogglePause: 'toggle_pause',
-	SetSettings: 'set_settings'
+	TogglePause: 'toggle_pause'
 } as const;
 export type InvokeMessage = ConstT<typeof InvokeMessage>;
 
@@ -25,6 +17,12 @@ export const FrontEndRoutes = {
 	Settings: '/',
 	Timer: '/timer'
 } as const;
+
+export const FrontEndNames = {
+	Settings: 'settings',
+	Timer: 'timer'
+} as const;
+
 export type FrontEndRoutes = ConstT<typeof FrontEndRoutes>;
 
 export const ModuleName = {
@@ -39,7 +37,7 @@ export type ModuleName = ConstT<typeof ModuleName>;
 
 /// These need to match the enum FrontEnd as_str()
 export const ListenMessage = {
-	// Autostart: 'autostart',
+	Cpu: 'cpu',
 	Error: 'error',
 	GetSettings: 'get::settings',
 	GoToSettings: 'goto::settings',
@@ -48,8 +46,7 @@ export const ListenMessage = {
 	NumberSessionsBeforeLong: 'sessions-before-long',
 	OnBreak: 'on-break',
 	PackageInfo: 'package-info',
-	Paused: 'paused',
-	Cpu: 'cpu'
+	Paused: 'paused'
 } as const;
 export type ListenMessage = ConstT<typeof ListenMessage>;
 

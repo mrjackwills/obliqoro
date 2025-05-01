@@ -74,8 +74,8 @@ pub struct ApplicationState {
     data_location: PathBuf,
     session_count: u8,
     settings: ModelSettings,
+    // TODO just put in a lazy static
     strategies: Vec<String>,
-    // app_handle: AppHandle,
     timer: Timer,
     cpu_usage: VecDeque<f32>, // VecDque of the cpu stats
 }
@@ -167,7 +167,7 @@ impl ApplicationState {
         }
     }
 
-    /// Toggle the pause status
+    /// Toggle the pause status & return the pause status
     pub fn toggle_pause(&mut self) -> bool {
         self.timer = self.timer.toggle();
         self.get_paused()
@@ -230,6 +230,7 @@ impl ApplicationState {
         )
     }
 
+    /// Attempt to get an AutoLaunch using name and path
     fn auto_launch() -> Option<AutoLaunch> {
         tauri::utils::platform::current_exe().map_or(None, |app_exe| {
             let app_path = dunce::canonicalize(app_exe).unwrap_or_default();
@@ -264,19 +265,19 @@ impl ApplicationState {
     /// Update all the settings
     /// Check if session length has changed, and reset timer if so
     pub fn update_all_settings(&mut self, frontend_state: &FrontEndState) {
-		if frontend_state.start_on_boot {
-			Self::auto_launch().and_then(|i| i.enable().ok());
+        if frontend_state.start_on_boot {
+            Self::auto_launch().and_then(|i| i.enable().ok());
         } else {
-			Self::auto_launch().and_then(|i| i.disable().ok());
+            Self::auto_launch().and_then(|i| i.disable().ok());
         }
         if frontend_state.session_as_sec != self.settings.session_as_sec {
             self.sx.send(InternalMessage::ResetTimer).ok();
         }
-		self.settings = ModelSettings::from(frontend_state);
+        self.settings = ModelSettings::from(frontend_state);
     }
 
     /// Reset settings to default state
-    pub fn reset_settings(&mut self, settings: ModelSettings) {
+    pub fn set_settings(&mut self, settings: ModelSettings) {
         self.settings = settings;
         Self::auto_launch().and_then(|i| i.disable().ok());
     }

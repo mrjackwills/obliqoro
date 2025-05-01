@@ -23,7 +23,7 @@ pub fn init(state: TauriState<'_>) {
             .send(InternalMessage::ToFrontEnd(message))
             .ok();
     }
-    check_version::check_version(state.lock().sx.clone());
+    check_version::parse_github(state.lock().sx.clone());
 }
 
 /// Request to reset settings to default
@@ -59,7 +59,7 @@ pub fn open_database_location(state: TauriState<'_>) {
         .ok();
 }
 
-/// Request to set the long_break length to the given i64 value
+/// Set all settings
 #[tauri::command]
 #[expect(clippy::needless_pass_by_value)]
 pub fn set_settings(state: TauriState<'_>, value: FrontEndState) {

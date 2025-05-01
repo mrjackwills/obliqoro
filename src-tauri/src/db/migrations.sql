@@ -50,28 +50,6 @@ SELECT
 FROM
     settings_old;
 
--- -- fix this?
--- CREATE TEMP TABLE temp_column_check AS
--- SELECT COUNT(*) AS has_column
--- FROM pragma_table_info('settings_old')
--- WHERE name = 'auto_pause';
-
--- UPDATE settings
--- SET auto_pause = (
---     SELECT auto_pause
---     FROM settings_old
---     WHERE settings_old.settings_id = settings.settings_id
--- )
--- WHERE (SELECT has_column FROM temp_column_check) = 1;
-
--- UPDATE settings
--- SET auto_pause = 0
--- WHERE (SELECT has_column FROM temp_column_check) = 0;
-
--- DROP TABLE temp_column_check;
-
--- DROP TABLE settings_old;
-
 -- Check for each column individually
 CREATE TEMP TABLE temp_column_check AS
 SELECT

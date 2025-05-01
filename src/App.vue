@@ -57,8 +57,8 @@ onBeforeMount(async () => {
 	await listen(ListenMessage.OnBreak, async (event: Event<number>) => intervalStore.set_interval(event.payload));
 	await listen(ListenMessage.PackageInfo, async (event: Event<PackageInfo>) => packageinfoStore.set_all(event.payload));
 	await listen(ListenMessage.Paused, async (event: Event<boolean>) => settingStore.set_paused(event.payload));
-	await invoke(InvokeMessage.Init);
 
+	await invoke(InvokeMessage.Init);
 });
 
 </script>

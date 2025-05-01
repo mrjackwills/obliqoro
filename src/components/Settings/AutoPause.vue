@@ -67,11 +67,10 @@
 </template>
 
 <script setup lang="ts">
-import { formatPercentage, secondsToText, zeroPad } from '../../vanillaTS/second';
+import { formatPercentage, secondsToText, zeroPad } from '../../vanillaTS/helpers';
 
 const cpuUsageStore = cpuUsageModule();
 const average_pause = computed(() => cpuUsageStore.average_pause);
-
 
 const settingStore = settingModule();
 
