@@ -6,7 +6,8 @@ export const packageinfoModule = defineStore(ModuleName.PackageInfo, {
 	state: () => ({
 		homepage: '',
 		version: '',
-		build_date: ''
+		build_date: '',
+		github_version: ''
 	}),
 
 	actions: {
@@ -18,6 +19,9 @@ export const packageinfoModule = defineStore(ModuleName.PackageInfo, {
 		},
 		set_version (x: string): void {
 			this.version = x;
+		},
+		set_github_version (x: string) {
+			this.github_version = x;
 		}
 	}
 });

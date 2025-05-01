@@ -17,6 +17,7 @@ use tauri::Manager;
 
 mod app_error;
 mod application_state;
+mod check_version;
 mod db;
 mod heartbeat;
 mod internal_message_handler;
@@ -95,6 +96,8 @@ async fn main() -> Result<(), ()> {
     let (sx, rx) = tokio::sync::broadcast::channel(128);
 
     let ctx = tauri::generate_context!();
+
+	
 
     match ApplicationState::new(tauri::api::path::app_data_dir(ctx.config()), &sx).await {
         Err(e) => {

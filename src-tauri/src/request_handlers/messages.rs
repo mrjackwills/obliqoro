@@ -1,12 +1,14 @@
 use serde::{Deserialize, Serialize};
 
+use crate::internal_message_handler::PackageInfo;
+
 /// Message to send to the front end
 #[derive(Debug, Clone)]
 pub enum FrontEnd {
     GetSettings,
     GoToSettings,
     GoToTimer,
-    PackageInfo,
+    PackageInfo(PackageInfo),
     NextBreak,
     OnBreak,
     Paused,
@@ -64,7 +66,7 @@ impl FrontEnd {
             Self::OnBreak => "on-break",
             Self::Error => "error",
             Self::SessionsBeforeLong => "sessions-before-long",
-            Self::PackageInfo => "package-info",
+            Self::PackageInfo(_) => "package-info",
             Self::Paused => "paused",
             Self::Cpu(_) => "cpu",
         }

@@ -21,5 +21,6 @@ declare module 'vue' {
     SessionBreakSliders: typeof import('./src/components/Settings/SessionBreakSliders.vue')['default']
     SnackBar: typeof import('./src/components/SnackBar.vue')['default']
     TheFooter: typeof import('./src/components/TheFooter.vue')['default']
+    VersionAlert: typeof import('./src/components/VersionAlert.vue')['default']
   }
 }

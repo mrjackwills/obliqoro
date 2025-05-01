@@ -10,6 +10,9 @@
 					</v-col>
 				</v-row>
 
+				<v-expand-transition>
+					<VersionAlert v-if='show_update' />
+				</v-expand-transition>
 				<HR />
 
 				<PauseRow />
@@ -56,6 +59,7 @@ import { snackError } from '../services/snack';
 import SessionBreakSliders from '../components/Settings/SessionBreakSliders.vue';
 const settingStore = settingModule();
 
+const show_update = computed(() => packageinfoModule().version !== packageinfoModule().github_version);
 
 const switches = computed(() => [
 	{

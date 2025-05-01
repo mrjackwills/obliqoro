@@ -1,5 +1,5 @@
 <template>
-	<v-snackbar v-model='visible' timeout='-1' class='mb-12' color='red' location='bottom'>
+	<v-snackbar v-model='visible' timeout='-1' class='' color='red' location='bottom right'>
 		<v-row justify='center' align='center' no-gutters class='ma-0 pa-0'>
 			<v-col v-if='icon && !loading' cols='auto' class=''>
 				<v-icon color='black' :icon='icon' />

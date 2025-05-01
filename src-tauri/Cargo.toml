@@ -33,6 +33,12 @@ dunce = "1.0"
 open = "5.3"
 parking_lot = "0.12"
 rand = "0.9"
+reqwest = { version = "0.12", default-features = false, features = [
+        "brotli",
+        "gzip",
+        "json",
+        "rustls-tls-native-roots",
+] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 sqlx = { version = "0.8", default-features = false, features = [ "runtime-tokio", "sqlite", "macros", "time"] }

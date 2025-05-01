@@ -19,10 +19,11 @@ use tokio::sync::broadcast::{Receiver, Sender};
 /// Get information about self for the Footer component
 /// BUILD_DATE is injected via the build.rs file
 #[derive(Debug, Clone, Hash, Serialize, Deserialize)]
-struct PackageInfo {
-    homepage: String,
-    version: String,
-    build_date: String,
+pub struct PackageInfo {
+    pub homepage: String,
+    pub version: String,
+    pub build_date: String,
+	pub github_version: Option<String>
 }
 impl Default for PackageInfo {
     fn default() -> Self {
@@ -33,6 +34,7 @@ impl Default for PackageInfo {
             homepage: homepage.to_owned(),
             version: env!("CARGO_PKG_VERSION").to_owned(),
             build_date: env!("BUILD_DATE").to_owned(),
+			github_version: None,
         }
     }
 }
@@ -275,11 +277,11 @@ fn handle_emitter(app: &AppHandle, front_end_msg: FrontEnd, state: &Arc<Mutex<Ap
             )
             .ok();
         }
-        FrontEnd::PackageInfo => {
+        FrontEnd::PackageInfo(info) => {
             app.emit_to(
                 ObliqoroWindow::Main.as_str(),
                 event_name,
-                PackageInfo::default(),
+                info
             )
             .ok();
         }

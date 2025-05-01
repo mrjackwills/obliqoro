@@ -73,6 +73,14 @@ onBeforeMount(async () => {
 	});
 
 	await listen(ListenMessage.PackageInfo, async (event: Event<PackageInfo>) => {
+
+		// console.log(event.payload);
+
+		if (event.payload.github_version) {
+			packageinfoStore.set_github_version(event.payload.github_version);
+			// console.log('new version available');
+		}
+		packageinfoStore.set_homepage(event.payload.homepage);
 		packageinfoStore.set_homepage(event.payload.homepage);
 		packageinfoStore.set_version(event.payload.version);
 		packageinfoStore.set_build_date(event.payload.build_date);
