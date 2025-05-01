@@ -21,16 +21,22 @@ async fn get_db(path: &PathBuf) -> Result<SqlitePool, sqlx::Error> {
     Ok(db)
 }
 
+async fn run_migrations(db: &SqlitePool) {
+    let migrations = include_str!("migrations.sql");
+    if let Err(e) = sqlx::query(migrations).execute(db).await {
+        println!("{e:?}");
+        // TODO - handle this better
+        std::process::exit(1);
+    }
+}
+
 /// Create, if they don't exists, all the sql tables
 async fn create_tables(db: &SqlitePool) {
     let init_db = include_str!("init_db.sql");
-    match sqlx::query(init_db).execute(db).await {
-        Ok(_) => (),
-        Err(e) => {
-            println!("{e:?}");
-            // TODO - handle this better
-            std::process::exit(1);
-        }
+    if let Err(e) = sqlx::query(init_db).execute(db).await {
+        println!("{e:?}");
+        // TODO - handle this better
+        std::process::exit(1);
     }
 }
 
@@ -38,5 +44,6 @@ async fn create_tables(db: &SqlitePool) {
 pub async fn init_db(path: &PathBuf) -> Result<SqlitePool, AppError> {
     let db = get_db(path).await?;
     create_tables(&db).await;
+    run_migrations(&db).await;
     Ok(db)
 }

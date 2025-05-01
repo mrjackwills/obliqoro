@@ -21,6 +21,7 @@
 ### Screenshots
 
 <p align='center'>
+<!-- TODO update me -->
  <a href='https://raw.githubusercontent.com/mrjackwills/obliqoro/main/.github/screenshot_01.png' target='_blank' rel='noopener noreferrer'>
   <img src='./.github/screenshot_01.png' width='48%'/>
  </a>&nbsp;
@@ -57,7 +58,6 @@ See the <a href='https://github.com/mrjackwills/obliqoro/releases/latest' target
 ### Todo
 
 + [ ] Code sign the application
-+ [ ] Pause on no/low cpu usage - user controllable setting
 + [ ] Notify user if new version available
 + [ ] Translations
 + [ ] Saving strategies into SQLite and enabling the addition of new custom strategies
@@ -67,6 +67,7 @@ See the <a href='https://github.com/mrjackwills/obliqoro/releases/latest' target
 + [ ] Testing on Mac
 + [ ] Password for exiting a long break?
 + [ ] Setting to enable writing logs to file when on production version
++ [x] Pause on no/low cpu usage - user controllable setting
 
 ### Development
 

@@ -19,9 +19,8 @@
 						<v-col cols='auto' class='ma-0 pa-0'>
 							<v-switch
 								v-model='pauseAfterBreak'
-								:class='pauseAfterBreak ? "text-primary" : "text-offwhite"'
 								class='ma-0 pa-0'
-								color='primary'
+								base-color='offwhite' color='primary'
 								density='compact'
 								hide-details
 								flat

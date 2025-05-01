@@ -17,39 +17,39 @@
 <script setup lang="ts">
 const snackStore = snackModule();
 const loading = computed({
-	get(): boolean {
+	get (): boolean {
 		return snackStore.loading;
 	},
-	set(b: boolean) {
+	set (b: boolean) {
 		snackStore.set_loading(b);
-	},
+	}
 });
 
 const message = computed({
-	get(): string {
+	get (): string {
 		return snackStore.message;
 	},
-	set(b: string) {
+	set (b: string) {
 		snackStore.set_message(b);
-	},
+	}
 });
 
 const snackTimeout = computed({
-	get(): number {
+	get (): number {
 		return snackStore.timeout;
 	},
-	set(n: number) {
+	set (n: number) {
 		snackStore.set_timeout(n);
-	},
+	}
 });
 
 const visible = computed({
-	get(): boolean {
+	get (): boolean {
 		return snackStore.visible;
 	},
-	set(b: boolean) {
+	set (b: boolean) {
 		snackStore.set_visible(b);
-	},
+	}
 });
 
 const timeout = ref(0);
@@ -58,7 +58,7 @@ const icon = computed(() => snackStore.icon);
 
 const closeSnackbar = (): void => {
 	visible.value = false;
-	snackStore.$reset;
+	snackStore.$reset();
 	clearTimeout(timeout.value);
 	timeout.value = 0;
 };

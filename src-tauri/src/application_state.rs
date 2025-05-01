@@ -1,13 +1,19 @@
-use std::{fmt, path::PathBuf, time::Instant};
-
-use rand::seq::SliceRandom;
+use auto_launch::AutoLaunch;
+use rand::seq::IndexedRandom;
 use sqlx::SqlitePool;
+use std::{
+    collections::VecDeque,
+    fmt::{self, Write},
+    path::PathBuf,
+    time::Instant,
+};
 use tokio::{sync::broadcast::Sender, task::JoinHandle};
 
 use crate::{
     app_error::AppError,
     db::{self, ModelSettings},
-    internal_message_handler::{BreakMessage, Emitter, InternalMessage},
+    internal_message_handler::{BreakMessage, InternalMessage},
+    request_handlers::{CpuMeasure, FrontEnd, FrontEndState},
     setup_tracing,
 };
 
@@ -63,14 +69,15 @@ pub struct ApplicationState {
     pub session_status: SessionStatus,
     pub sqlite: SqlitePool,
     pub sx: Sender<InternalMessage>,
-    pub tick_process: Option<JoinHandle<()>>,
+    pub heartbeat_process: Option<JoinHandle<()>>,
     pub pause_after_break: bool,
-    // TODO button on frontend to open this location?
     data_location: PathBuf,
     session_count: u8,
     settings: ModelSettings,
     strategies: Vec<String>,
+    // app_handle: AppHandle,
     timer: Timer,
+    cpu_usage: VecDeque<f32>, // VecDque of the cpu stats
 }
 
 impl ApplicationState {
@@ -88,11 +95,6 @@ impl ApplicationState {
             let db_location = PathBuf::from(format!("{}/obliqoro.db", local_dir.display()));
             let sqlite = db::init_db(&db_location).await?;
             let settings = ModelSettings::init(&sqlite).await?;
-            let strategies = include_str!("../oblique.txt")
-                .to_owned()
-                .lines()
-                .map(std::borrow::ToOwned::to_owned)
-                .collect::<Vec<_>>();
             Ok(Self {
                 data_location: local_dir,
                 pause_after_break: false,
@@ -100,10 +102,15 @@ impl ApplicationState {
                 session_status: SessionStatus::Work,
                 settings,
                 sqlite,
-                strategies,
+                strategies: include_str!("../oblique.txt")
+                    .to_owned()
+                    .lines()
+                    .map(std::borrow::ToOwned::to_owned)
+                    .collect::<Vec<_>>(),
                 sx: sx.clone(),
-                tick_process: None,
+                heartbeat_process: None,
                 timer: Timer::default(),
+                cpu_usage: VecDeque::with_capacity(60),
             })
         } else {
             Err(AppError::FS("Can't read or write app data".to_owned()))
@@ -127,9 +134,8 @@ impl ApplicationState {
 
     /// Return a random Oblique strategy
     fn random_strategy(&self) -> String {
-        let mut rng = rand::thread_rng();
         self.strategies
-            .choose(&mut rng)
+            .choose(&mut rand::rng())
             .map_or(String::new(), std::clone::Clone::clone)
     }
 
@@ -154,9 +160,7 @@ impl ApplicationState {
         };
         match self.session_status {
             SessionStatus::Break(break_type) => match break_type {
-                Break::Short => {
-                    u16::from(self.settings.short_break_as_sec).saturating_sub(taken_since)
-                }
+                Break::Short => self.settings.short_break_as_sec.saturating_sub(taken_since),
                 Break::Long => self.settings.long_break_as_sec.saturating_sub(taken_since),
             },
             SessionStatus::Work => self.settings.session_as_sec.saturating_sub(taken_since),
@@ -164,11 +168,12 @@ impl ApplicationState {
     }
 
     /// Toggle the pause status
-    pub fn toggle_pause(&mut self) {
+    pub fn toggle_pause(&mut self) -> bool {
         self.timer = self.timer.toggle();
+        self.get_paused()
     }
 
-    /// Check if the timer (tick process) is paused
+    /// Check if the timer (heartbeat_process) is paused
     pub const fn get_paused(&self) -> bool {
         matches!(self.timer, Timer::Paused(_))
     }
@@ -209,7 +214,9 @@ impl ApplicationState {
         let number_before_long = self.get_session_before_long_break();
         let mut title = String::from("next long break after ");
         match number_before_long {
-            2.. => title.push_str(&format!("{number_before_long} sessions")),
+            2.. => {
+                write!(&mut title, "{number_before_long} sessions").ok();
+            }
             _ => title.push_str("current session"),
         }
         title
@@ -223,14 +230,51 @@ impl ApplicationState {
         )
     }
 
-    /// Return ModelSettings object
-    pub const fn get_settings(&self) -> ModelSettings {
-        self.settings
+    fn auto_launch() -> Option<AutoLaunch> {
+        tauri::utils::platform::current_exe().map_or(None, |app_exe| {
+            let app_path = dunce::canonicalize(app_exe).unwrap_or_default();
+            let app_name = app_path.file_stem().unwrap_or_default().to_os_string();
+            Some(AutoLaunch::new(
+                app_name.to_str().unwrap_or_default(),
+                app_path.to_str().unwrap_or_default(),
+                &[] as &[&str],
+            ))
+        })
     }
 
-    /// Set the in memory settings to a new ModelSettings objects, is written to sql separately
+    /// Return ModelSettings object
+    pub fn get_state(&self) -> FrontEndState {
+        FrontEndState {
+            auto_pause_threshold: self.settings.auto_pause_threshold,
+            auto_pause_timespan_sec: self.settings.auto_pause_timespan_sec,
+            auto_pause: self.settings.auto_pause,
+            auto_resume_threshold: self.settings.auto_resume_threshold,
+            auto_resume_timespan_sec: self.settings.auto_resume_timespan_sec,
+            auto_resume: self.settings.auto_resume,
+            fullscreen: self.settings.fullscreen,
+            long_break_as_sec: self.settings.long_break_as_sec,
+            number_session_before_break: self.settings.number_session_before_break,
+            paused: self.get_paused(),
+            session_as_sec: self.settings.session_as_sec,
+            short_break_as_sec: self.settings.short_break_as_sec,
+            start_on_boot: Self::auto_launch().is_some_and(|i| i.is_enabled().unwrap_or_default()),
+        }
+    }
+
+    /// Update all the settings
+    pub fn update_all_settings(&mut self, current_state: &FrontEndState) {
+        self.settings = ModelSettings::from(current_state);
+        if current_state.start_on_boot {
+            Self::auto_launch().and_then(|i| i.enable().ok());
+        } else {
+            Self::auto_launch().and_then(|i| i.disable().ok());
+        }
+    }
+
+    /// Reset settings to default state
     pub fn reset_settings(&mut self, settings: ModelSettings) {
         self.settings = settings;
+        Self::auto_launch().and_then(|i| i.disable().ok());
     }
 
     /// Get fullscreen setting value
@@ -238,36 +282,69 @@ impl ApplicationState {
         self.settings.fullscreen
     }
 
-    /// Set fullscreen setting value
-    pub fn set_fullscreen(&mut self, fullscreen: bool) {
-        self.settings.fullscreen = fullscreen;
+    /// Calculate the average cpu usage over the past 60 seconds
+    /// Will return 0.0 if don't have 60 entries in the vecdqeue
+    pub fn calc_cpu_average(&self, limit: u16) -> Option<f32> {
+        if self.cpu_usage.len() < limit.into() {
+            return None;
+        }
+        Some(self.cpu_usage.iter().take(limit.into()).sum::<f32>() / f32::from(limit))
     }
 
-    /// Get long_break setting value
-    pub fn set_long_break_as_sec(&mut self, i: u16) {
-        self.settings.long_break_as_sec = i;
+    /// Calculate the current pause & resume averages, apply pause or resume, send details to frontend
+    fn handle_auto_pause_resume(&mut self, current_usage: Option<f32>) {
+        if let Some(cpu_usage) = current_usage {
+            if self.cpu_usage.len() >= 60 * 15 {
+                self.cpu_usage.pop_back();
+            }
+            let cpu_mesasure = CpuMeasure {
+                current: cpu_usage,
+                pause: self.calc_cpu_average(self.settings.auto_pause_timespan_sec),
+                resume: self.calc_cpu_average(self.settings.auto_resume_timespan_sec),
+            };
+
+            self.cpu_usage.push_front(cpu_usage);
+
+            let is_paused = self.get_paused();
+
+			// Only pause/resume in in work mode, does that make sense?
+            if self.session_status == SessionStatus::Work {
+                if is_paused && self.settings.auto_resume {
+                    if let Some(avg) = cpu_mesasure.resume {
+                        if avg >= f32::from(self.settings.auto_resume_threshold) {
+                            self.sx.send(InternalMessage::Pause).ok();
+                            self.sx
+                                .send(InternalMessage::ToFrontEnd(FrontEnd::GetSettings))
+                                .ok();
+                        }
+                    }
+                } else if !is_paused && self.settings.auto_pause {
+                    if let Some(avg) = cpu_mesasure.pause {
+                        if avg <= f32::from(self.settings.auto_pause_threshold) {
+                            self.sx.send(InternalMessage::Pause).ok();
+                            self.sx
+                                .send(InternalMessage::ToFrontEnd(FrontEnd::GetSettings))
+                                .ok();
+                        }
+                    }
+                }
+            }
+            self.sx
+                .send(InternalMessage::ToFrontEnd(FrontEnd::Cpu(cpu_mesasure)))
+                .ok();
+        }
     }
 
-    /// Set long_break setting value
-    pub fn set_number_session_before_break(&mut self, i: u8) {
-        self.settings.number_session_before_break = i;
-    }
+    /// Auto Pause/Resume, send timer stats
+    pub fn on_heartbeat(&mut self, cpu_usage: Option<f32>) {
+        self.handle_auto_pause_resume(cpu_usage);
 
-    /// Set session setting value
-    pub fn set_session_as_sec(&mut self, i: u16) {
-        self.settings.session_as_sec = i;
-    }
-
-    /// Set short_break setting value
-    pub fn set_short_break_as_sec(&mut self, i: u8) {
-        self.settings.short_break_as_sec = i;
-    }
-
-    pub fn tick_process(&self) {
         if !self.get_paused() {
             match self.session_status {
                 SessionStatus::Break(_) => {
-                    self.sx.send(InternalMessage::Emit(Emitter::OnBreak)).ok();
+                    self.sx
+                        .send(InternalMessage::ToFrontEnd(FrontEnd::OnBreak))
+                        .ok();
                     if self.current_timer_left() < 1 {
                         self.sx.send(InternalMessage::Break(BreakMessage::End)).ok();
                     }
@@ -283,12 +360,4 @@ impl ApplicationState {
             }
         }
     }
-    // /// close the sql connection in a tokio thead
-    // /// Honestly think this is pointless
-    // pub fn close_sql(&mut self) {
-    //     let sql = self.sqlite.clone();
-    //     tokio::spawn(async move {
-    //         sql.close().await;
-    //     });
-    // }
 }

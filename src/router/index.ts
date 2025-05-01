@@ -16,7 +16,7 @@ const router = createRouter({
 			name: 'timer',
 			component: Timer
 		}
-	],
+	]
 
 });
 

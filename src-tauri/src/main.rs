@@ -5,10 +5,10 @@
 
 use app_error::AppError;
 use application_state::ApplicationState;
+use heartbeat::heartbeat_process;
 use internal_message_handler::{start_message_handler, InternalMessage, WindowVisibility};
 use parking_lot::Mutex;
 use std::{path::PathBuf, sync::Arc};
-use tick::tick_process;
 use tracing::{error, Level};
 use tracing_subscriber::{fmt as t_fmt, prelude::__tracing_subscriber_SubscriberExt};
 
@@ -18,10 +18,10 @@ use tauri::Manager;
 mod app_error;
 mod application_state;
 mod db;
+mod heartbeat;
 mod internal_message_handler;
 mod request_handlers;
 mod system_tray;
-mod tick;
 mod window_action;
 
 pub type TauriState<'a> = tauri::State<'a, Arc<Mutex<ApplicationState>>>;
@@ -104,17 +104,11 @@ async fn main() -> Result<(), ()> {
         Ok(app_state) => {
             // TODO change this to just an Arc<ApplicationState>, and use a message bus everywhere?
             let state = Arc::new(Mutex::new(app_state));
+            let (init_state, internal_state) = (Arc::clone(&state), Arc::clone(&state));
+            let (event_sx, close_sx, handler_sx, tray_sx, instance_sx) =
+                (sx.clone(), sx.clone(), sx.clone(), sx.clone(), sx.clone());
 
-            let init_state = Arc::clone(&state);
-            let internal_state = Arc::clone(&state);
-
-            let event_sx = sx.clone();
-            let close_sx = sx.clone();
-            let instance_sx = sx.clone();
-            let handler_sx = sx.clone();
-            let tray_sx = sx.clone();
-
-            #[expect(unused_variables)]
+            #[allow(unused_variables)]
             let app_builder = tauri::Builder::default()
                 .manage(state)
                 .setup(|app| {
@@ -148,18 +142,12 @@ async fn main() -> Result<(), ()> {
                 })
                 // put all this in the handlers mod, then just import one thing?
                 .invoke_handler(tauri::generate_handler![
-                    request_handlers::get_autostart,
                     request_handlers::init,
                     request_handlers::minimize,
                     request_handlers::open_database_location,
                     request_handlers::pause_after_break,
                     request_handlers::reset_settings,
-                    request_handlers::set_autostart,
-                    request_handlers::set_setting_fullscreen,
-                    request_handlers::set_setting_longbreak,
-                    request_handlers::set_setting_number_sessions,
-                    request_handlers::set_setting_session,
-                    request_handlers::set_setting_shortbreak,
+                    request_handlers::set_settings,
                     request_handlers::toggle_pause,
                 ])
                 .plugin(tauri_plugin_single_instance::init(move |app, argv, cwd| {
@@ -171,7 +159,7 @@ async fn main() -> Result<(), ()> {
 
             match app_builder {
                 Ok(app) => {
-                    tick_process(&init_state);
+                    heartbeat_process(&init_state);
                     start_message_handler(&app, internal_state, rx, handler_sx);
                     app.run(move |_app, event| {
                         if let tauri::RunEvent::ExitRequested { api, .. } = event {
