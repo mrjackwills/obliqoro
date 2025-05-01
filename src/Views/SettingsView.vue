@@ -60,7 +60,7 @@ import { snackError } from '../services/snack';
 import SessionBreakSliders from '../components/Settings/SessionBreakSliders.vue';
 const settingStore = settingModule();
 
-const show_update = computed(() => packageinfoModule().version === packageinfoModule().github_version);
+const show_update = computed(() => packageinfoModule().github_version.length > 1 && packageinfoModule().version !== packageinfoModule().github_version);
 
 const switches = computed(() => [
 	{

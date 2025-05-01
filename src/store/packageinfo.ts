@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ModuleName } from '../types';
+import { ModuleName, PackageInfo } from '../types';
 
 export const packageinfoModule = defineStore(ModuleName.PackageInfo, {
 
@@ -11,17 +11,12 @@ export const packageinfoModule = defineStore(ModuleName.PackageInfo, {
 	}),
 
 	actions: {
-		set_build_date (x: string): void {
-			this.build_date = x;
-		},
-		set_homepage (x: string): void {
-			this.homepage = x;
-		},
-		set_version (x: string): void {
-			this.version = x;
-		},
-		set_github_version (x: string) {
-			this.github_version = x;
+
+		set_all (x: PackageInfo): void {
+			this.build_date = x.build_date;
+			this.homepage = x.homepage;
+			this.version = x.version;
+			this.github_version = x.github_version ?? '';
 		}
 	}
 });
