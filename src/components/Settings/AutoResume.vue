@@ -37,15 +37,7 @@
 					<span class='text-offwhite'>average from previous <span class='mono-num'>{{ secondsToText(auto_resume_timespan_sec, true) }}</span></span>
 				</v-col>
 				<v-col cols='auto' class='ma-0 pa-0'>
-					<span v-if='average_resume === 0'>
-						<v-progress-circular
-							indeterminate
-							class='ml-2 mt-n1'
-							color='primary'
-							size='10'
-							width='1'
-						/> 
-					</span>
+					<v-progress-circular v-if='average_resume === 0' :rotate='rotation' model-value='25' class='ml-2 mt-n1' color='primary' size='10' width='1' />
 					<span v-else class='mono-num'>
 						{{ formatPercentage(average_resume) }}%
 					</span>
@@ -140,6 +132,8 @@ const auto_resume_timespan_sec = computed({
 watch(auto_pause, (i) => {
 	if (!i) auto_resume.value = false;
 });
+
+defineProps<{ rotation: number }>();
 
 </script>
 

@@ -40,8 +40,8 @@
 				</v-row>
 
 				<SessionBreakSliders />
-				<AutoPause />
-				<AutoResume />
+				<AutoPause :rotation />
+				<AutoResume :rotation />
 				<v-expand-transition>
 					<VersionAlert v-if='show_update' />
 				</v-expand-transition>
@@ -60,6 +60,20 @@ import SessionBreakSliders from '../components/Settings/SessionBreakSliders.vue'
 const settingStore = settingModule();
 
 const show_update = computed(() => packageinfoModule().github_version.length > 1 && packageinfoModule().version !== packageinfoModule().github_version);
+
+/// Pass is rotation as a prop, so that both spinners have the same animation
+const rotation = ref(0);
+const rotation_interval = ref(0);
+onMounted(() => {
+	rotation_interval.value = window.setInterval(() => {
+		rotation.value += 20;
+		if (rotation.value >= 360) rotation.value = 0;
+	}, 30);
+});
+
+onUnmounted(() => {
+	clearInterval(rotation_interval.value);
+});
 
 const switches = computed(() => [
 	{

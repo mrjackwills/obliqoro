@@ -30,9 +30,7 @@
 					</span>
 				</v-col>
 				<v-col cols='auto' class='ma-0 pa-0'>
-					<span v-if='average_pause === 0'>
-						<v-progress-circular indeterminate class='ml-2 mt-n1' color='primary' size='10' width='1' />
-					</span>
+					<v-progress-circular v-if='average_pause === 0' :rotate='rotation' model-value='25' class='ml-2 mt-n1' color='primary' size='10' width='1' />
 					<span v-else class='mono-num'>
 						{{ formatPercentage(average_pause) }}%
 					</span>
@@ -69,6 +67,7 @@
 <script setup lang="ts">
 import { formatPercentage, secondsToText, zeroPad } from '../../vanillaTS/helpers';
 
+/// TODO if want pause and resume to have the same animation, need to pass in a prop 
 const cpuUsageStore = cpuUsageModule();
 const average_pause = computed(() => cpuUsageStore.average_pause);
 
@@ -119,5 +118,7 @@ const auto_pause_timespan_sec = computed({
 		settingStore.set_auto_pause_timespan_sec(b);
 	}
 });
+
+defineProps<{ rotation: number }>();
 
 </script>
