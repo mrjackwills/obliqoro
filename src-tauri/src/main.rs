@@ -54,6 +54,7 @@ async fn main() -> Result<(), ()> {
         }
         Ok(app_state) => {
             // TODO change this to just an Arc<ApplicationState>, and use a message bus everywhere?
+			// Application state could just be an Arc<Sx<InternalMessage>
             let state = Arc::new(Mutex::new(app_state));
             let (init_state, internal_state) = (Arc::clone(&state), Arc::clone(&state));
             let (event_sx, close_sx, handler_sx, tray_sx, instance_sx) =
