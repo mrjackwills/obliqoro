@@ -1,6 +1,9 @@
+# <a href='https://github.com/mrjackwills/obliqoro/releases/tag/v0.2.1'>v0.2.1</a>
+### 2025-05-02
+
 ### Fixes
-+ create_release.sh, [c3d316d96d98b76041e65ad66f2e3d2980712801]
-+ GitHub workflow, [e425d19c508710cec0d1bcca7d22346341785b98], [f5458c44ee5b30a6a26ba62ffd078b789e1e9734]
++ create_release.sh, [c3d316d9](https://github.com/mrjackwills/obliqoro/commit/c3d316d96d98b76041e65ad66f2e3d2980712801)
++ GitHub workflow, [e425d19c](https://github.com/mrjackwills/obliqoro/commit/e425d19c508710cec0d1bcca7d22346341785b98), [f5458c44](https://github.com/mrjackwills/obliqoro/commit/f5458c44ee5b30a6a26ba62ffd078b789e1e9734)
 
 # <a href='https://github.com/mrjackwills/obliqoro/releases/tag/v0.2.0'>v0.2.0</a>
 ### 2025-05-02
