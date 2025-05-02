@@ -1,7 +1,6 @@
 use crate::{
-    check_version,
     backend_message_handler::{BuildInfo, InternalMessage, WindowVisibility},
-    TauriState,
+    check_version, TauriState,
 };
 
 mod messages;

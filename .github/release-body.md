@@ -1,13 +1,12 @@
-### 2024-09-07
+### 2025-05-02
 
-### Chores
-+ switch from `allow(x)` to `expect(x)`, [310455305f54c3d68ddc4399d68f70c0ade6a95a]
-+ dependencies updated, [2def1b09431507bd7cf2c6ec1c8a4c77e48b6328]
-
-### Fixes
-+ use `fs::exists`, [dc2203c2be11e2ad8edf9159beb5c86bbd8c29e9]
+### Features
++ check GitHub for new release, [73748a6417f79ed65d46fd495a14313b41deb283]
++ auto pause & resume, [64e9dcafa5f6737d353318601ffc2cb5da32f2d7]
 
 ### Refactors
-+ remove unused assets, [cc19370f9db0317b048bbd335e0befae328cb0ac]
++ Multiple refactors, [821569ae0993338927abce6a527ac1e621e5c63c]
+
+This should *hopefully* be the last release before converting to [Tauri](https://tauri.app/) v2.
 
 see <a href='https://github.com/mrjackwills/obliqoro/blob/main/CHANGELOG.md'>CHANGELOG.md</a> for more details

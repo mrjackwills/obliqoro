@@ -12,9 +12,9 @@ use tokio::{sync::broadcast::Sender, task::JoinHandle};
 
 use crate::{
     app_error::AppError,
-    db::{self, ModelSettings},
     backend_message_handler::{BreakMessage, InternalMessage},
-    request_handlers::{CpuMeasure, MsgToFrontend, FrontEndState},
+    db::{self, ModelSettings},
+    request_handlers::{CpuMeasure, FrontEndState, MsgToFrontend},
 };
 
 use tracing::Level;
@@ -34,7 +34,7 @@ fn setup_tracing(app_dir: &PathBuf) -> Result<(), AppError> {
         t_fmt::Subscriber::builder()
             .with_file(true)
             .with_line_number(true)
-            .with_max_level( Level::DEBUG)
+            .with_max_level(Level::DEBUG)
             .finish()
             .with(log_fmt),
     ) {
@@ -146,7 +146,11 @@ impl ApplicationState {
         app_dir: Option<PathBuf>,
         sx: &Sender<InternalMessage>,
     ) -> Result<Self, AppError> {
-        let err = || Err(AppError::FS("Can't read or write to app data location".to_owned()));
+        let err = || {
+            Err(AppError::FS(
+                "Can't read or write to app data location".to_owned(),
+            ))
+        };
 
         let Some(data_location) = app_dir else {
             return err();
@@ -389,7 +393,9 @@ impl ApplicationState {
                 }
             }
             self.sx
-                .send(InternalMessage::ToFrontEnd(MsgToFrontend::Cpu(cpu_mesasure)))
+                .send(InternalMessage::ToFrontEnd(MsgToFrontend::Cpu(
+                    cpu_mesasure,
+                )))
                 .ok();
         }
     }

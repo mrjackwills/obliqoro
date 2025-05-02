@@ -11,13 +11,12 @@ use crate::{
     application_state::ApplicationState,
     db::ModelSettings,
     heartbeat::heartbeat_process,
-    request_handlers::{MsgToFrontend, FrontEndState, ShowTimer},
+    request_handlers::{FrontEndState, MsgToFrontend, ShowTimer},
     system_tray::{menu_enabled, set_icon, MenuItem},
     window_action::WindowAction,
     ObliqoroWindow,
 };
 use tokio::sync::broadcast::{Receiver, Sender};
-
 
 // Update the taskbar to display how many sessions before next long break,
 // and send internal message, to send message to front end to update settings in pinia
@@ -36,8 +35,10 @@ fn update_menu_session_number(
                     .ok()
             });
     }
-    sx.send(InternalMessage::ToFrontEnd(MsgToFrontend::SessionsBeforeLong))
-        .ok();
+    sx.send(InternalMessage::ToFrontEnd(
+        MsgToFrontend::SessionsBeforeLong,
+    ))
+    .ok();
 }
 
 /// Update the systemtray next break in text, and emit to frontend to next break timer
@@ -295,14 +296,16 @@ pub fn start_message_handler(
                 InternalMessage::SetSetting(frontend_state) => {
                     if let Err(e) = update_settings(frontend_state, &state).await {
                         error!("{:#?}", e);
-                        sx.send(InternalMessage::ToFrontEnd(MsgToFrontend::Error)).ok();
+                        sx.send(InternalMessage::ToFrontEnd(MsgToFrontend::Error))
+                            .ok();
                     }
                     update_menu(&app_handle, &state, &sx);
                 }
                 InternalMessage::ResetSettings => {
                     if let Err(e) = reset_settings(&state, &sx).await {
                         error!("{:#?}", e);
-                        sx.send(InternalMessage::ToFrontEnd(MsgToFrontend::Error)).ok();
+                        sx.send(InternalMessage::ToFrontEnd(MsgToFrontend::Error))
+                            .ok();
                     }
                     update_menu(&app_handle, &state, &sx);
                 }
