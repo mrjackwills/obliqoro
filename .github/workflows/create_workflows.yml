@@ -13,7 +13,8 @@ jobs:
       matrix:
         include:
           - build: linux
-            os: ubuntu-latest
+            #  22.04 for tauri v2 
+            os: ubuntu-20.04
             target: x86_64-unknown-linux-gnu
 
           - build: windows
@@ -45,7 +46,8 @@ jobs:
           cache: "npm"
 
       - name: Install Rust dependencies web
-        run: cargo install tauri-cli
+        # TODO update this when updating to v2
+        run: cargo install tauri-cli@1.6.5
 
       - name: Install node dependencies
         run: npm install
@@ -54,7 +56,7 @@ jobs:
         run: cargo tauri build
 
       - uses: actions/upload-artifact@v4
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-20.04'
         with:
           name: artifacts-${{ matrix.os }}
           path: |
@@ -87,7 +89,7 @@ jobs:
       - name: Download linux artifacts
         uses: actions/download-artifact@v4
         with:
-          name: artifacts-ubuntu-latest
+          name: artifacts-ubuntu-20.04
           path: artifacts/ubuntu
 
       - name: Download windows artifacts
