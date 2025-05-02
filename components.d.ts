@@ -11,7 +11,6 @@ declare module 'vue' {
     AppBar: typeof import('./src/components/AppBar.vue')['default']
     AutoPause: typeof import('./src/components/Settings/AutoPause.vue')['default']
     AutoResume: typeof import('./src/components/Settings/AutoResume.vue')['default']
-    CpuUsage: typeof import('./src/components/Settings/CpuUsage.vue')['default']
     HR: typeof import('./src/components/Settings/HR.vue')['default']
     PauseRow: typeof import('./src/components/Settings/PauseRow.vue')['default']
     ResetButton: typeof import('./src/components/Settings/ResetButton.vue')['default']

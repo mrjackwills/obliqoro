@@ -50,7 +50,7 @@
 
 import { mdiGithub, mdiOpenInNew } from '@mdi/js';
 import { invoke } from '@tauri-apps/api';
-import { InvokeMessage } from '../types';
+import { InvokeMessage } from '@/types';
 
 const buildTimeout = ref(0);
 const showBuild = ref(false);

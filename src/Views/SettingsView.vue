@@ -9,7 +9,6 @@
 						Settings
 					</v-col>
 				</v-row>
-
 			
 				<HR />
 
@@ -41,8 +40,8 @@
 				</v-row>
 
 				<SessionBreakSliders />
-				<AutoPause />
-				<AutoResume />
+				<AutoPause :rotation />
+				<AutoResume :rotation />
 				<v-expand-transition>
 					<VersionAlert v-if='show_update' />
 				</v-expand-transition>
@@ -55,12 +54,38 @@
 
 <script setup lang="ts">
 import { invoke } from '@tauri-apps/api/tauri';
-import { InvokeMessage } from '../types';
-import { snackError } from '../services/snack';
-import SessionBreakSliders from '../components/Settings/SessionBreakSliders.vue';
+import { InvokeMessage } from '@/types';
+import { snackError } from '@/services/snack';
+import SessionBreakSliders from '@/components/Settings/SessionBreakSliders.vue';
 const settingStore = settingModule();
 
 const show_update = computed(() => packageinfoModule().github_version.length > 1 && packageinfoModule().version !== packageinfoModule().github_version);
+
+/// Pass is rotation as a prop, so that both spinners have the same animation
+const rotation = ref(0);
+const rotation_interval = ref(0);
+
+const start_rotation_interval = (): void => {
+	rotation_interval.value = window.setInterval(() => {
+		rotation.value += 20;
+		if (rotation.value >= 360) rotation.value = 0;
+	}, 30);
+};
+
+const stop_rotation_interval = (): void  => {
+	clearInterval(rotation_interval.value);
+};
+
+const run_rotation = computed(() => settingStore.auto_pause && cpuUsageModule().average_pause === 0 || settingStore.auto_resume && cpuUsageModule().average_resume === 0);
+
+/// Only run rotation interval if needed
+watch(run_rotation, (i) => {
+	if (i) {
+		start_rotation_interval();
+	} else {
+		stop_rotation_interval();
+	}
+});
 
 const switches = computed(() => [
 	{

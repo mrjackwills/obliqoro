@@ -5,6 +5,7 @@ use std::{
     collections::VecDeque,
     fmt::{self, Write},
     path::PathBuf,
+    sync::LazyLock,
     time::Instant,
 };
 use tokio::{sync::broadcast::Sender, task::JoinHandle};
@@ -12,18 +13,68 @@ use tokio::{sync::broadcast::Sender, task::JoinHandle};
 use crate::{
     app_error::AppError,
     db::{self, ModelSettings},
-    internal_message_handler::{BreakMessage, InternalMessage},
-    request_handlers::{CpuMeasure, FrontEnd, FrontEndState},
-    setup_tracing,
+    backend_message_handler::{BreakMessage, InternalMessage},
+    request_handlers::{CpuMeasure, MsgToFrontend, FrontEndState},
 };
 
+use tracing::Level;
+use tracing_subscriber::{fmt as t_fmt, prelude::__tracing_subscriber_SubscriberExt};
+
+/// Setup tracing - warning this can write huge amounts to disk
+#[cfg(debug_assertions)]
+fn setup_tracing(app_dir: &PathBuf) -> Result<(), AppError> {
+    let logfile = tracing_appender::rolling::never(app_dir, "obliqoro.log");
+
+    let log_fmt = t_fmt::Layer::default()
+        .json()
+        .flatten_event(true)
+        .with_writer(logfile);
+
+    match tracing::subscriber::set_global_default(
+        t_fmt::Subscriber::builder()
+            .with_file(true)
+            .with_line_number(true)
+            .with_max_level( Level::DEBUG)
+            .finish()
+            .with(log_fmt),
+    ) {
+        Ok(()) => Ok(()),
+        Err(e) => {
+            println!("{e:?}");
+            Err(AppError::Internal("Unable to start tracing".to_owned()))
+        }
+    }
+}
+
+/// Setup tracing - warning this can write huge amounts to disk
+#[cfg(not(debug_assertions))]
+fn setup_tracing(_app_dir: &PathBuf) -> Result<(), AppError> {
+    let level = Level::INFO;
+    let log_fmt = t_fmt::Layer::default().json().flatten_event(true);
+
+    match tracing::subscriber::set_global_default(
+        t_fmt::Subscriber::builder()
+            .with_file(false)
+            .with_line_number(true)
+            .with_max_level(level)
+            .finish()
+            .with(log_fmt),
+    ) {
+        Ok(_) => Ok(()),
+        Err(e) => {
+            println!("{e:?}");
+            Err(AppError::Internal("Unable to start tracing".to_owned()))
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Hash)]
-pub enum Break {
+pub enum BreakVariant {
     Short,
     Long,
 }
 
-impl fmt::Display for Break {
+impl fmt::Display for BreakVariant {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Short => write!(f, "short"),
@@ -35,7 +86,7 @@ impl fmt::Display for Break {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Hash)]
 pub enum SessionStatus {
     Work,
-    Break(Break),
+    Break(BreakVariant),
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Hash)]
@@ -64,20 +115,30 @@ impl Timer {
     }
 }
 
+/// Load the Oblique Stratergies into a Lazylock vec
+pub static STRATEGIES: LazyLock<Vec<String>> = LazyLock::new(|| {
+    include_str!("../oblique.txt")
+        .to_owned()
+        .lines()
+        .map(std::borrow::ToOwned::to_owned)
+        .collect::<Vec<_>>()
+});
+
+/// Store a most 15 minutes worth of cpu data in the vecdeque
+const CPU_VECDEQUE_LEN: usize = 60 * 15;
+
 #[derive(Debug)]
 pub struct ApplicationState {
+    pub heartbeat_process: Option<JoinHandle<()>>,
+    pub pause_after_break: bool,
     pub session_status: SessionStatus,
     pub sqlite: SqlitePool,
     pub sx: Sender<InternalMessage>,
-    pub heartbeat_process: Option<JoinHandle<()>>,
-    pub pause_after_break: bool,
+    cpu_usage: VecDeque<f32>,
     data_location: PathBuf,
     session_count: u8,
     settings: ModelSettings,
-    strategies: Vec<String>,
-    // app_handle: AppHandle,
     timer: Timer,
-    cpu_usage: VecDeque<f32>, // VecDque of the cpu stats
 }
 
 impl ApplicationState {
@@ -85,36 +146,31 @@ impl ApplicationState {
         app_dir: Option<PathBuf>,
         sx: &Sender<InternalMessage>,
     ) -> Result<Self, AppError> {
-        if let Some(local_dir) = app_dir {
-            if !std::fs::exists(&local_dir).unwrap_or_default()
-                && std::fs::create_dir(&local_dir).is_err()
-            {
-                return Err(AppError::FS("Can't read or write app data".to_owned()));
-            }
-            setup_tracing(&local_dir)?;
-            let db_location = PathBuf::from(format!("{}/obliqoro.db", local_dir.display()));
-            let sqlite = db::init_db(&db_location).await?;
-            let settings = ModelSettings::init(&sqlite).await?;
-            Ok(Self {
-                data_location: local_dir,
-                pause_after_break: false,
-                session_count: 0,
-                session_status: SessionStatus::Work,
-                settings,
-                sqlite,
-                strategies: include_str!("../oblique.txt")
-                    .to_owned()
-                    .lines()
-                    .map(std::borrow::ToOwned::to_owned)
-                    .collect::<Vec<_>>(),
-                sx: sx.clone(),
-                heartbeat_process: None,
-                timer: Timer::default(),
-                cpu_usage: VecDeque::with_capacity(60 * 15),
-            })
-        } else {
-            Err(AppError::FS("Can't read or write app data".to_owned()))
+        let err = || Err(AppError::FS("Can't read or write to app data location".to_owned()));
+
+        let Some(data_location) = app_dir else {
+            return err();
+        };
+        if !std::fs::exists(&data_location).unwrap_or_default()
+            && std::fs::create_dir(&data_location).is_err()
+        {
+            return err();
         }
+        setup_tracing(&data_location)?;
+        let sqlite = db::init_db(&data_location).await?;
+        let settings = ModelSettings::init(&sqlite).await?;
+        Ok(Self {
+            cpu_usage: VecDeque::with_capacity(CPU_VECDEQUE_LEN),
+            data_location,
+            heartbeat_process: None,
+            pause_after_break: false,
+            session_count: 0,
+            session_status: SessionStatus::Work,
+            settings,
+            sqlite,
+            sx: sx.clone(),
+            timer: Timer::default(),
+        })
     }
 
     /// Check if current on a break
@@ -133,15 +189,15 @@ impl ApplicationState {
     }
 
     /// Return a random Oblique strategy
-    fn random_strategy(&self) -> String {
-        self.strategies
+    fn random_strategy() -> String {
+        STRATEGIES
             .choose(&mut rand::rng())
             .map_or(String::new(), std::clone::Clone::clone)
     }
 
     /// Get the settings for starting a break
     pub fn get_break_settings(&self) -> (u16, String) {
-        (self.current_timer_left(), self.random_strategy())
+        (self.current_timer_left(), Self::random_strategy())
     }
 
     /// Get the directory where the database is stored
@@ -160,14 +216,14 @@ impl ApplicationState {
         };
         match self.session_status {
             SessionStatus::Break(break_type) => match break_type {
-                Break::Short => self.settings.short_break_as_sec.saturating_sub(taken_since),
-                Break::Long => self.settings.long_break_as_sec.saturating_sub(taken_since),
+                BreakVariant::Short => self.settings.short_break_as_sec.saturating_sub(taken_since),
+                BreakVariant::Long => self.settings.long_break_as_sec.saturating_sub(taken_since),
             },
             SessionStatus::Work => self.settings.session_as_sec.saturating_sub(taken_since),
         }
     }
 
-    /// Toggle the pause status
+    /// Toggle the pause status & return the pause status
     pub fn toggle_pause(&mut self) -> bool {
         self.timer = self.timer.toggle();
         self.get_paused()
@@ -193,10 +249,10 @@ impl ApplicationState {
     pub fn start_break_session(&mut self) {
         let break_type = if self.session_count + 1 < self.settings.number_session_before_break {
             self.session_count += 1;
-            Break::Short
+            BreakVariant::Short
         } else {
             self.session_count = 0;
-            Break::Long
+            BreakVariant::Long
         };
         self.reset_timer();
         self.session_status = SessionStatus::Break(break_type);
@@ -230,6 +286,7 @@ impl ApplicationState {
         )
     }
 
+    /// Attempt to get an AutoLaunch using name and path
     fn auto_launch() -> Option<AutoLaunch> {
         tauri::utils::platform::current_exe().map_or(None, |app_exe| {
             let app_path = dunce::canonicalize(app_exe).unwrap_or_default();
@@ -242,7 +299,7 @@ impl ApplicationState {
         })
     }
 
-    /// Return ModelSettings object
+    /// Create a FrontEndState object from the ApplicationState
     pub fn get_state(&self) -> FrontEndState {
         FrontEndState {
             auto_pause_threshold: self.settings.auto_pause_threshold,
@@ -264,19 +321,19 @@ impl ApplicationState {
     /// Update all the settings
     /// Check if session length has changed, and reset timer if so
     pub fn update_all_settings(&mut self, frontend_state: &FrontEndState) {
-		if frontend_state.start_on_boot {
-			Self::auto_launch().and_then(|i| i.enable().ok());
+        if frontend_state.start_on_boot {
+            Self::auto_launch().and_then(|i| i.enable().ok());
         } else {
-			Self::auto_launch().and_then(|i| i.disable().ok());
+            Self::auto_launch().and_then(|i| i.disable().ok());
         }
         if frontend_state.session_as_sec != self.settings.session_as_sec {
             self.sx.send(InternalMessage::ResetTimer).ok();
         }
-		self.settings = ModelSettings::from(frontend_state);
+        self.settings = ModelSettings::from(frontend_state);
     }
 
     /// Reset settings to default state
-    pub fn reset_settings(&mut self, settings: ModelSettings) {
+    pub fn set_settings(&mut self, settings: ModelSettings) {
         self.settings = settings;
         Self::auto_launch().and_then(|i| i.disable().ok());
     }
@@ -297,7 +354,7 @@ impl ApplicationState {
     /// Calculate the current pause & resume averages, apply pause or resume, send details to frontend
     fn handle_auto_pause_resume(&mut self, current_usage: Option<f32>) {
         if let Some(cpu_usage) = current_usage {
-            if self.cpu_usage.len() >= 60 * 15 {
+            if self.cpu_usage.len() >= CPU_VECDEQUE_LEN {
                 self.cpu_usage.pop_back();
             }
             let cpu_mesasure = CpuMeasure {
@@ -310,14 +367,13 @@ impl ApplicationState {
 
             let is_paused = self.get_paused();
 
-            // Only pause/resume in in work mode, does that make sense?
             if self.session_status == SessionStatus::Work {
                 if is_paused && self.settings.auto_resume {
                     if let Some(avg) = cpu_mesasure.resume {
                         if avg >= f32::from(self.settings.auto_resume_threshold) {
                             self.sx.send(InternalMessage::Pause).ok();
                             self.sx
-                                .send(InternalMessage::ToFrontEnd(FrontEnd::GetSettings))
+                                .send(InternalMessage::ToFrontEnd(MsgToFrontend::GetSettings))
                                 .ok();
                         }
                     }
@@ -326,14 +382,14 @@ impl ApplicationState {
                         if avg <= f32::from(self.settings.auto_pause_threshold) {
                             self.sx.send(InternalMessage::Pause).ok();
                             self.sx
-                                .send(InternalMessage::ToFrontEnd(FrontEnd::GetSettings))
+                                .send(InternalMessage::ToFrontEnd(MsgToFrontend::GetSettings))
                                 .ok();
                         }
                     }
                 }
             }
             self.sx
-                .send(InternalMessage::ToFrontEnd(FrontEnd::Cpu(cpu_mesasure)))
+                .send(InternalMessage::ToFrontEnd(MsgToFrontend::Cpu(cpu_mesasure)))
                 .ok();
         }
     }
@@ -346,7 +402,7 @@ impl ApplicationState {
             match self.session_status {
                 SessionStatus::Break(_) => {
                     self.sx
-                        .send(InternalMessage::ToFrontEnd(FrontEnd::OnBreak))
+                        .send(InternalMessage::ToFrontEnd(MsgToFrontend::OnBreak))
                         .ok();
                     if self.current_timer_left() < 1 {
                         self.sx.send(InternalMessage::Break(BreakMessage::End)).ok();

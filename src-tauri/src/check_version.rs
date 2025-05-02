@@ -3,7 +3,7 @@ use tokio::sync::broadcast::Sender;
 
 use crate::{
     app_error::AppError,
-    internal_message_handler::{InternalMessage, PackageInfo},
+    backend_message_handler::{BuildInfo, InternalMessage},
 };
 
 // Get a reqwest client, use application name and version an UserAgent, this should never err
@@ -26,8 +26,8 @@ struct GitHubResponse {
     tag_name: String,
 }
 
-/// Check github to see if a new version is available, is executed in own thread
-pub fn check_version(sx: Sender<InternalMessage>) {
+/// Check github to see if a new version is available, is executed in own thread, send result to frontend
+pub fn parse_github(sx: Sender<InternalMessage>) {
     tokio::spawn(async move {
         let Ok(client) = get_client() else {
             return;
@@ -40,12 +40,12 @@ pub fn check_version(sx: Sender<InternalMessage>) {
             return;
         };
         let latest_version = body.tag_name.replace('v', "");
-        let info = PackageInfo {
+        let info = BuildInfo {
             github_version: Some(latest_version),
             ..Default::default()
         };
         sx.send(InternalMessage::ToFrontEnd(
-            crate::request_handlers::FrontEnd::PackageInfo(info),
+            crate::request_handlers::MsgToFrontend::BuildInfo(info),
         ))
         .ok();
     });

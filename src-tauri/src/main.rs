@@ -3,14 +3,12 @@
     windows_subsystem = "windows"
 )]
 
-use app_error::AppError;
 use application_state::ApplicationState;
 use heartbeat::heartbeat_process;
-use internal_message_handler::{start_message_handler, InternalMessage, WindowVisibility};
+use backend_message_handler::{start_message_handler, InternalMessage, WindowVisibility};
 use parking_lot::Mutex;
-use std::{path::PathBuf, sync::Arc};
-use tracing::{error, Level};
-use tracing_subscriber::{fmt as t_fmt, prelude::__tracing_subscriber_SubscriberExt};
+use std::sync::Arc;
+
 
 #[cfg(debug_assertions)]
 use tauri::Manager;
@@ -20,7 +18,7 @@ mod application_state;
 mod check_version;
 mod db;
 mod heartbeat;
-mod internal_message_handler;
+mod backend_message_handler;
 mod request_handlers;
 mod system_tray;
 mod window_action;
@@ -40,54 +38,6 @@ impl ObliqoroWindow {
     }
 }
 
-/// Setup tracing - warning this can write huge amounts to disk
-#[cfg(debug_assertions)]
-fn setup_tracing(app_dir: &PathBuf) -> Result<(), AppError> {
-    let level = Level::DEBUG;
-    let logfile = tracing_appender::rolling::never(app_dir, "obliqoro.log");
-
-    let log_fmt = t_fmt::Layer::default()
-        .json()
-        .flatten_event(true)
-        .with_writer(logfile);
-
-    match tracing::subscriber::set_global_default(
-        t_fmt::Subscriber::builder()
-            .with_file(true)
-            .with_line_number(true)
-            .with_max_level(level)
-            .finish()
-            .with(log_fmt),
-    ) {
-        Ok(()) => Ok(()),
-        Err(e) => {
-            println!("{e:?}");
-            Err(AppError::Internal("Unable to start tracing".to_owned()))
-        }
-    }
-}
-
-/// Setup tracing - warning this can write huge amounts to disk
-#[cfg(not(debug_assertions))]
-fn setup_tracing(_app_dir: &PathBuf) -> Result<(), AppError> {
-    let level = Level::INFO;
-    let log_fmt = t_fmt::Layer::default().json().flatten_event(true);
-
-    match tracing::subscriber::set_global_default(
-        t_fmt::Subscriber::builder()
-            .with_file(false)
-            .with_line_number(true)
-            .with_max_level(level)
-            .finish()
-            .with(log_fmt),
-    ) {
-        Ok(_) => Ok(()),
-        Err(e) => {
-            println!("{e:?}");
-            Err(AppError::Internal("Unable to start tracing".to_owned()))
-        }
-    }
-}
 
 #[tokio::main]
 async fn main() -> Result<(), ()> {
@@ -99,11 +49,12 @@ async fn main() -> Result<(), ()> {
 
     match ApplicationState::new(tauri::api::path::app_data_dir(ctx.config()), &sx).await {
         Err(e) => {
-            error!("{e:?}");
+            tracing::error!("{e:?}");
             std::process::exit(1);
         }
         Ok(app_state) => {
             // TODO change this to just an Arc<ApplicationState>, and use a message bus everywhere?
+			// Application state could just be an Arc<Sx<InternalMessage>
             let state = Arc::new(Mutex::new(app_state));
             let (init_state, internal_state) = (Arc::clone(&state), Arc::clone(&state));
             let (event_sx, close_sx, handler_sx, tray_sx, instance_sx) =
@@ -141,7 +92,6 @@ async fn main() -> Result<(), ()> {
                     }
                     _ => (),
                 })
-                // put all this in the handlers mod, then just import one thing?
                 .invoke_handler(tauri::generate_handler![
                     request_handlers::init,
                     request_handlers::minimize,
@@ -172,8 +122,8 @@ async fn main() -> Result<(), ()> {
                     });
                 }
                 Err(e) => {
-                    error!("{:?}", e);
-                    error!("Unable to build application");
+                    tracing::error!("{:?}", e);
+                    tracing::error!("Unable to build application");
                 }
             }
         }

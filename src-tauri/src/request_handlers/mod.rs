@@ -1,6 +1,6 @@
 use crate::{
     check_version,
-    internal_message_handler::{InternalMessage, PackageInfo, WindowVisibility},
+    backend_message_handler::{BuildInfo, InternalMessage, WindowVisibility},
     TauriState,
 };
 
@@ -12,10 +12,10 @@ pub use messages::*;
 #[allow(clippy::needless_pass_by_value)]
 pub fn init(state: TauriState<'_>) {
     for message in [
-        FrontEnd::GetSettings,
-        FrontEnd::NextBreak,
-        FrontEnd::SessionsBeforeLong,
-        FrontEnd::PackageInfo(PackageInfo::default()),
+        MsgToFrontend::GetSettings,
+        MsgToFrontend::NextBreak,
+        MsgToFrontend::SessionsBeforeLong,
+        MsgToFrontend::BuildInfo(BuildInfo::default()),
     ] {
         state
             .lock()
@@ -23,7 +23,7 @@ pub fn init(state: TauriState<'_>) {
             .send(InternalMessage::ToFrontEnd(message))
             .ok();
     }
-    check_version::check_version(state.lock().sx.clone());
+    check_version::parse_github(state.lock().sx.clone());
 }
 
 /// Request to reset settings to default
@@ -59,7 +59,7 @@ pub fn open_database_location(state: TauriState<'_>) {
         .ok();
 }
 
-/// Request to set the long_break length to the given i64 value
+/// Set all settings
 #[tauri::command]
 #[expect(clippy::needless_pass_by_value)]
 pub fn set_settings(state: TauriState<'_>, value: FrontEndState) {

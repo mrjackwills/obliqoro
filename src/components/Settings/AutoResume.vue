@@ -37,15 +37,7 @@
 					<span class='text-offwhite'>average from previous <span class='mono-num'>{{ secondsToText(auto_resume_timespan_sec, true) }}</span></span>
 				</v-col>
 				<v-col cols='auto' class='ma-0 pa-0'>
-					<span v-if='average_resume === 0'>
-						<v-progress-circular
-							indeterminate
-							class='ml-2 mt-n1'
-							color='primary'
-							size='10'
-							width='1'
-						/> 
-					</span>
+					<v-progress-circular v-if='average_resume === 0' :rotate='rotation' model-value='25' class='ml-2 mt-n1' color='primary' size='10' width='1' />
 					<span v-else class='mono-num'>
 						{{ formatPercentage(average_resume) }}%
 					</span>
@@ -82,13 +74,12 @@
 </template>
 
 <script setup lang="ts">
-import { formatPercentage, secondsToText, zeroPad } from '../../vanillaTS/second';
-
-const cpuUsageStore = cpuUsageModule();
-const average_resume = computed(() => cpuUsageStore.average_resume);
-
+import { formatPercentage, secondsToText, zeroPad } from '@/vanillaTS/helpers';
 
 const settingStore = settingModule();
+const cpuUsageStore = cpuUsageModule();
+
+const average_resume = computed(() => cpuUsageStore.average_resume);
 
 const auto_pause = computed(() => settingStore.auto_pause);
 
@@ -138,10 +129,11 @@ const auto_resume_timespan_sec = computed({
 	}
 });
 
-// this should be setting the flast auto_resume value in the rust backend
 watch(auto_pause, (i) => {
 	if (!i) auto_resume.value = false;
 });
+
+defineProps<{ rotation: number }>();
 
 </script>
 
@@ -149,5 +141,4 @@ watch(auto_pause, (i) => {
 	.diss {
 		opacity:  0.38
 	}
-
-	</style>
+</style>

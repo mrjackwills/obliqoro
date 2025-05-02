@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ModuleName, PackageInfo } from '../types';
+import { ModuleName, BuildInfo } from '../types';
 
 export const packageinfoModule = defineStore(ModuleName.PackageInfo, {
 
@@ -12,7 +12,7 @@ export const packageinfoModule = defineStore(ModuleName.PackageInfo, {
 
 	actions: {
 
-		set_all (x: PackageInfo): void {
+		set_all (x: BuildInfo): void {
 			this.build_date = x.build_date;
 			this.homepage = x.homepage;
 			this.version = x.version;

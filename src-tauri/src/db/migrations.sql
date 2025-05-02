@@ -50,31 +50,10 @@ SELECT
 FROM
     settings_old;
 
--- -- fix this?
--- CREATE TEMP TABLE temp_column_check AS
--- SELECT COUNT(*) AS has_column
--- FROM pragma_table_info('settings_old')
--- WHERE name = 'auto_pause';
-
--- UPDATE settings
--- SET auto_pause = (
---     SELECT auto_pause
---     FROM settings_old
---     WHERE settings_old.settings_id = settings.settings_id
--- )
--- WHERE (SELECT has_column FROM temp_column_check) = 1;
-
--- UPDATE settings
--- SET auto_pause = 0
--- WHERE (SELECT has_column FROM temp_column_check) = 0;
-
--- DROP TABLE temp_column_check;
-
--- DROP TABLE settings_old;
-
 -- Check for each column individually
 CREATE TEMP TABLE temp_column_check AS
 SELECT
+	MAX(CASE WHEN name = 'auto_pause' THEN 1 ELSE 0 END) AS has_auto_pause,
     MAX(CASE WHEN name = 'auto_resume' THEN 1 ELSE 0 END) AS has_auto_resume,
     MAX(CASE WHEN name = 'auto_resume_threshold' THEN 1 ELSE 0 END) AS has_auto_resume_threshold,
     MAX(CASE WHEN name = 'auto_resume_timespan_sec' THEN 1 ELSE 0 END) AS has_auto_resume_timespan_sec,
@@ -118,6 +97,18 @@ UPDATE settings
 SET auto_resume_timespan_sec = 0
 WHERE (SELECT has_auto_resume_timespan_sec FROM temp_column_check) = 0;
 
+-- Update for auto_pause
+UPDATE settings
+SET auto_pause = (
+    SELECT auto_pause FROM settings_old
+    WHERE settings_old.settings_id = settings.settings_id
+)
+WHERE (SELECT has_auto_pause FROM temp_column_check) = 1;
+
+UPDATE settings
+SET auto_pause = 0
+WHERE (SELECT has_auto_pause FROM temp_column_check) = 0;
+
 -- Update for auto_pause_threshold
 UPDATE settings
 SET auto_pause_threshold = (
@@ -141,7 +132,6 @@ WHERE (SELECT has_auto_pause_timespan_sec FROM temp_column_check) = 1;
 UPDATE settings
 SET auto_pause_timespan_sec = 0
 WHERE (SELECT has_auto_pause_timespan_sec FROM temp_column_check) = 0;
-
 
 DROP TABLE temp_column_check;
 DROP TABLE settings_old;

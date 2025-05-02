@@ -11,7 +11,6 @@ export const sec_to_minutes = (s: number): string => {
 	}
 };
 
-
 /// Work out the correct plural for a given unit
 const suffix = (unit: number): string => unit === 1 ? '' : 's';
 

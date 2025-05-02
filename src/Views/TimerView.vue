@@ -4,7 +4,7 @@
 			<v-progress-circular :model-value='circ_value' color='primary' :size='circle_size' width='30' class=''>
 
 				<v-container fluid class='pa-0'>
-								
+
 					<v-row align='center' justify='center' class='mx-1 mb-12 switch_margin'>
 						<v-col cols='11' class='text-primary text-center ma-0 pa-0 px-2 ' :class='text_size'>
 							{{ strategy }}
@@ -41,8 +41,8 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { FrontEndRoutes, InvokeMessage } from '../types';
-import { sec_to_minutes } from '../vanillaTS/second';
+import { FrontEndRoutes, InvokeMessage } from '@/types';
+import { sec_to_minutes } from '@/vanillaTS/helpers';
 import { invoke } from '@tauri-apps/api/tauri';
 
 const store = intervalModule();
@@ -66,10 +66,7 @@ watch(pauseAfterBreak, async (pause) => {
 });
 
 watch(interval, async (i) => {
-	if (i <= 0) {
-		// set a 200ms timeout?
-		router.push(FrontEndRoutes.Settings);
-	}
+	if (i <= 0) router.push(FrontEndRoutes.Settings);
 });
 
 </script>
