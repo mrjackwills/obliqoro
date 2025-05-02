@@ -12,7 +12,7 @@
 <script setup lang="ts">
 import { listen, Event } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api/tauri';
-import { ListenMessage, ShowTimer, FrontEndRoutes, CurrentState, InvokeMessage, PackageInfo, CpuMeasure } from './types';
+import { ListenMessage, ShowTimer, FrontEndRoutes, FrontEndState, BuildInfo, InvokeMessage, CpuMeasure } from './types';
 import { useRouter } from 'vue-router';
 import { snackError } from './services/snack';
 
@@ -50,12 +50,12 @@ onBeforeMount(async () => {
 
 	await listen(ListenMessage.Cpu, async (event: Event<CpuMeasure>) => cpuUsageStore.set_all(event.payload));
 	await listen(ListenMessage.Error, async (event: Event<string>) => snackError({ message: event.payload }));
-	await listen(ListenMessage.GetSettings, async (event: Event<CurrentState>) => settingStore.set_current_state(event.payload));
+	await listen(ListenMessage.GetSettings, async (event: Event<FrontEndState>) => settingStore.set_current_state(event.payload));
 	await listen(ListenMessage.GoToSettings, () => router.push(FrontEndRoutes.Settings));
 	await listen(ListenMessage.NextBreak, async (event: Event<string>) => nextbreakModule().set_next_break(event.payload));
 	await listen(ListenMessage.NumberSessionsBeforeLong, async (event: Event<string>) => settingStore.set_session_before_next_long_break(event.payload));
 	await listen(ListenMessage.OnBreak, async (event: Event<number>) => intervalStore.set_interval(event.payload));
-	await listen(ListenMessage.PackageInfo, async (event: Event<PackageInfo>) => packageinfoStore.set_all(event.payload));
+	await listen(ListenMessage.PackageInfo, async (event: Event<BuildInfo>) => packageinfoStore.set_all(event.payload));
 	await listen(ListenMessage.Paused, async (event: Event<boolean>) => settingStore.set_paused(event.payload));
 
 	await invoke(InvokeMessage.Init);
