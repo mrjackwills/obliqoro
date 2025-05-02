@@ -64,15 +64,27 @@ const show_update = computed(() => packageinfoModule().github_version.length > 1
 /// Pass is rotation as a prop, so that both spinners have the same animation
 const rotation = ref(0);
 const rotation_interval = ref(0);
-onMounted(() => {
+
+const start_rotation_interval = (): void => {
 	rotation_interval.value = window.setInterval(() => {
 		rotation.value += 20;
 		if (rotation.value >= 360) rotation.value = 0;
 	}, 30);
-});
+};
 
-onUnmounted(() => {
+const stop_rotation_interval = (): void  => {
 	clearInterval(rotation_interval.value);
+};
+
+const run_rotation = computed(() => settingStore.auto_pause && cpuUsageModule().average_pause === 0 || settingStore.auto_resume && cpuUsageModule().average_resume === 0);
+
+/// Only run rotation interval if needed
+watch(run_rotation, (i) => {
+	if (i) {
+		start_rotation_interval();
+	} else {
+		stop_rotation_interval();
+	}
 });
 
 const switches = computed(() => [
