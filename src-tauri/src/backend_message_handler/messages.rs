@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::request_handlers::{MsgToFrontend, FrontEndState};
+use crate::request_handlers::{FrontEndState, MsgToFrontend};
 
 /// Get information about self for the Footer component
 /// BUILD_DATE is injected via the build.rs file

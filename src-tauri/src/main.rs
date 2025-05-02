@@ -4,21 +4,20 @@
 )]
 
 use application_state::ApplicationState;
-use heartbeat::heartbeat_process;
 use backend_message_handler::{start_message_handler, InternalMessage, WindowVisibility};
+use heartbeat::heartbeat_process;
 use parking_lot::Mutex;
 use std::sync::Arc;
-
 
 #[cfg(debug_assertions)]
 use tauri::Manager;
 
 mod app_error;
 mod application_state;
+mod backend_message_handler;
 mod check_version;
 mod db;
 mod heartbeat;
-mod backend_message_handler;
 mod request_handlers;
 mod system_tray;
 mod window_action;
@@ -38,7 +37,6 @@ impl ObliqoroWindow {
     }
 }
 
-
 #[tokio::main]
 async fn main() -> Result<(), ()> {
     let tray = system_tray::create_system_tray();
@@ -54,7 +52,7 @@ async fn main() -> Result<(), ()> {
         }
         Ok(app_state) => {
             // TODO change this to just an Arc<ApplicationState>, and use a message bus everywhere?
-			// Application state could just be an Arc<Sx<InternalMessage>
+            // Application state could just be an Arc<Sx<InternalMessage>
             let state = Arc::new(Mutex::new(app_state));
             let (init_state, internal_state) = (Arc::clone(&state), Arc::clone(&state));
             let (event_sx, close_sx, handler_sx, tray_sx, instance_sx) =
