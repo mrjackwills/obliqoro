@@ -195,7 +195,7 @@ cargo_test() {
 # build for production, as Github action would do
 cargo_build() {
 	echo -e "\n${GREEN}cargo tauri build${RESET}"
-	cargo tauri build
+	npm run tauri build
 	ask_continue
 }
 

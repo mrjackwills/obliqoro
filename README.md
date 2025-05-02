@@ -57,8 +57,6 @@ See the <a href='https://github.com/mrjackwills/obliqoro/releases/latest' target
 ### Todo
 
 + [ ] Code sign the application
-+ [ ] Pause on no/low cpu usage - user controllable setting
-+ [ ] Notify user if new version available
 + [ ] Translations
 + [ ] Saving strategies into SQLite and enabling the addition of new custom strategies
 + [ ] Statistics for the number of sessions worked
@@ -67,6 +65,8 @@ See the <a href='https://github.com/mrjackwills/obliqoro/releases/latest' target
 + [ ] Testing on Mac
 + [ ] Password for exiting a long break?
 + [ ] Setting to enable writing logs to file when on production version
++ [x] Notify user if new version available
++ [x] Pause on no/low cpu usage - user controllable setting
 
 ### Development
 

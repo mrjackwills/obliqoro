@@ -4,138 +4,95 @@
 		<v-row align='center' justify='center' class='ma-0 pa-0'>
 			<v-col cols='9' class='ma-0 pa-0'>
 
-				<!-- TITLE -->
 				<v-row align='center' justify='center' class='ma-0 pa-0'>
 					<v-col cols='auto' class='text-h4 ma-0 pa-0 text-primary'>
 						Settings
 					</v-col>
 				</v-row>
+			
+				<HR />
 
-				<hr class='my-4 hr' />
+				<PauseRow />
 
-				<!-- BREAK/PAUSE INFO -->
-				<v-row align='center' justify='space-between' class='ma-0 pa-0'>
-
-					<v-col cols='5' class='ma-0 pa-0 text-primary text-left'>
-						<v-row align='center' justify='start' class='ma-0 pa-0'>
-							<template v-if='!paused'>
-								<v-col cols='auto' class='ma-0 pa-0 mr-2'>
-									<v-icon :icon='mdiCoffeeOutline' class='' />
-								</v-col>
-								<v-col cols='auto' class='ma-0 pa-0'>
-									{{ next_in }}
-								</v-col>
-							</template>
-						</v-row>
-					</v-col>
-
-					<v-col cols='2' class='ma-0 pa-0'>
-						<v-btn @click='toggle_pause' color='primary' block rounded='sm' class='ma-0 pa-0' >
-							<v-row align='center' justify='start' class='ma-0 pa-0'>
-								<v-col cols='auto' class='ma-0 pa-0 mr-1'>
-									<v-icon :icon='pauseIcon' class='' />
-								</v-col>
-								<v-col cols='auto' class='ma-0 pa-0'>
-									{{ pauseText }}
-								</v-col>
-							</v-row>
-						</v-btn>
-					</v-col>
-
-					<v-col cols='5' class='ma-0 pa-0 text-primary'>
-						<v-row align='center' justify='end' class='ma-0 pa-0' v-if='!paused'>
-							<v-col cols='auto' class='ma-0 pa-0'>
-								{{ sessions_before_long }}
-							</v-col>
-							<v-col cols='auto' class='ma-0 pa-0 ml-2'>
-								<v-icon :icon='mdiWeatherNight' class='' />
-							</v-col>
-						</v-row>
-
-					</v-col>
-				</v-row>
-						
-				<hr class='my-4 hr' />
+				<HR />
 
 				<!-- SWITCHES -->
-				<v-form v-on:submit.prevent class='mt-4'>
-					<v-row class='ma-0 pa-0' justify='space-between'>
-
-						<v-col v-for='(item, index) in switches' :key='index' cols='auto' class='ma-0 pa-0'>
-							<v-switch
-								v-model='item.model.value'
-								:class='item.model.value ? "text-primary" : "text-offwhite"'
-								:label='item.label'
-								flat
-								color='primary'
-							/>
-						
-						</v-col>
-
-					</v-row>
+				<v-row align='center' class='ma-0 pa-0' justify='space-between'>
 					
-					<!-- SLIDERS -->
-					<section v-for='(item, index) in sliders' :key='index'>
+					<v-col v-for='(item, index) in switches' :key='index' cols='auto' class='ma-0 pa-0'>
 
-						<v-row class='text-primary ma-0 pa-0'>
-							<v-col cols='auto' class='ma-0 pa-0'>
-								{{ item.name }}
+						<v-row class='text-primary ma-0 pa-0' justify='space-between'>
+
+							<v-col cols='auto' class='text-center ma-0 pa-0 mr-3'>
+								<v-switch v-model='item.model.value' base-color='offwhite' color='primary'
+									density='compact' flat />
 							</v-col>
-							<v-spacer />
-							<v-col cols='auto' class='ma-0 pa-0'>
-								{{ item.label_value }}
+
+							<v-col cols='auto' class='ma-0 pa-0 text-left text-body-2 mt-2'
+								:class='item.model.value ? "text-primary" : "text-offwhite"'>
+								{{ item.label }}
 							</v-col>
+							
 						</v-row>
 
-						<v-row class='ma-0 pa-0'>
-							<v-col cols='12' class='ma-0 pa-0'>
-								<v-slider v-model='item.model.value' color='primary' :disabled='paused' :min='item.min'
-									density='compact' :max='item.max' :step='item.step' rounded>
-								</v-slider>
-								<ResumeTooltip :paused='paused' />
-							</v-col>
-						</v-row>
-					</section>
-
-				</v-form>
-
-				<!-- RESET BUTTON -->
-				<v-row class='ma-0 pa-0 mt-6' justify='center'>
-					<v-col cols='auto' class='ma-0 pa-0'>
-						<v-btn @click='reset_settings' :disabled='paused' variant='outlined' color='red' block rounded='sm'>
-							<v-icon :icon='mdiCogRefresh' class='mr-1' />
-							reset settings
-						</v-btn>
 					</v-col>
-				
+
 				</v-row>
 
+				<SessionBreakSliders />
+				<AutoPause :rotation />
+				<AutoResume :rotation />
+				<v-expand-transition>
+					<VersionAlert v-if='show_update' />
+				</v-expand-transition>
+				<ResetButton :saveTimeout='saveTimeout' />
 			</v-col>
 		</v-row>
 
 	</v-row>
 </template>
+
 <script setup lang="ts">
-import { sec_to_minutes, sec_to_minutes_only } from '../vanillaTS/second';
 import { invoke } from '@tauri-apps/api/tauri';
-import { InvokeMessage } from '../types';
-import { snackError } from '../services/snack';
-import { mdiCogRefresh, mdiCoffeeOutline, mdiPlay, mdiPause, mdiWeatherNight } from '@mdi/js';
+import { InvokeMessage } from '@/types';
+import { snackError } from '@/services/snack';
+import SessionBreakSliders from '@/components/Settings/SessionBreakSliders.vue';
 const settingStore = settingModule();
 
-const next_in = computed(() => nextbreakModule().nextbreak);
+const show_update = computed(() => packageinfoModule().github_version.length > 1 && packageinfoModule().version !== packageinfoModule().github_version);
 
-const sessions_before_long = computed(() =>	settingStore.session_before_next_long_break);
+/// Pass is rotation as a prop, so that both spinners have the same animation
+const rotation = ref(0);
+const rotation_interval = ref(0);
 
-const paused = computed(() => settingStore.paused);
-const pauseIcon = computed(() => paused.value? mdiPlay:mdiPause);
-const pauseText = computed(() => paused.value? 'resume':'pause');
+const start_rotation_interval = (): void => {
+	rotation_interval.value = window.setInterval(() => {
+		rotation.value += 20;
+		if (rotation.value >= 360) rotation.value = 0;
+	}, 30);
+};
+
+const stop_rotation_interval = (): void  => {
+	clearInterval(rotation_interval.value);
+};
+
+const run_rotation = computed(() => settingStore.auto_pause && cpuUsageModule().average_pause === 0 || settingStore.auto_resume && cpuUsageModule().average_resume === 0);
+
+/// Only run rotation interval if needed
+watch(run_rotation, (i) => {
+	if (i) {
+		start_rotation_interval();
+	} else {
+		stop_rotation_interval();
+	}
+});
 
 const switches = computed(() => [
 	{
 		label: 'fullscreen',
 		model: fullscreen
 	},
+
 	{
 		label: 'start on boot',
 		model: start_on_boot
@@ -143,153 +100,44 @@ const switches = computed(() => [
 ]
 );
 
-const sliders = computed(() => [
-	{
-		name: 'session length',
-		model: session_as_sec,
-		min: 60,
-		step: 60,
-		max: 60 * 59,
-		label_value: sec_to_minutes_only(session_as_sec.value)
-	},
-	{
-		name: 'short break length',
-		model: short_break_as_sec,
-		min: 10,
-		step: 10,
-		max: 60 * 2,
-		label_value: sec_to_minutes(short_break_as_sec.value)
-	},
-	{
-		name: 'long break length',
-		model: long_break_as_sec,
-		min: 60,
-		step: 15,
-		max: 60 * 10,
-		label_value: sec_to_minutes(long_break_as_sec.value)
-	},
-	{
-		name: 'sessions before long break',
-		model: number_session_before_break,
-		min: 2,
-		step: 1,
-		max: 10,
-		label_value: number_session_before_break.value
-	}
-]);
-
 const start_on_boot = computed({
-	get(): boolean {
-		return settingStore.autostart;
+	get (): boolean {
+		return settingStore.start_on_boot;
 	},
-	set(b: boolean) {
-		settingStore.set_autostart(b);
+	set (b: boolean) {
+		settingStore.set_start_on_boot(b);
 	}
 });
 
 const fullscreen = computed({
-	get(): boolean {
+	get (): boolean {
 		return settingStore.fullscreen;
 	},
-	set(b: boolean) {
+	set (b: boolean) {
 		settingStore.set_fullscreen(b);
 	}
 });
 
-const session_as_sec = computed({
-	get(): number {
-		return settingStore.session_as_sec;
-	},
-	set(b: number) {
-		settingStore.set_session_as_sec(b);
-	}
-});
-
-const short_break_as_sec = computed({
-	get(): number {
-		return settingStore.short_break_as_sec;
-	},
-	set(b: number) {
-		settingStore.set_short_break_as_sec(b);
-	}
-});
-
-const long_break_as_sec = computed({
-	get(): number {
-		return settingStore.long_break_as_sec;
-	},
-	set(b: number) {
-		settingStore.set_long_break_as_sec(b);
-	}
-});
-
-const number_session_before_break = computed({
-	get(): number {
-		return settingStore.number_session_before_break;
-	},
-	set(b: number) {
-		settingStore.set_number_session_before_break(b);
-	}
-});
-
-const reset_settings = async (): Promise<void> => {
-	clearInterval(saveTimeout.value);
-	await invoke(InvokeMessage.ResetSettings);
-};
-
-const toggle_pause = async (): Promise<void> => {
-	await invoke(InvokeMessage.TogglePause);
-};
-
-const send_settings = async (message: InvokeMessage, value: number | boolean): Promise<void> => {
-	saveTimeout.value = window.setTimeout(async () => {
-		try {
-			await invoke(message, { value });
-		} catch (e) {
-			snackError({ message: 'Unable to save settings' });
-		}
-	}, 250);
-};
-
 const saveTimeout = ref(0);
 
-watch(fullscreen, async (value) => {
-	await send_settings(InvokeMessage.SetSettingFullscreen, value);
-});
+const current_state = computed(() => settingStore.get_current_state);
 
-watch(long_break_as_sec, async (value) => {
-	await send_settings(InvokeMessage.SetSettingLongBreak, value);
-});
+const send_state = async (): Promise<void> => {
+	if (saveTimeout.value) {
+		clearTimeout(saveTimeout.value);
+	}
+	saveTimeout.value = window.setTimeout(async () => {
+		try {
+			await invoke(InvokeMessage.SetSettings, { value: current_state.value });
+		} catch {
+			snackError({ message: `Unable to save settings` });
+		}
+	}, 100);
+};
 
-watch(session_as_sec, async (value) => {
-	await send_settings(InvokeMessage.SetSettingSession, value);
-});
 
-watch(short_break_as_sec, async (value) => {
-	await send_settings(InvokeMessage.SetSettingShortBreak, value);
-});
-
-watch(number_session_before_break, async (value) => {
-	await send_settings(InvokeMessage.SetSettingNumberSession, value);
-});
-
-watch(start_on_boot, async (value) => {
-	await send_settings(InvokeMessage.SetAutoStart, value);
+watch(current_state, async (_i) => {
+	await send_state();
 });
 
 </script>
-
-<style>
-
-.v-label {
-	opacity: 1 !important;
-}
-
-.hr {
-	border: 1px solid rgba(var(--v-theme-primary), .9);
-}
-
-.v-switch__track {
-	background-color: rgb(var(--v-theme-offwhite))!important;
-}
-</style>

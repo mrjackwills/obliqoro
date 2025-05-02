@@ -20,18 +20,19 @@
 		"source=/etc/localtime,target=/etc/localtime,type=bind,readonly"
 	],
 
-	"postCreateCommand": "cargo install typos-cli tauri-cli && npm install -g npm-check-updates",
+	// TODO change to V2
+	"postCreateCommand": "cargo install typos-cli create-tauri-app --locked && npm install -g npm-check-updates",
 
 	"customizations": {
 		"vscode": {
 				// Add the IDs of extensions you want installed when the container is created.
 			"extensions": [
 				"bmuskalla.vscode-tldr",
-				"bungcip.better-toml",
 				"christian-kohler.path-intellisense",
+				"citreae535.sparse-crates",
 				"dbaeumer.vscode-eslint",
-				"fill-labs.dependi",
 				"foxundermoon.shell-format",
+				"gruntfuggly.todo-tree",
 				"meganrogge.template-string-converter",
 				"ms-vscode.live-server",
 				"mutantdino.resourcemonitor",
@@ -49,8 +50,7 @@
 				// VS Code don't watch files under ./target
 				"files.watcherExclude": {
 					"**/target/**": true
-				},
-				"rust-analyzer.checkOnSave.command": "clippy"
+				}
 			}
 		}
 	},

@@ -1,5 +1,5 @@
 use sqlx::{sqlite::SqliteJournalMode, ConnectOptions, SqlitePool};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 mod models;
 
@@ -21,22 +21,33 @@ async fn get_db(path: &PathBuf) -> Result<SqlitePool, sqlx::Error> {
     Ok(db)
 }
 
+async fn run_migrations(db: &SqlitePool) {
+    let migrations = include_str!("migrations.sql");
+    if let Err(e) = sqlx::query(migrations).execute(db).await {
+        println!("{e:?}");
+        // TODO - handle this better
+        std::process::exit(1);
+    }
+}
+
 /// Create, if they don't exists, all the sql tables
 async fn create_tables(db: &SqlitePool) {
     let init_db = include_str!("init_db.sql");
-    match sqlx::query(init_db).execute(db).await {
-        Ok(_) => (),
-        Err(e) => {
-            println!("{e:?}");
-            // TODO - handle this better
-            std::process::exit(1);
-        }
+    if let Err(e) = sqlx::query(init_db).execute(db).await {
+        println!("{e:?}");
+        // TODO - handle this better
+        std::process::exit(1);
     }
 }
 
 /// Init db connection, works if folder/files exists or not
-pub async fn init_db(path: &PathBuf) -> Result<SqlitePool, AppError> {
-    let db = get_db(path).await?;
+pub async fn init_db(data_location: &Path) -> Result<SqlitePool, AppError> {
+    let db = get_db(&PathBuf::from(format!(
+        "{}/obliqoro.db",
+        data_location.display()
+    )))
+    .await?;
     create_tables(&db).await;
+    run_migrations(&db).await;
     Ok(db)
 }

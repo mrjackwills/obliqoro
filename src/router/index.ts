@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import { FrontEndRoutes } from '../types';
+import { FrontEndNames, FrontEndRoutes } from '../types';
 import Settings from '../Views/SettingsView.vue';
 import Timer from '../Views/TimerView.vue';
 
@@ -8,15 +8,15 @@ const router = createRouter({
 	routes: [
 		{
 			path: FrontEndRoutes.Settings,
-			name: 'settings',
+			name: FrontEndNames.Settings,
 			component: Settings
 		},
 		{
 			path: FrontEndRoutes.Timer,
-			name: 'timer',
+			name: FrontEndNames.Timer,
 			component: Timer
 		}
-	],
+	]
 
 });
 

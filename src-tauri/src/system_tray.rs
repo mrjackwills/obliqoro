@@ -1,5 +1,6 @@
 use crate::{
-    internal_message_handler::{Emitter, InternalMessage, WindowVisibility},
+    backend_message_handler::{InternalMessage, WindowVisibility},
+    request_handlers::MsgToFrontend,
     ObliqoroWindow,
 };
 use tauri::{
@@ -64,7 +65,16 @@ pub fn menu_enabled(app: &tauri::AppHandle, enable: bool) {
     }
 }
 
-/// todo refactor into own mod?
+/// Change the system tray icon when paused & unpaused
+pub fn set_icon(app: &tauri::AppHandle, paused: bool) {
+    let icon = if paused {
+        include_bytes!("../icons/icon_paused.png").to_vec()
+    } else {
+        include_bytes!("../icons/icon.png").to_vec()
+    };
+    app.tray_handle().set_icon(tauri::Icon::Raw(icon)).ok();
+}
+
 pub fn create_system_tray() -> SystemTray {
     let mut tray_menu = SystemTrayMenu::new();
     for i in [
@@ -82,6 +92,7 @@ pub fn create_system_tray() -> SystemTray {
     SystemTray::new().with_menu(tray_menu)
 }
 
+/// Handle interaction events on the systemtray icon/menu
 pub fn on_system_tray_event(event: SystemTrayEvent, sx: &Sender<InternalMessage>) {
     match event {
         SystemTrayEvent::DoubleClick { .. } => {
@@ -90,7 +101,8 @@ pub fn on_system_tray_event(event: SystemTrayEvent, sx: &Sender<InternalMessage>
         }
         SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
             x if x == MenuItem::Settings.get_id() => {
-                sx.send(InternalMessage::Emit(Emitter::GoToSettings)).ok();
+                sx.send(InternalMessage::ToFrontEnd(MsgToFrontend::GoToSettings))
+                    .ok();
             }
             x if x == MenuItem::Quit.get_id() => {
                 sx.send(InternalMessage::Window(WindowVisibility::Close))
