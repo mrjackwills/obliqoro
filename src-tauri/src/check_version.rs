@@ -3,7 +3,7 @@ use tokio::sync::broadcast::Sender;
 
 use crate::{
     app_error::AppError,
-    internal_message_handler::{InternalMessage, PackageInfo},
+    backend_message_handler::{BuildInfo, InternalMessage},
 };
 
 // Get a reqwest client, use application name and version an UserAgent, this should never err
@@ -40,12 +40,12 @@ pub fn parse_github(sx: Sender<InternalMessage>) {
             return;
         };
         let latest_version = body.tag_name.replace('v', "");
-        let info = PackageInfo {
+        let info = BuildInfo {
             github_version: Some(latest_version),
             ..Default::default()
         };
         sx.send(InternalMessage::ToFrontEnd(
-            crate::request_handlers::FrontEnd::PackageInfo(info),
+            crate::request_handlers::MsgToFrontend::BuildInfo(info),
         ))
         .ok();
     });

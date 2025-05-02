@@ -1,5 +1,5 @@
 use sqlx::{sqlite::SqliteJournalMode, ConnectOptions, SqlitePool};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 mod models;
 
@@ -41,8 +41,8 @@ async fn create_tables(db: &SqlitePool) {
 }
 
 /// Init db connection, works if folder/files exists or not
-pub async fn init_db(path: &PathBuf) -> Result<SqlitePool, AppError> {
-    let db = get_db(path).await?;
+pub async fn init_db(data_location: &Path) -> Result<SqlitePool, AppError> {
+    let db = get_db( &PathBuf::from(format!("{}/obliqoro.db", data_location.display()))).await?;
     create_tables(&db).await;
     run_migrations(&db).await;
     Ok(db)

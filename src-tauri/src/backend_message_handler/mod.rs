@@ -1,70 +1,23 @@
 use parking_lot::Mutex;
-use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use tauri::{AppHandle, Manager};
 use tracing::error;
+mod messages;
+
+pub use messages::*;
 
 use crate::{
     app_error::AppError,
     application_state::ApplicationState,
     db::ModelSettings,
     heartbeat::heartbeat_process,
-    request_handlers::{FrontEnd, FrontEndState, ShowTimer},
+    request_handlers::{MsgToFrontend, FrontEndState, ShowTimer},
     system_tray::{menu_enabled, set_icon, MenuItem},
     window_action::WindowAction,
     ObliqoroWindow,
 };
 use tokio::sync::broadcast::{Receiver, Sender};
 
-/// Get information about self for the Footer component
-/// BUILD_DATE is injected via the build.rs file
-#[derive(Debug, Clone, Hash, Serialize, Deserialize)]
-pub struct PackageInfo {
-    pub homepage: String,
-    pub version: String,
-    pub build_date: String,
-    pub github_version: Option<String>,
-}
-impl Default for PackageInfo {
-    fn default() -> Self {
-        let (homepage, _) = env!("CARGO_PKG_REPOSITORY")
-            .split_once(env!("CARGO_PKG_NAME"))
-            .unwrap_or_default();
-        Self {
-            homepage: homepage.to_owned(),
-            version: env!("CARGO_PKG_VERSION").to_owned(),
-            build_date: env!("BUILD_DATE").to_owned(),
-            github_version: None,
-        }
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Hash)]
-pub enum BreakMessage {
-    End,
-    Start,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Hash)]
-pub enum WindowVisibility {
-    Close,
-    Hide,
-    Minimize,
-    Show,
-    Toggle,
-}
-
-#[derive(Debug, Clone)]
-pub enum InternalMessage {
-    Break(BreakMessage),
-    Pause,
-    ResetSettings,
-    ResetTimer,
-    SetSetting(FrontEndState),
-    ToFrontEnd(FrontEnd),
-    UpdateMenuTimer,
-    Window(WindowVisibility),
-}
 
 // Update the taskbar to display how many sessions before next long break,
 // and send internal message, to send message to front end to update settings in pinia
@@ -83,7 +36,7 @@ fn update_menu_session_number(
                     .ok()
             });
     }
-    sx.send(InternalMessage::ToFrontEnd(FrontEnd::SessionsBeforeLong))
+    sx.send(InternalMessage::ToFrontEnd(MsgToFrontend::SessionsBeforeLong))
         .ok();
 }
 
@@ -100,7 +53,7 @@ fn update_menu_next_break(
             .try_get_item(MenuItem::Next.get_id())
             .and_then(|item| item.set_title(state.lock().get_next_break_title()).ok());
     }
-    sx.send(InternalMessage::ToFrontEnd(FrontEnd::NextBreak))
+    sx.send(InternalMessage::ToFrontEnd(MsgToFrontend::NextBreak))
         .ok();
 }
 
@@ -156,9 +109,12 @@ async fn reset_settings(
     let settings = ModelSettings::reset_settings(&sqlite).await?;
     state.lock().set_settings(settings);
     reset_timer(state);
-    sx.send(InternalMessage::ToFrontEnd(FrontEnd::GetSettings))
+    sx.send(InternalMessage::ToFrontEnd(MsgToFrontend::GetSettings))
         .ok();
-    sx.send(InternalMessage::ToFrontEnd(FrontEnd::Paused(state.lock().get_paused()))).ok();
+    sx.send(InternalMessage::ToFrontEnd(MsgToFrontend::Paused(
+        state.lock().get_paused(),
+    )))
+    .ok();
     Ok(())
 }
 async fn update_settings(
@@ -206,10 +162,14 @@ fn handle_visibility(
 
 /// Handle all internal messages about emitting messages to the frontend, and send to the frontend
 #[allow(clippy::too_many_lines)]
-fn emit_to_frontend(app: &AppHandle, front_end_msg: FrontEnd, state: &Arc<Mutex<ApplicationState>>) {
-    let event_name = front_end_msg.as_str();
-    match front_end_msg {
-        FrontEnd::GoToSettings => {
+fn emit_to_frontend(
+    app: &AppHandle,
+    msg_to_frontend: MsgToFrontend,
+    state: &Arc<Mutex<ApplicationState>>,
+) {
+    let event_name = msg_to_frontend.as_str();
+    match msg_to_frontend {
+        MsgToFrontend::GoToSettings => {
             let on_break = state.lock().on_break();
             if !on_break {
                 app.emit_to(ObliqoroWindow::Main.as_str(), event_name, ())
@@ -218,13 +178,13 @@ fn emit_to_frontend(app: &AppHandle, front_end_msg: FrontEnd, state: &Arc<Mutex<
             }
         }
 
-        FrontEnd::Cpu(value) => {
+        MsgToFrontend::Cpu(value) => {
             app.app_handle()
                 .emit_to(ObliqoroWindow::Main.as_str(), event_name, value)
                 .ok();
         }
 
-        FrontEnd::NextBreak => {
+        MsgToFrontend::NextBreak => {
             app.app_handle()
                 .emit_to(
                     ObliqoroWindow::Main.as_str(),
@@ -234,7 +194,7 @@ fn emit_to_frontend(app: &AppHandle, front_end_msg: FrontEnd, state: &Arc<Mutex<
                 .ok();
         }
 
-        FrontEnd::OnBreak => {
+        MsgToFrontend::OnBreak => {
             app.emit_to(
                 ObliqoroWindow::Main.as_str(),
                 event_name,
@@ -243,12 +203,12 @@ fn emit_to_frontend(app: &AppHandle, front_end_msg: FrontEnd, state: &Arc<Mutex<
             .ok();
         }
 
-        FrontEnd::Error => {
+        MsgToFrontend::Error => {
             app.emit_to(ObliqoroWindow::Main.as_str(), event_name, "Internal Error")
                 .ok();
         }
 
-        FrontEnd::GetSettings => {
+        MsgToFrontend::GetSettings => {
             app.emit_to(
                 ObliqoroWindow::Main.as_str(),
                 event_name,
@@ -256,7 +216,7 @@ fn emit_to_frontend(app: &AppHandle, front_end_msg: FrontEnd, state: &Arc<Mutex<
             )
             .ok();
         }
-        FrontEnd::SessionsBeforeLong => {
+        MsgToFrontend::SessionsBeforeLong => {
             app.app_handle()
                 .emit_to(
                     ObliqoroWindow::Main.as_str(),
@@ -265,7 +225,7 @@ fn emit_to_frontend(app: &AppHandle, front_end_msg: FrontEnd, state: &Arc<Mutex<
                 )
                 .ok();
         }
-        FrontEnd::GoToTimer => {
+        MsgToFrontend::GoToTimer => {
             let (break_time, strategy) = state.lock().get_break_settings();
             app.emit_to(
                 ObliqoroWindow::Main.as_str(),
@@ -274,17 +234,13 @@ fn emit_to_frontend(app: &AppHandle, front_end_msg: FrontEnd, state: &Arc<Mutex<
             )
             .ok();
         }
-        FrontEnd::PackageInfo(info) => {
+        MsgToFrontend::BuildInfo(info) => {
             app.emit_to(ObliqoroWindow::Main.as_str(), event_name, info)
                 .ok();
         }
-        FrontEnd::Paused(paused) => {
-            app.emit_to(
-                ObliqoroWindow::Main.as_str(),
-                event_name,
-                paused,
-            )
-            .ok();
+        MsgToFrontend::Paused(paused) => {
+            app.emit_to(ObliqoroWindow::Main.as_str(), event_name, paused)
+                .ok();
         }
     }
 }
@@ -301,7 +257,7 @@ fn handle_break(
         BreakMessage::Start => {
             state.lock().start_break_session();
             menu_enabled(app, false);
-            sx.send(InternalMessage::ToFrontEnd(FrontEnd::GoToTimer))
+            sx.send(InternalMessage::ToFrontEnd(MsgToFrontend::GoToTimer))
                 .ok();
             WindowAction::show_window(app, fullscreen);
         }
@@ -339,14 +295,14 @@ pub fn start_message_handler(
                 InternalMessage::SetSetting(frontend_state) => {
                     if let Err(e) = update_settings(frontend_state, &state).await {
                         error!("{:#?}", e);
-                        sx.send(InternalMessage::ToFrontEnd(FrontEnd::Error)).ok();
+                        sx.send(InternalMessage::ToFrontEnd(MsgToFrontend::Error)).ok();
                     }
                     update_menu(&app_handle, &state, &sx);
                 }
                 InternalMessage::ResetSettings => {
                     if let Err(e) = reset_settings(&state, &sx).await {
                         error!("{:#?}", e);
-                        sx.send(InternalMessage::ToFrontEnd(FrontEnd::Error)).ok();
+                        sx.send(InternalMessage::ToFrontEnd(MsgToFrontend::Error)).ok();
                     }
                     update_menu(&app_handle, &state, &sx);
                 }
@@ -368,7 +324,8 @@ pub fn start_message_handler(
                     let paused = state.lock().toggle_pause();
                     update_menu_pause(&app_handle, paused);
                     set_icon(&app_handle, paused);
-                    sx.send(InternalMessage::ToFrontEnd(FrontEnd::Paused(paused))).ok();
+                    sx.send(InternalMessage::ToFrontEnd(MsgToFrontend::Paused(paused)))
+                        .ok();
                 }
             }
         }

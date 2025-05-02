@@ -1,7 +1,7 @@
 use parking_lot::Mutex;
 use std::sync::Arc;
 
-use crate::{application_state::ApplicationState, internal_message_handler::InternalMessage};
+use crate::{application_state::ApplicationState, backend_message_handler::InternalMessage};
 
 /// Spawn off a tokio thread, that loops continually, well with a 250ms pause between each loop
 /// The outer tread is saved into ApplicationState, so that it can be cancelled at any time

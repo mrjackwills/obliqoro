@@ -1,6 +1,6 @@
 use crate::{
     check_version,
-    internal_message_handler::{InternalMessage, PackageInfo, WindowVisibility},
+    backend_message_handler::{BuildInfo, InternalMessage, WindowVisibility},
     TauriState,
 };
 
@@ -12,10 +12,10 @@ pub use messages::*;
 #[allow(clippy::needless_pass_by_value)]
 pub fn init(state: TauriState<'_>) {
     for message in [
-        FrontEnd::GetSettings,
-        FrontEnd::NextBreak,
-        FrontEnd::SessionsBeforeLong,
-        FrontEnd::PackageInfo(PackageInfo::default()),
+        MsgToFrontend::GetSettings,
+        MsgToFrontend::NextBreak,
+        MsgToFrontend::SessionsBeforeLong,
+        MsgToFrontend::BuildInfo(BuildInfo::default()),
     ] {
         state
             .lock()

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { CurrentState, ModuleName } from '../types';
+import { FrontEndState, ModuleName } from '../types';
 
 export const settingModule = defineStore(ModuleName.Setting, {
 
@@ -21,7 +21,7 @@ export const settingModule = defineStore(ModuleName.Setting, {
 	}),
 
 	getters: {
-		get_current_state (): CurrentState {
+		get_current_state (): FrontEndState {
 			return {
 				auto_pause_threshold: this.auto_pause_threshold,
 				auto_pause_timespan_sec: this.auto_pause_timespan_sec,
@@ -91,7 +91,7 @@ export const settingModule = defineStore(ModuleName.Setting, {
 		set_session_before_next_long_break (x: string): void {
 			this.session_before_next_long_break = x;
 		},
-		set_current_state (x: CurrentState): void {
+		set_current_state (x: FrontEndState): void {
 			this.start_on_boot = x.start_on_boot;
 			this.fullscreen = x.fullscreen;
 			this.long_break_as_sec = x.long_break_as_sec;

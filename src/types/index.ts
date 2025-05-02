@@ -73,8 +73,8 @@ export type CpuMeasure = {
 	pause?: number;
 	resume?: number;
 };
-export type PackageInfo = Record<'homepage' | 'version' | 'build_date', string> & { github_version?: string };
-export type CurrentState = Record<'fullscreen' | 'auto_pause' | 'paused' | 'start_on_boot' | 'auto_resume', boolean>
+export type BuildInfo = Record<'homepage' | 'version' | 'build_date', string> & { github_version?: string };
+export type FrontEndState = Record<'fullscreen' | 'auto_pause' | 'paused' | 'start_on_boot' | 'auto_resume', boolean>
 	& Record<
 		'auto_pause_threshold' |
 		'auto_pause_timespan_sec' |

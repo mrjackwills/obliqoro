@@ -1,6 +1,6 @@
 use crate::{
-    internal_message_handler::{InternalMessage, WindowVisibility},
-    request_handlers::FrontEnd,
+    backend_message_handler::{InternalMessage, WindowVisibility},
+    request_handlers::MsgToFrontend,
     ObliqoroWindow,
 };
 use tauri::{
@@ -92,6 +92,7 @@ pub fn create_system_tray() -> SystemTray {
     SystemTray::new().with_menu(tray_menu)
 }
 
+/// Handle interaction events on the systemtray icon/menu
 pub fn on_system_tray_event(event: SystemTrayEvent, sx: &Sender<InternalMessage>) {
     match event {
         SystemTrayEvent::DoubleClick { .. } => {
@@ -100,7 +101,7 @@ pub fn on_system_tray_event(event: SystemTrayEvent, sx: &Sender<InternalMessage>
         }
         SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
             x if x == MenuItem::Settings.get_id() => {
-                sx.send(InternalMessage::ToFrontEnd(FrontEnd::GoToSettings))
+                sx.send(InternalMessage::ToFrontEnd(MsgToFrontend::GoToSettings))
                     .ok();
             }
             x if x == MenuItem::Quit.get_id() => {
