@@ -12,9 +12,9 @@
 <script setup lang="ts">
 import { listen, Event } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api/tauri';
-import { ListenMessage, ShowTimer, FrontEndRoutes, FrontEndState, BuildInfo, InvokeMessage, CpuMeasure } from './types';
+import { ListenMessage, ShowTimer, FrontEndRoutes, FrontEndState, BuildInfo, InvokeMessage, CpuMeasure } from '@/types';
 import { useRouter } from 'vue-router';
-import { snackError } from './services/snack';
+import { snackError } from '@/services/snack';
 
 const router = useRouter();
 const route = useRoute();

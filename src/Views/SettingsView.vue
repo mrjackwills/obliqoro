@@ -54,9 +54,9 @@
 
 <script setup lang="ts">
 import { invoke } from '@tauri-apps/api/tauri';
-import { InvokeMessage } from '../types';
-import { snackError } from '../services/snack';
-import SessionBreakSliders from '../components/Settings/SessionBreakSliders.vue';
+import { InvokeMessage } from '@/types';
+import { snackError } from '@/services/snack';
+import SessionBreakSliders from '@/components/Settings/SessionBreakSliders.vue';
 const settingStore = settingModule();
 
 const show_update = computed(() => packageinfoModule().github_version.length > 1 && packageinfoModule().version !== packageinfoModule().github_version);

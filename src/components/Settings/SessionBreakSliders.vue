@@ -28,7 +28,7 @@
 
 <script setup lang="ts">
 
-import { secondsToText } from '../../vanillaTS/helpers';
+import { secondsToText } from '@/vanillaTS/helpers';
 
 const settingStore = settingModule();
 

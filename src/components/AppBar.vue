@@ -26,7 +26,7 @@
 
 <script setup lang="ts">
 import { invoke } from '@tauri-apps/api/tauri';
-import { InvokeMessage } from '../types';
+import { InvokeMessage } from '@/types';
 import { mdiMinusThick } from '@mdi/js';
 
 const show_tooltip = ref(true);

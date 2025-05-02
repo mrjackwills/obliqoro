@@ -65,9 +65,8 @@
 </template>
 
 <script setup lang="ts">
-import { formatPercentage, secondsToText, zeroPad } from '../../vanillaTS/helpers';
+import { formatPercentage, secondsToText, zeroPad } from '@/vanillaTS/helpers';
 
-/// TODO if want pause and resume to have the same animation, need to pass in a prop 
 const cpuUsageStore = cpuUsageModule();
 const average_pause = computed(() => cpuUsageStore.average_pause);
 

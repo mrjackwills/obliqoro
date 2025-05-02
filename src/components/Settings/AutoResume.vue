@@ -74,7 +74,7 @@
 </template>
 
 <script setup lang="ts">
-import { formatPercentage, secondsToText, zeroPad } from '../../vanillaTS/helpers';
+import { formatPercentage, secondsToText, zeroPad } from '@/vanillaTS/helpers';
 
 const settingStore = settingModule();
 const cpuUsageStore = cpuUsageModule();

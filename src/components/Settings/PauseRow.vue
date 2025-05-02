@@ -43,9 +43,9 @@
 
 <script setup lang="ts">
 import { invoke } from '@tauri-apps/api/tauri';
+import { InvokeMessage } from '@/types';
 import { mdiCoffeeOutline, mdiPlay, mdiPause, mdiWeatherNight } from '@mdi/js';
-import { snackError } from '../../services/snack';
-import { InvokeMessage } from '../../types';
+import { snackError } from '@/services/snack';
 
 const settingStore = settingModule();
 

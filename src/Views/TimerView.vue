@@ -41,8 +41,8 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { FrontEndRoutes, InvokeMessage } from '../types';
-import { sec_to_minutes } from '../vanillaTS/helpers';
+import { FrontEndRoutes, InvokeMessage } from '@/types';
+import { sec_to_minutes } from '@/vanillaTS/helpers';
 import { invoke } from '@tauri-apps/api/tauri';
 
 const store = intervalModule();
