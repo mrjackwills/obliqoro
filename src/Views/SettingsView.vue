@@ -65,7 +65,6 @@ const show_update = computed(() => packageinfoModule().github_version.length > 1
 const rotation = ref(0);
 const rotation_interval = ref(0);
 
-
 // TODO this can pause if the timer view appears before it's calculated
 const start_rotation_interval = (): void => {
 	rotation_interval.value = window.setInterval(() => {
@@ -79,6 +78,14 @@ const stop_rotation_interval = (): void  => {
 };
 
 const run_rotation = computed(() => settingStore.auto_pause && cpuUsageModule().average_pause === 0 || settingStore.auto_resume && cpuUsageModule().average_resume === 0);
+
+onMounted(() => {
+	start_rotation_interval();
+});
+
+onUnmounted(() => {
+	stop_rotation_interval();
+});
 
 /// Only run rotation interval if needed
 watch(run_rotation, (i) => {
