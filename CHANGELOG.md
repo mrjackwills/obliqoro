@@ -5,6 +5,9 @@
 + auto_resume when break timer visible, [7d3b0a39f2e25d85e6c13eb1c745e1e084deb85e]
 + check for update every 7 days, [7d205d6f918daa74d236896b24e668e10a760339]
 
+### Fixes
++ resume/pause animation spinner [d4edf4055ce8d2e90805171a7850a00be555ca82]
+
 # <a href='https://github.com/mrjackwills/obliqoro/releases/tag/v0.2.1'>v0.2.1</a>
 ### 2025-05-02
 
