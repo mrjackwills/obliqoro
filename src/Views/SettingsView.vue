@@ -65,6 +65,8 @@ const show_update = computed(() => packageinfoModule().github_version.length > 1
 const rotation = ref(0);
 const rotation_interval = ref(0);
 
+
+// TODO this can pause if the timer view appears before it's calculated
 const start_rotation_interval = (): void => {
 	rotation_interval.value = window.setInterval(() => {
 		rotation.value += 20;
@@ -136,7 +138,7 @@ const send_state = async (): Promise<void> => {
 };
 
 
-watch(current_state, async (_i) => {
+watch(current_state, async () => {
 	await send_state();
 });
 
