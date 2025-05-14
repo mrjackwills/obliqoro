@@ -27,7 +27,7 @@ struct GitHubResponse {
 }
 
 /// Check github to see if a new version is available, is executed in own thread, send result to frontend
-pub fn parse_github(sx: Sender<InternalMessage>) {
+pub fn fetch_updates(sx: Sender<InternalMessage>) {
     tokio::spawn(async move {
         let Ok(client) = get_client() else {
             return;

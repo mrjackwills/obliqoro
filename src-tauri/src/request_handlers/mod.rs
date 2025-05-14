@@ -22,7 +22,7 @@ pub fn init(state: TauriState<'_>) {
             .send(InternalMessage::ToFrontEnd(message))
             .ok();
     }
-    check_version::parse_github(state.lock().sx.clone());
+    check_version::fetch_updates(state.lock().sx.clone());
 }
 
 /// Request to reset settings to default
