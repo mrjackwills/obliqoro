@@ -46,7 +46,7 @@ sysinfo = { version = "0.35", default-features = false, features = ["system"] }
 tauri = { version = "1.8", features = [ "shell-open", "native-tls-vendored", "system-tray", "icon-png"] }
 tauri-plugin-single-instance = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 thiserror = "2.0"
-tokio = { version = "1.44", features = ["full"] }
+tokio = { version = "1.45", features = ["full"] }
 tracing = "0.1"
 tracing-appender = "0.2"
 tracing-subscriber = { version="0.3", features = ["json"] }
