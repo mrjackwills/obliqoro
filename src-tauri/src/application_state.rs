@@ -13,12 +13,15 @@ use tokio::{sync::broadcast::Sender, task::JoinHandle};
 use crate::{
     app_error::AppError,
     backend_message_handler::{BreakMessage, InternalMessage},
+    check_version,
     db::{self, ModelSettings},
     request_handlers::{CpuMeasure, FrontEndState, MsgToFrontend},
 };
 
 use tracing::Level;
 use tracing_subscriber::{fmt as t_fmt, prelude::__tracing_subscriber_SubscriberExt};
+
+const ONE_WEEK_AS_SEC: u64 = 60 * 60 * 24 * 7;
 
 /// Setup tracing - warning this can write huge amounts to disk
 #[cfg(debug_assertions)]
@@ -134,6 +137,7 @@ pub struct ApplicationState {
     pub session_status: SessionStatus,
     pub sqlite: SqlitePool,
     pub sx: Sender<InternalMessage>,
+    start_time: std::time::Instant,
     cpu_usage: VecDeque<f32>,
     data_location: PathBuf,
     session_count: u8,
@@ -167,6 +171,7 @@ impl ApplicationState {
             cpu_usage: VecDeque::with_capacity(CPU_VECDEQUE_LEN),
             data_location,
             heartbeat_process: None,
+            start_time: std::time::Instant::now(),
             pause_after_break: false,
             session_count: 0,
             session_status: SessionStatus::Work,
@@ -207,6 +212,15 @@ impl ApplicationState {
     /// Get the directory where the database is stored
     pub const fn get_data_location(&self) -> &PathBuf {
         &self.data_location
+    }
+
+    /// Check if have been running for more than one week,
+    /// If so check for updates & reset start timer
+    pub fn update_timer_check(&mut self) {
+        if self.start_time.elapsed().as_secs() >= ONE_WEEK_AS_SEC {
+            self.start_time = std::time::Instant::now();
+            check_version::fetch_updates(self.sx.clone());
+        }
     }
 
     /// Return, in seconds, the current amount left of the onoing work - or break - session
