@@ -1,4 +1,3 @@
-/* eslint-disable @stylistic/ts/object-curly-newline */
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
@@ -12,12 +11,8 @@ const app = createApp(App);
 
 // Inject router into store
 declare module 'pinia' {
-	export interface Pinia {
-		router: () => Router;
-	}
-	export interface PiniaCustomProperties {
-		router: Router;
-	}
+	export interface Pinia { router: () => Router }
+	export interface PiniaCustomProperties { router: Router }
 }
 
 const pinia = createPinia();
@@ -26,8 +21,8 @@ pinia.use(({ store }) => {
 });
 pinia.router = (): Router => router;
 
-app
-	.use(router)
-	.use(pinia)
-	.use(vuetify)
-	.mount('#app');
+app.
+	use(router).
+	use(pinia).
+	use(vuetify).
+	mount('#app');

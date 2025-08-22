@@ -9,7 +9,7 @@
 						Settings
 					</v-col>
 				</v-row>
-			
+
 				<HR />
 
 				<PauseRow />
@@ -18,7 +18,7 @@
 
 				<!-- SWITCHES -->
 				<v-row align='center' class='ma-0 pa-0' justify='space-between'>
-					
+
 					<v-col v-for='(item, index) in switches' :key='index' cols='auto' class='ma-0 pa-0'>
 
 						<v-row class='text-primary ma-0 pa-0' justify='space-between'>
@@ -32,7 +32,7 @@
 								:class='item.model.value ? "text-primary" : "text-offwhite"'>
 								{{ item.label }}
 							</v-col>
-							
+
 						</v-row>
 
 					</v-col>
@@ -61,7 +61,7 @@ const settingStore = settingModule();
 
 const show_update = computed(() => packageinfoModule().github_version.length > 1 && packageinfoModule().version !== packageinfoModule().github_version);
 
-/// Pass is rotation as a prop, so that both spinners have the same animation
+// / Pass is rotation as a prop, so that both spinners have the same animation
 const rotation = ref(0);
 const rotation_interval = ref(0);
 
@@ -73,7 +73,7 @@ const start_rotation_interval = (): void => {
 	}, 30);
 };
 
-const stop_rotation_interval = (): void  => {
+const stop_rotation_interval = (): void => {
 	clearInterval(rotation_interval.value);
 };
 
@@ -87,7 +87,7 @@ onUnmounted(() => {
 	stop_rotation_interval();
 });
 
-/// Only run rotation interval if needed
+// / Only run rotation interval if needed
 watch(run_rotation, (i) => {
 	if (i) {
 		start_rotation_interval();
@@ -106,8 +106,7 @@ const switches = computed(() => [
 		label: 'start on boot',
 		model: start_on_boot
 	}
-]
-);
+]);
 
 const start_on_boot = computed({
 	get (): boolean {

@@ -2,7 +2,7 @@
 
 	<v-row class='text-primary ma-0 pa-0 mt-n6' justify='start' >
 
-		
+
 		<v-col cols='auto' class='ma-0 pa-0'>
 			<v-row class='text-primary ma-0 pa-0' justify='start'>
 
@@ -16,20 +16,20 @@
 					/>
 				</v-col>
 
-				<v-col cols='auto' class='ma-0 pa-0 text-left text-body-2 mt-2' 
+				<v-col cols='auto' class='ma-0 pa-0 text-left text-body-2 mt-2'
 					:class='[!auto_pause? "text-offwhite diss" : auto_resume ? "text-primary" : "text-offwhite"]'>
 					auto-resume
 				</v-col>
 
 			</v-row>
-			
+
 			<v-tooltip activator='parent' v-if='!auto_resume ' content-class='tooltip' text='Automatically resume session if average CPU usage exceeds threshold' />
-		
+
 		</v-col>
 
 		<v-spacer />
 
-		<v-col cols='5' class='ma-0 pa-0 text-left mt-2' 
+		<v-col cols='5' class='ma-0 pa-0 text-left mt-2'
 			v-if='auto_resume && auto_pause'
 			:class='[!auto_pause? "text-offwhite diss" : auto_resume ? "text-primary" : "text-offwhite"]'>
 			<v-row class='ma-0 pa-0 text-caption' justify='space-between'>
@@ -49,7 +49,7 @@
 	</v-row>
 
 	<v-row class='text-primary ma-0 pa-0 mt-n6' :class='{"disabled-opacity":!auto_resume}' justify='space-between' >
-	
+
 		<v-col cols='5' v-for='(item, index) in sliders_auto_resume' :key='index' class='ma-0 pa-0'>
 
 			<v-row class='text-offwhite ma-0 pa-0'>
@@ -65,7 +65,7 @@
 			<v-row class='ma-0 pa-0 mt-n2'>
 				<v-col cols='12' class='ma-0 pa-0'>
 					<v-slider v-model='item.model.value' color='primary' :disabled='!auto_resume||!auto_pause' :min='item.min'
-						:max='item.max' :step='item.step' rounded  :thumb-size='10' :track-size='2' 
+						:max='item.max' :step='item.step' rounded  :thumb-size='10' :track-size='2'
 						class='ma-0 pa-0' />
 				</v-col>
 			</v-row>

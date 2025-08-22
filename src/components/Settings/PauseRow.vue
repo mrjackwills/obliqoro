@@ -66,7 +66,7 @@ const toggle_pause = async (): Promise<void> => {
 	paused.value = !paused.value;
 	try {
 		await invoke(InvokeMessage.TogglePause);
-	} catch (e)  {
+	} catch (e) {
 		snackError({ message: `Unable to pause: ${e}` });
 	}
 };

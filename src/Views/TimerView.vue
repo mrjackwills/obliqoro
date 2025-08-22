@@ -87,7 +87,7 @@ watch(auto_resume, async () => {
 
 const current_state = computed(() => settingStore.get_current_state);
 
-// TODO: refactor this, as it's used in the SettingsView as well 
+// TODO: refactor this, as it's used in the SettingsView as well
 const saveTimeout = ref(0);
 
 const send_state = async (): Promise<void> => {
