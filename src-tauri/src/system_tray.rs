@@ -41,7 +41,7 @@ impl MenuItem {
 
 pub fn menu_enabled(app: &tauri::AppHandle, enable: bool) {
     if !enable {
-        app.get_window(ObliqoroWindow::Main.as_str())
+        app.get_webview_window(ObliqoroWindow::Main.as_str())
             .and_then(|window| {
                 window
                     .app_handle()

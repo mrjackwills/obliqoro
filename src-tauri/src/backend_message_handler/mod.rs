@@ -1,6 +1,6 @@
 use parking_lot::Mutex;
 use std::sync::Arc;
-use tauri::{AppHandle, Manager};
+use tauri::{AppHandle, Emitter, Manager};
 use tracing::error;
 mod messages;
 
@@ -25,20 +25,23 @@ fn update_menu_session_number(
     state: &Arc<Mutex<ApplicationState>>,
     sx: &Sender<InternalMessage>,
 ) {
-    if let Some(window) = app.get_window(ObliqoroWindow::Main.as_str()) {
-        window
-            .app_handle()
-            .tray_handle()
-            .try_get_item(MenuItem::Session.get_id())
-            .and_then(|item| {
-                item.set_title(state.lock().get_sessions_before_long_title())
-                    .ok()
-            });
-    }
-    sx.send(InternalMessage::ToFrontEnd(
-        MsgToFrontend::SessionsBeforeLong,
-    ))
-    .ok();
+	// TODO fix me
+    // if let Some(window) = app.get_webview_window(ObliqoroWindow::Main.as_str()) {
+    //     window
+    //         .app_handle()
+	// 		.tray_by_id(id)
+			
+    //         .tray_handle()
+    //         .try_get_item(MenuItem::Session.get_id())
+    //         .and_then(|item| {
+    //             item.set_title(state.lock().get_sessions_before_long_title())
+    //                 .ok()
+    //         });
+    // }
+    // sx.send(InternalMessage::ToFrontEnd(
+    //     MsgToFrontend::SessionsBeforeLong,
+    // ))
+    // .ok();
 }
 
 /// Update the systemtray next break in text, and emit to frontend to next break timer
@@ -47,15 +50,16 @@ fn update_menu_next_break(
     state: &Arc<Mutex<ApplicationState>>,
     sx: &Sender<InternalMessage>,
 ) {
-    if let Some(window) = app.get_window(ObliqoroWindow::Main.as_str()) {
-        window
-            .app_handle()
-            .tray_handle()
-            .try_get_item(MenuItem::Next.get_id())
-            .and_then(|item| item.set_title(state.lock().get_next_break_title()).ok());
-    }
-    sx.send(InternalMessage::ToFrontEnd(MsgToFrontend::NextBreak))
-        .ok();
+	// todo fix me
+    // if let Some(window) = app.get_webview_window(ObliqoroWindow::Main.as_str()) {
+    //     window
+    //         .app_handle()
+    //         .tray_handle()
+    //         .try_get_item(MenuItem::Next.get_id())
+    //         .and_then(|item| item.set_title(state.lock().get_next_break_title()).ok());
+    // }
+    // sx.send(InternalMessage::ToFrontEnd(MsgToFrontend::NextBreak))
+    //     .ok();
 }
 
 /// Update the systemtray `Puased/Resume` item
@@ -67,23 +71,24 @@ fn update_menu_pause(app: &AppHandle, paused: bool) {
         MenuItem::Pause.as_str()
     };
 
-    if let Some(window) = app.get_window(ObliqoroWindow::Main.as_str()) {
-        window
-            .app_handle()
-            .tray_handle()
-            .try_get_item(MenuItem::Next.get_id())
-            .and_then(|item| item.set_enabled(!paused).ok());
-        window
-            .app_handle()
-            .tray_handle()
-            .try_get_item(MenuItem::Session.get_id())
-            .and_then(|item| item.set_enabled(!paused).ok());
-        window
-            .app_handle()
-            .tray_handle()
-            .try_get_item(MenuItem::Pause.get_id())
-            .and_then(|item| item.set_title(title).ok());
-    }
+	// todo fix me
+    // if let Some(window) = app.get_webview_window(ObliqoroWindow::Main.as_str()) {
+    //     window
+    //         .app_handle()
+    //         .tray_handle()
+    //         .try_get_item(MenuItem::Next.get_id())
+    //         .and_then(|item| item.set_enabled(!paused).ok());
+    //     window
+    //         .app_handle()
+    //         .tray_handle()
+    //         .try_get_item(MenuItem::Session.get_id())
+    //         .and_then(|item| item.set_enabled(!paused).ok());
+    //     window
+    //         .app_handle()
+    //         .tray_handle()
+    //         .try_get_item(MenuItem::Pause.get_id())
+    //         .and_then(|item| item.set_title(title).ok());
+    // }
 }
 
 /// Update all menu items
@@ -173,7 +178,7 @@ fn emit_to_frontend(
         MsgToFrontend::GoToSettings => {
             let on_break = state.lock().on_break();
             if !on_break {
-                app.emit_to(ObliqoroWindow::Main.as_str(), event_name, ())
+				app.emit_str(ObliqoroWindow::Main.as_str(), event_name.to_owned())
                     .ok();
                 WindowAction::toggle_visibility(app, false);
             }

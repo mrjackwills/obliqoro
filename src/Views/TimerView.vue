@@ -54,7 +54,7 @@
 import { computed } from 'vue';
 import { FrontEndRoutes, InvokeMessage } from '@/types';
 import { sec_to_minutes } from '@/vanillaTS/helpers';
-import { invoke } from '@tauri-apps/api/tauri';
+import { invoke } from '@tauri-apps/api/core';
 import { snackError } from '@/services/snack';
 const settingStore = settingModule();
 

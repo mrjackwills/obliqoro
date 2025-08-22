@@ -60,17 +60,20 @@ async fn main() -> Result<(), ()> {
 
             #[allow(unused_variables)]
             let app_builder = tauri::Builder::default()
+                .plugin(tauri_plugin_shell::init())
                 .manage(state)
                 .setup(|app| {
                     #[cfg(debug_assertions)]
                     {
-                        if let Some(main_window) = app.get_window(ObliqoroWindow::Main.as_str()) {
+                        if let Some(main_window) = app.get_webview_window(ObliqoroWindow::Main.as_str()) {
                             main_window.open_devtools();
                         }
                     }
                     Ok(())
                 })
-                .system_tray(tray)
+				
+                // .system_tray(tray)
+				// .tr
                 .on_system_tray_event(move |_app, event| {
                     system_tray::on_system_tray_event(event, &tray_sx);
                 })

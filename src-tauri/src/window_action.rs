@@ -51,21 +51,21 @@ impl WindowAction {
 
     /// show window
     pub fn show_window(app: &AppHandle, fullscreen: bool) {
-        if let Some(window) = app.get_window(ObliqoroWindow::Main.as_str()) {
+        if let Some(window) = app.get_webview_window(ObliqoroWindow::Main.as_str()) {
             Self::show(&window, fullscreen);
         }
     }
 
     /// hide window
     pub fn hide_window(app: &AppHandle, fullscreen: bool) {
-        if let Some(window) = app.get_window(ObliqoroWindow::Main.as_str()) {
+        if let Some(window) = app.get_webview_window(ObliqoroWindow::Main.as_str()) {
             Self::hide(&window, fullscreen);
         }
     }
 
     /// Toggle the visible of the main window based on current visibility
     pub fn toggle_visibility(app: &AppHandle, fullscreen: bool) {
-        if let Some(window) = app.get_window(ObliqoroWindow::Main.as_str()) {
+        if let Some(window) = app.get_webview_window(ObliqoroWindow::Main.as_str()) {
             match window.is_visible() {
                 Ok(true) => Self::hide(&window, fullscreen),
                 Ok(false) => Self::show(&window, fullscreen),
@@ -76,7 +76,7 @@ impl WindowAction {
 
     /// Change from full screen to the standard window size
     pub fn remove_fullscreen(app: &AppHandle) {
-        if let Some(window) = app.get_window(ObliqoroWindow::Main.as_str()) {
+        if let Some(window) = app.get_webview_window(ObliqoroWindow::Main.as_str()) {
             match window.is_visible() {
                 Ok(_) => {
                     Self::_remove_fullscreen(&window);
@@ -88,7 +88,7 @@ impl WindowAction {
 
     // unminimize the main window
     // pub fn unminimize(app: &AppHandle) {
-    //     if let Some(window) = app.get_window(ObliqoroWindow::Main.as_str()) {
+    //     if let Some(window) = app.get_webview_window(ObliqoroWindow::Main.as_str()) {
     //         window.unminimize().unwrap_or_default();
     //     }
     // }

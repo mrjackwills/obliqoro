@@ -53,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import { invoke } from '@tauri-apps/api/tauri';
+import { invoke } from '@tauri-apps/api/core';
 import { InvokeMessage } from '@/types';
 import { snackError } from '@/services/snack';
 import SessionBreakSliders from '@/components/Settings/SessionBreakSliders.vue';
