@@ -25,8 +25,10 @@ const packageinfoStore = packageinfoModule();
 
 const on_settings = computed(() => route.fullPath === FrontEndRoutes.Settings);
 
-/// Disable webview hotkeys, reloading, searching, etc
-/// Also disable context menu
+/*
+ * Disable webview hotkeys, reloading, searching, etc
+ * also disable context menu
+ */
 const disable_hotkeys = (): void => {
 	window.addEventListener('contextmenu', (event) => event.preventDefault());
 

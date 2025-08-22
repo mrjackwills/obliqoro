@@ -37,7 +37,6 @@ export const settingModule = defineStore(ModuleName.Setting, {
 				short_break_as_sec: this.short_break_as_sec,
 				start_on_boot: this.start_on_boot
 			};
-
 		}
 	},
 	actions: {

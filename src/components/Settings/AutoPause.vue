@@ -7,16 +7,16 @@
 				<v-col cols='auto' class='text-center ma-0 pa-0 mr-3' >
 					<v-switch v-model='auto_pause' base-color='offwhite' color='primary' density='compact' flat/>
 				</v-col>
-				
+
 				<v-col cols='auto' class='ma-0 pa-0 text-left text-body-2 mt-2'
 					:class='auto_pause ? "text-primary" : "text-offwhite"'>
 					auto-pause
 				</v-col>
-			
+
 			</v-row>
 			<v-tooltip activator='parent' v-if='!auto_pause' content-class='tooltip' text='Automatically pause session if average CPU usage drops below threshold' />
-			
-			
+
+
 		</v-col>
 
 		<v-spacer />
