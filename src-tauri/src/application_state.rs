@@ -149,7 +149,7 @@ pub struct ApplicationState {
 impl ApplicationState {
     pub async fn new(
         data_location: PathBuf,
-        sx: &Sender<InternalMessage>,
+        sx: Sender<InternalMessage>,
 		system_tray_menu: tauri::menu::Menu<tauri::Wry>
     ) -> Result<Self, AppError> {
         let err = || {
@@ -164,8 +164,20 @@ impl ApplicationState {
             return err();
         }
         setup_tracing(&data_location)?;
-        let sqlite = db::init_db(&data_location).await?;
-        let settings = ModelSettings::init(&sqlite).await?;
+
+		// let (tmp_tx, tmp_rx) = std::sync::mpsc::channel();
+
+		// let dl = data_location.clone();
+		// tokio::spawn(async  move {
+
+			let sqlite = db::init_db(&data_location).await.unwrap();
+			let settings = ModelSettings::init(&sqlite).await.unwrap();
+			// tmp_tx.send((sqlite, settings)).ok();
+		// });
+
+		// let Ok((sqlite, settings)) = tmp_rx.recv() else {
+			// std::process::exit(1);
+		// };
         Ok(Self {
             cpu_usage: VecDeque::with_capacity(CPU_VECDEQUE_LEN),
             data_location,
@@ -176,7 +188,7 @@ impl ApplicationState {
             session_status: SessionStatus::Work,
             settings,
             sqlite,
-            sx: sx.clone(),
+            sx,
 			system_tray_menu,
             timer: Timer::default(),
         })

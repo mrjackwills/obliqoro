@@ -10,7 +10,7 @@ impl WindowAction {
     /// Show the window
     /// Linux v Windows, need to handle fullscreen & resize on each platform differently
     #[cfg(target_os = "windows")]
-    fn show(window: &tauri::Window, fullscreen: bool) {
+    fn show(window: &WebviewWindow, fullscreen: bool) {
         window.set_fullscreen(fullscreen).ok();
         window.set_resizable(false).ok();
         window.show().ok();

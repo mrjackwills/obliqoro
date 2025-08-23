@@ -11,7 +11,7 @@
     "lint": "eslint ./src"
   },
   "dependencies": {
-    "@tauri-apps/api": "^2.0.0",
+    "@tauri-apps/api": "^2.8.0",
     "@tauri-apps/plugin-shell": "^2.3.0",
     "@vuelidate/core": "^2.0.3",
     "@vuelidate/validators": "^2.0.4",
@@ -31,7 +31,7 @@
     "@vitejs/plugin-vue": "^6.0.1",
     "@vue/eslint-config-typescript": "^14.6.0",
     "@vue/tsconfig": "^0.8.1",
-    "eslint": "9.33.0",
+    "eslint": "9.34.0",
     "sass": "^1.90.0",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.40.0",

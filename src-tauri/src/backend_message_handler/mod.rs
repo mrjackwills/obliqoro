@@ -104,7 +104,7 @@ fn update_menu(
 /// Stop the tick process, and start a new one
 fn reset_timer(state: &Arc<Mutex<ApplicationState>>) {
     state.lock().reset_timer();
-    heartbeat_process(state);
+    heartbeat_process(Arc::clone(&state));
 }
 
 async fn reset_settings(
@@ -286,12 +286,12 @@ fn handle_break(
 
 /// Spawn into a tokio thread, handle all internal messages
 pub fn start_message_handler(
-    app: &tauri::App,
+    app_handle: &AppHandle,
     state: Arc<Mutex<ApplicationState>>,
     mut rx: Receiver<InternalMessage>,
     sx: Sender<InternalMessage>,
 ) {
-    let app_handle = app.app_handle().to_owned();
+    let app_handle = app_handle.to_owned();
     tokio::spawn(async move {
         while let Ok(message) = rx.recv().await {
             match message {

@@ -5,11 +5,13 @@ use crate::{application_state::ApplicationState, backend_message_handler::Intern
 
 /// Spawn off a tokio thread, that loops continually, well with a 250ms pause between each loop
 /// The outer tread is saved into ApplicationState, so that it can be cancelled at any time
-pub fn heartbeat_process(state: &Arc<Mutex<ApplicationState>>) {
+pub fn heartbeat_process(state: Arc<Mutex<ApplicationState>>) {
+println!("pre");
     if let Some(x) = &state.lock().heartbeat_process {
         x.abort();
     }
-    let spawn_state = Arc::clone(state);
+	println!("heartbe_p");
+    let spawn_state = Arc::clone(&state);
     state.lock().sx.send(InternalMessage::UpdateMenuTimer).ok();
     state.lock().heartbeat_process = Some(tokio::task::spawn(async move {
         let mut sys = sysinfo::System::new();
