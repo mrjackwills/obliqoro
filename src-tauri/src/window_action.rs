@@ -1,3 +1,5 @@
+#[cfg(not(target_os = "windows"))]
+use tauri::WebviewWindow;
 use tauri::{AppHandle, Manager};
 
 use crate::ObliqoroWindow;
@@ -18,7 +20,7 @@ impl WindowAction {
     /// Show the window
     /// see github issue #1
     #[cfg(not(target_os = "windows"))]
-    fn show(window: &tauri::Window, fullscreen: bool) {
+    fn show(window: &WebviewWindow, fullscreen: bool) {
         if fullscreen {
             if window.is_visible().unwrap_or_default() {
                 window.hide().ok();
@@ -35,13 +37,13 @@ impl WindowAction {
     }
 
     /// Change from full screen to the standard window size
-    fn _remove_fullscreen(window: &tauri::Window) {
+    fn _remove_fullscreen(window: &WebviewWindow) {
         window.set_resizable(true).ok();
         window.set_fullscreen(false).ok();
     }
 
     /// Hide window
-    fn hide(window: &tauri::Window, fullscreen: bool) {
+    fn hide(window: &WebviewWindow, fullscreen: bool) {
         if fullscreen {
             Self::_remove_fullscreen(window);
         }
@@ -52,6 +54,7 @@ impl WindowAction {
     /// show window
     pub fn show_window(app: &AppHandle, fullscreen: bool) {
         if let Some(window) = app.get_webview_window(ObliqoroWindow::Main.as_str()) {
+			// window.sh
             Self::show(&window, fullscreen);
         }
     }

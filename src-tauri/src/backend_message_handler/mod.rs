@@ -12,7 +12,7 @@ use crate::{
     db::ModelSettings,
     heartbeat::heartbeat_process,
     request_handlers::{FrontEndState, MsgToFrontend, ShowTimer},
-    system_tray::{menu_enabled, set_icon, MenuItem},
+    system_tray::{menu_enabled, set_icon, MenuEntry},
     window_action::WindowAction,
     ObliqoroWindow,
 };
@@ -68,7 +68,7 @@ fn update_menu_pause(app: &AppHandle, paused: bool) {
     let title = if paused {
         "Resume"
     } else {
-        MenuItem::Pause.as_str()
+        MenuEntry::Pause.as_str()
     };
 
 	// todo fix me
@@ -291,7 +291,7 @@ pub fn start_message_handler(
     mut rx: Receiver<InternalMessage>,
     sx: Sender<InternalMessage>,
 ) {
-    let app_handle = app.handle();
+    let app_handle = app.app_handle().to_owned();
     tokio::spawn(async move {
         while let Ok(message) = rx.recv().await {
             match message {

@@ -130,7 +130,7 @@ pub static STRATEGIES: LazyLock<Vec<String>> = LazyLock::new(|| {
 /// Store a most 15 minutes worth of cpu data in the vecdeque
 const CPU_VECDEQUE_LEN: usize = 60 * 15;
 
-#[derive(Debug)]
+// #[derive(Debug)]
 pub struct ApplicationState {
     pub heartbeat_process: Option<JoinHandle<()>>,
     pub pause_after_break: bool,
@@ -141,14 +141,16 @@ pub struct ApplicationState {
     cpu_usage: VecDeque<f32>,
     data_location: PathBuf,
     session_count: u8,
+	system_tray_menu: tauri::menu::Menu<tauri::Wry>,
     settings: ModelSettings,
     timer: Timer,
 }
 
 impl ApplicationState {
     pub async fn new(
-        app_dir: Option<PathBuf>,
+        data_location: PathBuf,
         sx: &Sender<InternalMessage>,
+		system_tray_menu: tauri::menu::Menu<tauri::Wry>
     ) -> Result<Self, AppError> {
         let err = || {
             Err(AppError::FS(
@@ -156,9 +158,6 @@ impl ApplicationState {
             ))
         };
 
-        let Some(data_location) = app_dir else {
-            return err();
-        };
         if !std::fs::exists(&data_location).unwrap_or_default()
             && std::fs::create_dir(&data_location).is_err()
         {
@@ -178,6 +177,7 @@ impl ApplicationState {
             settings,
             sqlite,
             sx: sx.clone(),
+			system_tray_menu,
             timer: Timer::default(),
         })
     }
