@@ -1,12 +1,9 @@
-use std::sync::{Arc, LazyLock};
+use std::sync::LazyLock;
 
 use crate::{
-    application_state::ApplicationState,
-    backend_message_handler::{InternalMessage, WindowVisibility},
-    request_handlers::ToFrontEnd,
+    backend_message_handler::{MsgFE, MsgI, MsgWV},
     SYSTEM_TRAY_ID,
 };
-use parking_lot::Mutex;
 use tauri::{
     image::Image,
     menu::{Menu, MenuEvent, MenuItem},
@@ -47,11 +44,9 @@ impl MenuEntry {
 }
 
 /// Change the text of the Next item, and if on break, disable all items, else enable all
-pub fn change_menu_entry_status(state: &Arc<Mutex<ApplicationState>>, enable: bool) {
+pub fn change_menu_entry_status(system_tray_menu: &Menu<Wry>, enable: bool) {
     if !enable {
-        state
-            .lock()
-            .system_tray_menu
+        system_tray_menu
             .get(MenuEntry::Next.get_id())
             .and_then(|i| i.as_menuitem().and_then(|i| i.set_text("on a break").ok()));
     }
@@ -62,9 +57,7 @@ pub fn change_menu_entry_status(state: &Arc<Mutex<ApplicationState>>, enable: bo
         MenuEntry::Next,
         MenuEntry::Session,
     ] {
-        state
-            .lock()
-            .system_tray_menu
+        system_tray_menu
             .get(i.get_id())
             .and_then(|i| i.as_menuitem().and_then(|i| i.set_enabled(enable).ok()));
     }
@@ -142,7 +135,7 @@ fn gen_menu_all_enabled(app_handle: &AppHandle) -> Result<Menu<Wry>, tauri::Erro
 
 pub fn create_system_tray(
     app_handle: &tauri::AppHandle,
-    sx: Sender<InternalMessage>,
+    sx: Sender<MsgI>,
 ) -> Result<Menu<Wry>, tauri::Error> {
     let s1 = sx.clone();
     let menu = gen_menu_all_enabled(app_handle)?;
@@ -158,28 +151,24 @@ pub fn create_system_tray(
 }
 
 #[allow(clippy::needless_pass_by_value)]
-fn on_tray_event(event: TrayIconEvent, sx: Sender<InternalMessage>) {
+fn on_tray_event(event: TrayIconEvent, sx: Sender<MsgI>) {
     if let TrayIconEvent::DoubleClick { .. } = event {
-        sx.send(InternalMessage::Window(WindowVisibility::Toggle))
-            .ok();
+        sx.send(MsgI::Window(MsgWV::Toggle)).ok();
     }
 }
 
 /// Handle interaction events on the systemtray icon/menu
-fn on_menu_entry_event(event: &MenuEvent, sx: &Sender<InternalMessage>) {
+fn on_menu_entry_event(event: &MenuEvent, sx: &Sender<MsgI>) {
     match event.id.as_ref() {
         val if val == MenuEntry::Settings.get_id() => {
-            sx.send(InternalMessage::ToFrontEnd(ToFrontEnd::GoToSettings))
-                .ok();
+            sx.send(MsgI::ToFrontEnd(MsgFE::GoToSettings)).ok();
         }
         val if val == MenuEntry::Quit.get_id() => {
-            sx.send(InternalMessage::Window(WindowVisibility::Close))
-                .ok();
+            sx.send(MsgI::Window(MsgWV::Close)).ok();
         }
         val if val == MenuEntry::Pause.get_id() => {
-            sx.send(InternalMessage::Pause).ok();
+            sx.send(MsgI::Pause).ok();
         }
         _ => (),
     }
 }
-

@@ -3,13 +3,8 @@
     windows_subsystem = "windows"
 )]
 
-#![allow(unused)]
-
-use application_state::ApplicationState;
-use backend_message_handler::{start_message_handler, InternalMessage, WindowVisibility};
+use backend_message_handler::{MsgI, MsgWV};
 use heartbeat::heartbeat_process;
-use parking_lot::Mutex;
-use std::sync::Arc;
 use tauri::generate_context;
 
 use tauri::{Builder, Manager};
@@ -17,7 +12,6 @@ use tauri::{Builder, Manager};
 use crate::backend_message_handler::MessageHandler;
 
 mod app_error;
-mod application_state;
 mod backend_message_handler;
 mod check_version;
 mod db;
@@ -27,7 +21,7 @@ mod system_tray;
 mod window_action;
 
 // TODO change to an sx
-pub type TauriState<'a> = tauri::State<'a, tokio::sync::broadcast::Sender<InternalMessage>>;
+pub type TauriState<'a> = tauri::State<'a, tokio::sync::broadcast::Sender<MsgI>>;
 
 // TODO MOVE ME
 /// Simple macro to create an empty String, or create String from a &str - to get rid of .to_owned() / String::from() etc
@@ -47,18 +41,11 @@ const MAIN_WINDOW: &str = "main";
 #[tokio::main]
 async fn main() -> Result<(), ()> {
     let (sx, rx) = tokio::sync::broadcast::channel(128);
-    let (sx1, sx2, sx3, sx4) = (sx.clone(), sx.clone(), sx.clone(), sx.clone());
-
-    // Start the message_handler here, use a sx/rx to send the tray mnu & data location to the state?
+    let (sx1, sx2, sx3) = (sx.clone(), sx.clone(), sx.clone());
 
     let (setup_tx, setup_rx) = tokio::sync::oneshot::channel();
-    if MessageHandler::init(rx, sx.clone(), setup_rx)
-        .await
-        .is_err()
-    {
-        println!("Error with MessageHandler init");
-        std::process::exit(1);
-    }
+    MessageHandler::init(rx, sx.clone(), setup_rx);
+    heartbeat_process(&sx);
 
     Builder::default()
         .setup(|app| {
@@ -70,11 +57,11 @@ async fn main() -> Result<(), ()> {
             }
 
             let Ok(app_data_dir) = tauri::path::PathResolver::app_data_dir(app.path()) else {
-				// todo printerr
+                // todo printerr
                 std::process::exit(1)
             };
             let Ok(system_tray_menu) = system_tray::create_system_tray(app.app_handle(), sx) else {
-				// todo printerr
+                // todo printerr
                 std::process::exit(1)
             };
             setup_tx
@@ -86,13 +73,11 @@ async fn main() -> Result<(), ()> {
         .on_window_event(move |_window, event| match event {
             tauri::WindowEvent::CloseRequested { api, .. } => {
                 api.prevent_close();
-                sx3.send(InternalMessage::Window(WindowVisibility::Hide))
-                    .ok();
+                sx2.send(MsgI::Window(MsgWV::Hide)).ok();
             }
             tauri::WindowEvent::Moved(val) => {
                 if val.x <= -32000 && val.y <= -32000 {
-                    sx3.send(InternalMessage::Window(WindowVisibility::Minimize))
-                        .ok();
+                    sx2.send(MsgI::Window(MsgWV::Minimize)).ok();
                 }
             }
             _ => (),
@@ -108,8 +93,7 @@ async fn main() -> Result<(), ()> {
         ])
         .plugin(tauri_plugin_single_instance::init(
             move |_app, _argv, _cwd| {
-                sx4.send(InternalMessage::Window(WindowVisibility::Show))
-                    .ok();
+                sx3.send(MsgI::Window(MsgWV::Show)).ok();
             },
         ))
         .run(generate_context!())

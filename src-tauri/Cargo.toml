@@ -31,7 +31,6 @@ tauri-build = { version = "2", features = [] }
 auto-launch = "0.5"
 dunce = "1.0"
 open = "5.3"
-parking_lot = "0.12"
 rand = "0.9"
 reqwest = { version = "0.12", default-features = false, features = [
         "brotli",

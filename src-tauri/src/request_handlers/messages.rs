@@ -1,25 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::backend_message_handler::BuildInfo;
-
-/// Message to send from Backend to Frontend
-#[derive(Debug, Clone)]
-pub enum ToFrontEnd {
-    BuildInfo(BuildInfo),
-    Cpu(CpuMeasure),
-    Error,
-    // Fullscreen(bool),
-    GetSettings,
-    GoToSettings,
-    GoToTimer,
-    NextBreak,
-    OnBreak,
-    Paused(bool),
-    SessionsBeforeLong,
-}
-
+// TODO put these somehwere more useful
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
-#[allow(clippy::struct_excessive_bools)]
 pub struct CpuMeasure {
     pub current: f32,
     pub pause: Option<f32>,
@@ -57,21 +39,4 @@ impl ShowTimer {
     }
 }
 
-/// These need to match the frontend types.InvokeMessage const
-impl ToFrontEnd {
-    pub const fn as_str(&self) -> &'static str {
-        match self {
-            Self::GetSettings => "get::settings",
-            Self::GoToSettings => "goto::settings",
-            // Self::Fullscreen(_) => "fullscreen",
-            Self::GoToTimer => "goto::timer",
-            Self::NextBreak => "next-break",
-            Self::OnBreak => "on-break",
-            Self::Error => "error",
-            Self::SessionsBeforeLong => "sessions-before-long",
-            Self::BuildInfo(_) => "package-info",
-            Self::Paused(_) => "paused",
-            Self::Cpu(_) => "cpu",
-        }
-    }
-}
+

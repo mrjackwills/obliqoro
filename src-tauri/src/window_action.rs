@@ -1,9 +1,6 @@
-use std::sync::mpsc::Sender;
-
 use tauri::WebviewWindow;
 use tauri::{AppHandle, Manager};
 
-use crate::backend_message_handler::InternalMessage;
 use crate::MAIN_WINDOW;
 
 pub struct WindowAction;
