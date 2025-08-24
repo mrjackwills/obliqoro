@@ -33,6 +33,9 @@ async fn main() -> Result<(), ()> {
     let (sx, rx) = tokio::sync::broadcast::channel(128);
     let (sx1, sx2, sx3, sx4) = (sx.clone(), sx.clone(), sx.clone(), sx.clone());
 
+	// Start the message_handler here, use a sx/rx to send the tray mnu & data location to the state?
+
+
     Builder::default()
         .setup(|app| {
             #[cfg(debug_assertions)]
@@ -41,7 +44,6 @@ async fn main() -> Result<(), ()> {
                     main_window.open_devtools();
                 }
             }
-			
 
             let Ok(app_data_dir) = tauri::path::PathResolver::app_data_dir(app.path()) else {
                 std::process::exit(1)
@@ -49,6 +51,11 @@ async fn main() -> Result<(), ()> {
             let (temp_tx, tmp_rx) = std::sync::mpsc::channel();
             let system_tray_menu = system_tray::create_system_tray(app.app_handle(), &sx)?;
 
+			let t = system_tray_menu.clone();
+
+			// use  asingel one shot here? to send to the
+			// TODO all of this in the message handler thead
+			// have  msg called SetDBLocation, sent after manae is called
             tokio::spawn(async move {
                 let Ok(state) = ApplicationState::new(app_data_dir, sx, system_tray_menu).await
                 else {
@@ -60,12 +67,10 @@ async fn main() -> Result<(), ()> {
                 std::process::exit(1);
             };
 
-            let state = Arc::new(Mutex::new(state));
-            let (state_heartbeat, state_message_handler) = (Arc::clone(&state), Arc::clone(&state));
 
-            heartbeat_process(&state_heartbeat);
-            start_message_handler(app.app_handle(), state_message_handler, rx, sx2);
-			app.manage(sx1);
+            heartbeat_process(&sx2);
+            start_message_handler(app.app_handle(), state, rx, sx2);
+            app.manage(sx1);
             Ok(())
         })
         .on_window_event(move |_window, event| match event {
@@ -97,6 +102,7 @@ async fn main() -> Result<(), ()> {
                     .ok();
             },
         ))
-        .run(generate_context!()).ok();
+        .run(generate_context!())
+        .ok();
     Ok(())
 }

@@ -5,7 +5,7 @@ use std::{
     collections::VecDeque,
     fmt::{self, Write},
     path::PathBuf,
-    sync::LazyLock,
+    sync::{Arc, LazyLock},
     time::Instant,
 };
 use tokio::{sync::broadcast::Sender, task::JoinHandle};
@@ -132,7 +132,7 @@ const CPU_VECDEQUE_LEN: usize = 60 * 15;
 
 // #[derive(Debug)]
 pub struct ApplicationState {
-    pub heartbeat_process: Option<JoinHandle<()>>,
+    pub heartbeat_process: Option<Arc<JoinHandle<()>>>,
     pub pause_after_break: bool,
     pub session_status: SessionStatus,
     pub sqlite: SqlitePool,
@@ -150,6 +150,7 @@ impl ApplicationState {
     pub async fn new(
         data_location: PathBuf,
         sx: Sender<InternalMessage>,
+		// rx x2, one for the init directory emssage, the other for message handling
         system_tray_menu: tauri::menu::Menu<tauri::Wry>,
     ) -> Result<Self, AppError> {
         let err = || {

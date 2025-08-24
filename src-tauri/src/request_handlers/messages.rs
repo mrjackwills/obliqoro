@@ -8,7 +8,7 @@ pub enum ToFrontEnd {
     BuildInfo(BuildInfo),
     Cpu(CpuMeasure),
     Error,
-	// Fullscreen(bool),
+    // Fullscreen(bool),
     GetSettings,
     GoToSettings,
     GoToTimer,
@@ -63,7 +63,7 @@ impl ToFrontEnd {
         match self {
             Self::GetSettings => "get::settings",
             Self::GoToSettings => "goto::settings",
-			// Self::Fullscreen(_) => "fullscreen",
+            // Self::Fullscreen(_) => "fullscreen",
             Self::GoToTimer => "goto::timer",
             Self::NextBreak => "next-break",
             Self::OnBreak => "on-break",

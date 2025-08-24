@@ -13,12 +13,12 @@ impl WindowAction {
     /// Linux v Windows, need to handle fullscreen & resize on each platform differently
     #[cfg(target_os = "windows")]
     fn show(window: &WebviewWindow, fullscreen: bool) {
-		if fullscreen {
-			window.set_fullscreen(true).ok();
+        if fullscreen {
+            window.set_fullscreen(true).ok();
         } else {
-			window.center().ok();
+            window.center().ok();
         }
-		window.show().ok();
+        window.show().ok();
     }
 
     /// Show the window

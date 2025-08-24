@@ -3,6 +3,7 @@ use std::sync::Arc;
 use tauri::{AppHandle, Emitter, Manager};
 use tracing::error;
 mod messages;
+mod st;
 
 pub use messages::*;
 
@@ -51,7 +52,7 @@ fn update_menu_pause(state: &Arc<Mutex<ApplicationState>>, paused: bool) {
         MenuEntry::Pause.as_str()
     };
 
-	// the error is here
+    // the error is here
     // let state = app.state::<Arc<Mutex<ApplicationState>>>();
 
     state
@@ -78,10 +79,11 @@ fn update_menu(state: &Arc<Mutex<ApplicationState>>, sx: &Sender<InternalMessage
     update_menu_session_number(state, sx);
 }
 
+// fix thie
 /// Stop the tick process, and start a new one
 fn reset_timer(state: &Arc<Mutex<ApplicationState>>) {
     state.lock().reset_timer();
-    heartbeat_process(state);
+    heartbeat_process(&state.lock().sx);
 }
 
 async fn reset_settings(
@@ -121,7 +123,7 @@ fn handle_visibility(
     match window_visibility {
         WindowVisibility::Close => {
             if !on_break {
-				app.exit(0);
+                app.exit(0);
             }
         }
         WindowVisibility::Hide => {
@@ -153,20 +155,19 @@ fn emit_to_frontend(
     let event_name = msg_to_frontend.as_str();
     match msg_to_frontend {
         ToFrontEnd::GoToSettings => {
-			// WindowAction::show_window(app, false);
+            // WindowAction::show_window(app, false);
             let on_break = state.lock().on_break();
-			// state.lock().sx.send(InternalMessage::ToFrontEnd(ToFrontEnd::Fullscreen(false))).ok();
+            // state.lock().sx.send(InternalMessage::ToFrontEnd(ToFrontEnd::Fullscreen(false))).ok();
             if !on_break {
                 app.emit_str(MAIN_WINDOW, event_name.to_owned()).ok();
-				// todo fix this?
+                // todo fix this?
                 WindowAction::toggle_visibility(app, false);
             }
         }
 
-		//  ToFrontEnd::Fullscreen(value) => {
-		// 	  app.emit_to(MAIN_WINDOW, event_name, value).ok();
+        //  ToFrontEnd::Fullscreen(value) => {
+        // 	  app.emit_to(MAIN_WINDOW, event_name, value).ok();
         // }
-
         ToFrontEnd::Cpu(value) => {
             app.app_handle()
                 .emit_to(MAIN_WINDOW, event_name, value)
@@ -203,7 +204,8 @@ fn emit_to_frontend(
         }
         ToFrontEnd::GoToTimer => {
             let (break_time, strategy) = state.lock().get_break_settings();
-			app.emit_to(MAIN_WINDOW,"fullscreen", state.lock().get_fullscreen()).ok();
+            app.emit_to(MAIN_WINDOW, "fullscreen", state.lock().get_fullscreen())
+                .ok();
             app.emit_to(
                 MAIN_WINDOW,
                 event_name,
@@ -237,7 +239,6 @@ fn handle_break(
             WindowAction::show_window(app, fullscreen);
         }
         BreakMessage::End => {
-		
             state.lock().start_work_session();
             change_menu_entry_status(state, true);
             if state.lock().pause_after_break {
@@ -250,12 +251,15 @@ fn handle_break(
             }
 
             state.lock().pause_after_break = false;
-				//    sx.send(InternalMessage::ToFrontEnd(ToFrontEnd::Fullscreen(false)))
-                // .ok();
+            //    sx.send(InternalMessage::ToFrontEnd(ToFrontEnd::Fullscreen(false)))
+            // .ok();
         }
     }
 }
 
+
+// create state here
+// TODO combine this with the application state, have state as on .self
 /// Spawn into a tokio thread, handle all internal messages
 pub fn start_message_handler(
     app_handle: &AppHandle,
@@ -270,12 +274,12 @@ pub fn start_message_handler(
                 InternalMessage::ToFrontEnd(emitter) => {
                     emit_to_frontend(&app_handle, emitter, &state);
                 }
-				InternalMessage::OpenLocation => {
-					open::that(state.lock().get_data_location()).ok();
-				}
-				InternalMessage::UpdatePause(pause) => {
-					state.lock().pause_after_break = pause;
-				}
+                InternalMessage::OpenLocation => {
+                    open::that(state.lock().get_data_location()).ok();
+                }
+                InternalMessage::UpdatePause(pause) => {
+                    state.lock().pause_after_break = pause;
+                }
                 InternalMessage::SetSetting(frontend_state) => {
                     if let Err(e) = update_settings(frontend_state, &state).await {
                         error!("{:#?}", e);
@@ -290,6 +294,22 @@ pub fn start_message_handler(
                     }
                     update_menu(&state, &sx);
                 }
+                InternalMessage::Hearbteat(heartbeat) => match heartbeat {
+                    Hearbteat::Abort => {
+                        if let Some(handle) = state.lock().heartbeat_process.as_ref() {
+                            handle.abort();
+                        }
+                    }
+                    Hearbteat::Update(handle) => {
+                        state.lock().heartbeat_process = Some(handle);
+                    }
+                    Hearbteat::OnHeartbeat(cpu_usage) => {
+                        state.lock().on_heartbeat(cpu_usage);
+                    }
+                    Hearbteat::UpdateTimer => {
+                        state.lock().update_timer_check();
+                    }
+                },
                 InternalMessage::ResetTimer => {
                     reset_timer(&state);
                 }

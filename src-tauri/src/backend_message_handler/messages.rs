@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use serde::{Deserialize, Serialize};
 
 use crate::request_handlers::{FrontEndState, ToFrontEnd};
@@ -41,15 +43,25 @@ pub enum WindowVisibility {
 }
 
 #[derive(Debug, Clone)]
+pub enum Hearbteat {
+    Abort,
+    Update(Arc<tokio::task::JoinHandle<()>>),
+    OnHeartbeat(Option<f32>),
+    UpdateTimer,
+}
+
+#[derive(Debug, Clone)]
 pub enum InternalMessage {
     Break(BreakMessage),
     Pause,
-	OpenLocation,
-	UpdatePause(bool),
+    OpenLocation,
+    UpdatePause(bool),
     ResetSettings,
     ResetTimer,
     SetSetting(FrontEndState),
     ToFrontEnd(ToFrontEnd),
     UpdateMenuTimer,
+    Hearbteat(Hearbteat),
+    // UpdateHeartbeatProcess(Option<JoinHandle<()>),
     Window(WindowVisibility),
 }
