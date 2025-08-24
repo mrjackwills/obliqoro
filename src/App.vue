@@ -15,7 +15,7 @@ import { invoke } from '@tauri-apps/api/core';
 import { ListenMessage, ShowTimer, FrontEndRoutes, FrontEndState, BuildInfo, InvokeMessage, CpuMeasure } from '@/types';
 import { useRouter } from 'vue-router';
 import { snackError } from '@/services/snack';
-import { getCurrentWindow } from '@tauri-apps/api/window';
+// import { getCurrentWindow } from '@tauri-apps/api/window';
 
 const router = useRouter();
 const route = useRoute();
@@ -61,9 +61,11 @@ onBeforeMount(async () => {
 	await listen(ListenMessage.PackageInfo, async (event: Event<BuildInfo>) => packageinfoStore.set_all(event.payload));
 	await listen(ListenMessage.Paused, async (event: Event<boolean>) => settingStore.set_paused(event.payload));
 
-	await listen(ListenMessage.Fullscreen, async (event: Event<boolean>) => {
-		await getCurrentWindow().setFullscreen(event.payload);
-	});
+	/*
+	 * await listen(ListenMessage.Fullscreen, async (event: Event<boolean>) => {
+	 * 	await getCurrentWindow().setFullscreen(event.payload);
+	 * });
+	 */
 
 
 	await invoke(InvokeMessage.Init);

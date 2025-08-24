@@ -22,7 +22,8 @@ mod request_handlers;
 mod system_tray;
 mod window_action;
 
-pub type TauriState<'a> = tauri::State<'a, Arc<Mutex<ApplicationState>>>;
+// TODO change to an sx
+pub type TauriState<'a> = tauri::State<'a, tokio::sync::broadcast::Sender<InternalMessage>>;
 
 const SYSTEM_TRAY_ID: &str = "obliqoro_system_tray";
 const MAIN_WINDOW: &str = "main";
@@ -30,7 +31,7 @@ const MAIN_WINDOW: &str = "main";
 #[tokio::main]
 async fn main() -> Result<(), ()> {
     let (sx, rx) = tokio::sync::broadcast::channel(128);
-    let (sx1, sx2, sx3) = (sx.clone(), sx.clone(), sx.clone());
+    let (sx1, sx2, sx3, sx4) = (sx.clone(), sx.clone(), sx.clone(), sx.clone());
 
     Builder::default()
         .setup(|app| {
@@ -40,6 +41,7 @@ async fn main() -> Result<(), ()> {
                     main_window.open_devtools();
                 }
             }
+			
 
             let Ok(app_data_dir) = tauri::path::PathResolver::app_data_dir(app.path()) else {
                 std::process::exit(1)
@@ -62,19 +64,19 @@ async fn main() -> Result<(), ()> {
             let (state_heartbeat, state_message_handler) = (Arc::clone(&state), Arc::clone(&state));
 
             heartbeat_process(&state_heartbeat);
-            start_message_handler(app.app_handle(), state_message_handler, rx, sx1);
-            app.manage(state);
+            start_message_handler(app.app_handle(), state_message_handler, rx, sx2);
+			app.manage(sx1);
             Ok(())
         })
         .on_window_event(move |_window, event| match event {
             tauri::WindowEvent::CloseRequested { api, .. } => {
                 api.prevent_close();
-                sx2.send(InternalMessage::Window(WindowVisibility::Hide))
+                sx3.send(InternalMessage::Window(WindowVisibility::Hide))
                     .ok();
             }
             tauri::WindowEvent::Moved(val) => {
                 if val.x <= -32000 && val.y <= -32000 {
-                    sx2.send(InternalMessage::Window(WindowVisibility::Minimize))
+                    sx3.send(InternalMessage::Window(WindowVisibility::Minimize))
                         .ok();
                 }
             }
@@ -91,7 +93,7 @@ async fn main() -> Result<(), ()> {
         ])
         .plugin(tauri_plugin_single_instance::init(
             move |_app, _argv, _cwd| {
-                sx3.send(InternalMessage::Window(WindowVisibility::Show))
+                sx4.send(InternalMessage::Window(WindowVisibility::Show))
                     .ok();
             },
         ))

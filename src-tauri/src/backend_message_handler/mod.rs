@@ -44,14 +44,15 @@ fn update_menu_next_break(state: &Arc<Mutex<ApplicationState>>, sx: &Sender<Inte
 }
 
 /// Update the systemtray `Puased/Resume` item
-fn update_menu_pause(app: &AppHandle, paused: bool) {
+fn update_menu_pause(state: &Arc<Mutex<ApplicationState>>, paused: bool) {
     let title = if paused {
         "Resume"
     } else {
         MenuEntry::Pause.as_str()
     };
 
-    let state = app.state::<Arc<Mutex<ApplicationState>>>();
+	// the error is here
+    // let state = app.state::<Arc<Mutex<ApplicationState>>>();
 
     state
         .lock()
@@ -152,8 +153,9 @@ fn emit_to_frontend(
     let event_name = msg_to_frontend.as_str();
     match msg_to_frontend {
         ToFrontEnd::GoToSettings => {
+			// WindowAction::show_window(app, false);
             let on_break = state.lock().on_break();
-			state.lock().sx.send(InternalMessage::ToFrontEnd(ToFrontEnd::Fullscreen(false))).ok();
+			// state.lock().sx.send(InternalMessage::ToFrontEnd(ToFrontEnd::Fullscreen(false))).ok();
             if !on_break {
                 app.emit_str(MAIN_WINDOW, event_name.to_owned()).ok();
 				// todo fix this?
@@ -161,9 +163,9 @@ fn emit_to_frontend(
             }
         }
 
-		 ToFrontEnd::Fullscreen(value) => {
-			  app.emit_to(MAIN_WINDOW, event_name, value).ok();
-        }
+		//  ToFrontEnd::Fullscreen(value) => {
+		// 	  app.emit_to(MAIN_WINDOW, event_name, value).ok();
+        // }
 
         ToFrontEnd::Cpu(value) => {
             app.app_handle()
@@ -241,7 +243,7 @@ fn handle_break(
             if state.lock().pause_after_break {
                 sx.send(InternalMessage::Pause).ok();
                 // if the app is in fullscreen mode, need to remove the fullscreen, normally this is handled by the hide_window function, but it's not being called here
-                // WindowAction::remove_fullscreen(app);
+                WindowAction::remove_fullscreen(app);
             } else {
                 WindowAction::hide_window(app, fullscreen);
                 update_menu(state, sx);
@@ -268,6 +270,12 @@ pub fn start_message_handler(
                 InternalMessage::ToFrontEnd(emitter) => {
                     emit_to_frontend(&app_handle, emitter, &state);
                 }
+				InternalMessage::OpenLocation => {
+					open::that(state.lock().get_data_location()).ok();
+				}
+				InternalMessage::UpdatePause(pause) => {
+					state.lock().pause_after_break = pause;
+				}
                 InternalMessage::SetSetting(frontend_state) => {
                     if let Err(e) = update_settings(frontend_state, &state).await {
                         error!("{:#?}", e);
@@ -298,7 +306,7 @@ pub fn start_message_handler(
 
                 InternalMessage::Pause => {
                     let paused = state.lock().toggle_pause();
-                    update_menu_pause(&app_handle, paused);
+                    update_menu_pause(&state, paused);
                     set_icon(&app_handle, paused);
                     sx.send(InternalMessage::ToFrontEnd(ToFrontEnd::Paused(paused)))
                         .ok();

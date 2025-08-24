@@ -44,6 +44,8 @@ pub enum WindowVisibility {
 pub enum InternalMessage {
     Break(BreakMessage),
     Pause,
+	OpenLocation,
+	UpdatePause(bool),
     ResetSettings,
     ResetTimer,
     SetSetting(FrontEndState),
