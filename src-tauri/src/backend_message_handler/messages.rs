@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::request_handlers::{FrontEndState, MsgToFrontend};
+use crate::request_handlers::{FrontEndState, ToFrontEnd};
 
 /// Get information about self for the Footer component
 /// BUILD_DATE is injected via the build.rs file
@@ -47,7 +47,7 @@ pub enum InternalMessage {
     ResetSettings,
     ResetTimer,
     SetSetting(FrontEndState),
-    ToFrontEnd(MsgToFrontend),
+    ToFrontEnd(ToFrontEnd),
     UpdateMenuTimer,
     Window(WindowVisibility),
 }

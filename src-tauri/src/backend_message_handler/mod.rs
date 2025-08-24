@@ -11,100 +11,76 @@ use crate::{
     application_state::ApplicationState,
     db::ModelSettings,
     heartbeat::heartbeat_process,
-    request_handlers::{FrontEndState, MsgToFrontend, ShowTimer},
-    system_tray::{menu_enabled, set_icon, MenuEntry},
+    request_handlers::{FrontEndState, ShowTimer, ToFrontEnd},
+    system_tray::{change_menu_entry_status, set_icon, MenuEntry},
     window_action::WindowAction,
-    ObliqoroWindow,
+    MAIN_WINDOW,
 };
 use tokio::sync::broadcast::{Receiver, Sender};
 
 // Update the taskbar to display how many sessions before next long break,
 // and send internal message, to send message to front end to update settings in pinia
-fn update_menu_session_number(
-    app: &AppHandle,
-    state: &Arc<Mutex<ApplicationState>>,
-    sx: &Sender<InternalMessage>,
-) {
-	// TODO fix me
-    // if let Some(window) = app.get_webview_window(ObliqoroWindow::Main.as_str()) {
-    //     window
-    //         .app_handle()
-	// 		.tray_by_id(id)
-			
-    //         .tray_handle()
-    //         .try_get_item(MenuItem::Session.get_id())
-    //         .and_then(|item| {
-    //             item.set_title(state.lock().get_sessions_before_long_title())
-    //                 .ok()
-    //         });
-    // }
-    // sx.send(InternalMessage::ToFrontEnd(
-    //     MsgToFrontend::SessionsBeforeLong,
-    // ))
-    // .ok();
+fn update_menu_session_number(state: &Arc<Mutex<ApplicationState>>, sx: &Sender<InternalMessage>) {
+    let title = state.lock().get_sessions_before_long_title();
+    state
+        .lock()
+        .system_tray_menu
+        .get(MenuEntry::Session.get_id())
+        .and_then(|i| i.as_menuitem().and_then(|i| i.set_text(title).ok()));
+    sx.send(InternalMessage::ToFrontEnd(ToFrontEnd::SessionsBeforeLong))
+        .ok();
 }
 
 /// Update the systemtray next break in text, and emit to frontend to next break timer
-fn update_menu_next_break(
-    app: &AppHandle,
-    state: &Arc<Mutex<ApplicationState>>,
-    sx: &Sender<InternalMessage>,
-) {
-	// todo fix me
-    // if let Some(window) = app.get_webview_window(ObliqoroWindow::Main.as_str()) {
-    //     window
-    //         .app_handle()
-    //         .tray_handle()
-    //         .try_get_item(MenuItem::Next.get_id())
-    //         .and_then(|item| item.set_title(state.lock().get_next_break_title()).ok());
-    // }
-    // sx.send(InternalMessage::ToFrontEnd(MsgToFrontend::NextBreak))
-    //     .ok();
+fn update_menu_next_break(state: &Arc<Mutex<ApplicationState>>, sx: &Sender<InternalMessage>) {
+    let title = state.lock().get_next_break_title();
+    state
+        .lock()
+        .system_tray_menu
+        .get(MenuEntry::Next.get_id())
+        .and_then(|i| i.as_menuitem().and_then(|i| i.set_text(title).ok()));
+    sx.send(InternalMessage::ToFrontEnd(ToFrontEnd::NextBreak))
+        .ok();
 }
 
 /// Update the systemtray `Puased/Resume` item
 fn update_menu_pause(app: &AppHandle, paused: bool) {
-    // let paused = state.lock().get_paused();
     let title = if paused {
         "Resume"
     } else {
         MenuEntry::Pause.as_str()
     };
 
-	// todo fix me
-    // if let Some(window) = app.get_webview_window(ObliqoroWindow::Main.as_str()) {
-    //     window
-    //         .app_handle()
-    //         .tray_handle()
-    //         .try_get_item(MenuItem::Next.get_id())
-    //         .and_then(|item| item.set_enabled(!paused).ok());
-    //     window
-    //         .app_handle()
-    //         .tray_handle()
-    //         .try_get_item(MenuItem::Session.get_id())
-    //         .and_then(|item| item.set_enabled(!paused).ok());
-    //     window
-    //         .app_handle()
-    //         .tray_handle()
-    //         .try_get_item(MenuItem::Pause.get_id())
-    //         .and_then(|item| item.set_title(title).ok());
-    // }
+    let state = app.state::<Arc<Mutex<ApplicationState>>>();
+
+    state
+        .lock()
+        .system_tray_menu
+        .get(MenuEntry::Next.get_id())
+        .and_then(|i| i.as_menuitem().and_then(|i| i.set_enabled(!paused).ok()));
+    state
+        .lock()
+        .system_tray_menu
+        .get(MenuEntry::Session.get_id())
+        .and_then(|i| i.as_menuitem().and_then(|i| i.set_enabled(!paused).ok()));
+
+    state
+        .lock()
+        .system_tray_menu
+        .get(MenuEntry::Pause.get_id())
+        .and_then(|i| i.as_menuitem().and_then(|i| i.set_text(title).ok()));
 }
 
 /// Update all menu items
-fn update_menu(
-    app: &AppHandle,
-    state: &Arc<Mutex<ApplicationState>>,
-    sx: &Sender<InternalMessage>,
-) {
-    update_menu_next_break(app, state, sx);
-    update_menu_session_number(app, state, sx);
+fn update_menu(state: &Arc<Mutex<ApplicationState>>, sx: &Sender<InternalMessage>) {
+    update_menu_next_break(state, sx);
+    update_menu_session_number(state, sx);
 }
 
 /// Stop the tick process, and start a new one
 fn reset_timer(state: &Arc<Mutex<ApplicationState>>) {
     state.lock().reset_timer();
-    heartbeat_process(Arc::clone(&state));
+    heartbeat_process(state);
 }
 
 async fn reset_settings(
@@ -115,9 +91,9 @@ async fn reset_settings(
     let settings = ModelSettings::reset_settings(&sqlite).await?;
     state.lock().set_settings(settings);
     reset_timer(state);
-    sx.send(InternalMessage::ToFrontEnd(MsgToFrontend::GetSettings))
+    sx.send(InternalMessage::ToFrontEnd(ToFrontEnd::GetSettings))
         .ok();
-    sx.send(InternalMessage::ToFrontEnd(MsgToFrontend::Paused(
+    sx.send(InternalMessage::ToFrontEnd(ToFrontEnd::Paused(
         state.lock().get_paused(),
     )))
     .ok();
@@ -144,7 +120,7 @@ fn handle_visibility(
     match window_visibility {
         WindowVisibility::Close => {
             if !on_break {
-                app.exit(0);
+				app.exit(0);
             }
         }
         WindowVisibility::Hide => {
@@ -170,83 +146,74 @@ fn handle_visibility(
 #[allow(clippy::too_many_lines)]
 fn emit_to_frontend(
     app: &AppHandle,
-    msg_to_frontend: MsgToFrontend,
+    msg_to_frontend: ToFrontEnd,
     state: &Arc<Mutex<ApplicationState>>,
 ) {
     let event_name = msg_to_frontend.as_str();
     match msg_to_frontend {
-        MsgToFrontend::GoToSettings => {
+        ToFrontEnd::GoToSettings => {
             let on_break = state.lock().on_break();
+			state.lock().sx.send(InternalMessage::ToFrontEnd(ToFrontEnd::Fullscreen(false))).ok();
             if !on_break {
-				app.emit_str(ObliqoroWindow::Main.as_str(), event_name.to_owned())
-                    .ok();
+                app.emit_str(MAIN_WINDOW, event_name.to_owned()).ok();
+				// todo fix this?
                 WindowAction::toggle_visibility(app, false);
             }
         }
 
-        MsgToFrontend::Cpu(value) => {
+		 ToFrontEnd::Fullscreen(value) => {
+			  app.emit_to(MAIN_WINDOW, event_name, value).ok();
+        }
+
+        ToFrontEnd::Cpu(value) => {
             app.app_handle()
-                .emit_to(ObliqoroWindow::Main.as_str(), event_name, value)
+                .emit_to(MAIN_WINDOW, event_name, value)
                 .ok();
         }
 
-        MsgToFrontend::NextBreak => {
+        ToFrontEnd::NextBreak => {
             app.app_handle()
-                .emit_to(
-                    ObliqoroWindow::Main.as_str(),
-                    event_name,
-                    state.lock().get_next_break_title(),
-                )
+                .emit_to(MAIN_WINDOW, event_name, state.lock().get_next_break_title())
                 .ok();
         }
 
-        MsgToFrontend::OnBreak => {
-            app.emit_to(
-                ObliqoroWindow::Main.as_str(),
-                event_name,
-                state.lock().current_timer_left(),
-            )
-            .ok();
-        }
-
-        MsgToFrontend::Error => {
-            app.emit_to(ObliqoroWindow::Main.as_str(), event_name, "Internal Error")
+        ToFrontEnd::OnBreak => {
+            app.emit_to(MAIN_WINDOW, event_name, state.lock().current_timer_left())
                 .ok();
         }
 
-        MsgToFrontend::GetSettings => {
-            app.emit_to(
-                ObliqoroWindow::Main.as_str(),
-                event_name,
-                state.lock().get_state(),
-            )
-            .ok();
+        ToFrontEnd::Error => {
+            app.emit_to(MAIN_WINDOW, event_name, "Internal Error").ok();
         }
-        MsgToFrontend::SessionsBeforeLong => {
+
+        ToFrontEnd::GetSettings => {
+            app.emit_to(MAIN_WINDOW, event_name, state.lock().get_state())
+                .ok();
+        }
+        ToFrontEnd::SessionsBeforeLong => {
             app.app_handle()
                 .emit_to(
-                    ObliqoroWindow::Main.as_str(),
+                    MAIN_WINDOW,
                     event_name,
                     state.lock().get_sessions_before_long_title(),
                 )
                 .ok();
         }
-        MsgToFrontend::GoToTimer => {
+        ToFrontEnd::GoToTimer => {
             let (break_time, strategy) = state.lock().get_break_settings();
+			app.emit_to(MAIN_WINDOW,"fullscreen", state.lock().get_fullscreen()).ok();
             app.emit_to(
-                ObliqoroWindow::Main.as_str(),
+                MAIN_WINDOW,
                 event_name,
                 ShowTimer::new(break_time, strategy),
             )
             .ok();
         }
-        MsgToFrontend::BuildInfo(info) => {
-            app.emit_to(ObliqoroWindow::Main.as_str(), event_name, info)
-                .ok();
+        ToFrontEnd::BuildInfo(info) => {
+            app.emit_to(MAIN_WINDOW, event_name, info).ok();
         }
-        MsgToFrontend::Paused(paused) => {
-            app.emit_to(ObliqoroWindow::Main.as_str(), event_name, paused)
-                .ok();
+        ToFrontEnd::Paused(paused) => {
+            app.emit_to(MAIN_WINDOW, event_name, paused).ok();
         }
     }
 }
@@ -262,24 +229,27 @@ fn handle_break(
     match break_message {
         BreakMessage::Start => {
             state.lock().start_break_session();
-            menu_enabled(app, false);
-            sx.send(InternalMessage::ToFrontEnd(MsgToFrontend::GoToTimer))
+            change_menu_entry_status(state, false);
+            sx.send(InternalMessage::ToFrontEnd(ToFrontEnd::GoToTimer))
                 .ok();
             WindowAction::show_window(app, fullscreen);
         }
         BreakMessage::End => {
+		
             state.lock().start_work_session();
-            menu_enabled(app, true);
+            change_menu_entry_status(state, true);
             if state.lock().pause_after_break {
                 sx.send(InternalMessage::Pause).ok();
                 // if the app is in fullscreen mode, need to remove the fullscreen, normally this is handled by the hide_window function, but it's not being called here
-                WindowAction::remove_fullscreen(app);
+                // WindowAction::remove_fullscreen(app);
             } else {
                 WindowAction::hide_window(app, fullscreen);
-                update_menu(app, state, sx);
+                update_menu(state, sx);
             }
 
             state.lock().pause_after_break = false;
+				//    sx.send(InternalMessage::ToFrontEnd(ToFrontEnd::Fullscreen(false)))
+                // .ok();
         }
     }
 }
@@ -301,24 +271,22 @@ pub fn start_message_handler(
                 InternalMessage::SetSetting(frontend_state) => {
                     if let Err(e) = update_settings(frontend_state, &state).await {
                         error!("{:#?}", e);
-                        sx.send(InternalMessage::ToFrontEnd(MsgToFrontend::Error))
-                            .ok();
+                        sx.send(InternalMessage::ToFrontEnd(ToFrontEnd::Error)).ok();
                     }
-                    update_menu(&app_handle, &state, &sx);
+                    update_menu(&state, &sx);
                 }
                 InternalMessage::ResetSettings => {
                     if let Err(e) = reset_settings(&state, &sx).await {
                         error!("{:#?}", e);
-                        sx.send(InternalMessage::ToFrontEnd(MsgToFrontend::Error))
-                            .ok();
+                        sx.send(InternalMessage::ToFrontEnd(ToFrontEnd::Error)).ok();
                     }
-                    update_menu(&app_handle, &state, &sx);
+                    update_menu(&state, &sx);
                 }
                 InternalMessage::ResetTimer => {
                     reset_timer(&state);
                 }
 
-                InternalMessage::UpdateMenuTimer => update_menu(&app_handle, &state, &sx),
+                InternalMessage::UpdateMenuTimer => update_menu(&state, &sx),
 
                 InternalMessage::Break(break_message) => {
                     handle_break(break_message, &state, &app_handle, &sx);
@@ -332,7 +300,7 @@ pub fn start_message_handler(
                     let paused = state.lock().toggle_pause();
                     update_menu_pause(&app_handle, paused);
                     set_icon(&app_handle, paused);
-                    sx.send(InternalMessage::ToFrontEnd(MsgToFrontend::Paused(paused)))
+                    sx.send(InternalMessage::ToFrontEnd(ToFrontEnd::Paused(paused)))
                         .ok();
                 }
             }

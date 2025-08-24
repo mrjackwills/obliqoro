@@ -45,7 +45,7 @@ pub fn fetch_updates(sx: Sender<InternalMessage>) {
             ..Default::default()
         };
         sx.send(InternalMessage::ToFrontEnd(
-            crate::request_handlers::MsgToFrontend::BuildInfo(info),
+            crate::request_handlers::ToFrontEnd::BuildInfo(info),
         ))
         .ok();
     });

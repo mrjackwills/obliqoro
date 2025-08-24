@@ -15,7 +15,7 @@ use crate::{
     backend_message_handler::{BreakMessage, InternalMessage},
     check_version,
     db::{self, ModelSettings},
-    request_handlers::{CpuMeasure, FrontEndState, MsgToFrontend},
+    request_handlers::{CpuMeasure, FrontEndState, ToFrontEnd},
 };
 
 use tracing::Level;
@@ -137,11 +137,11 @@ pub struct ApplicationState {
     pub session_status: SessionStatus,
     pub sqlite: SqlitePool,
     pub sx: Sender<InternalMessage>,
+    pub system_tray_menu: tauri::menu::Menu<tauri::Wry>,
     start_time: std::time::Instant,
     cpu_usage: VecDeque<f32>,
     data_location: PathBuf,
     session_count: u8,
-	system_tray_menu: tauri::menu::Menu<tauri::Wry>,
     settings: ModelSettings,
     timer: Timer,
 }
@@ -150,7 +150,7 @@ impl ApplicationState {
     pub async fn new(
         data_location: PathBuf,
         sx: Sender<InternalMessage>,
-		system_tray_menu: tauri::menu::Menu<tauri::Wry>
+        system_tray_menu: tauri::menu::Menu<tauri::Wry>,
     ) -> Result<Self, AppError> {
         let err = || {
             Err(AppError::FS(
@@ -165,19 +165,9 @@ impl ApplicationState {
         }
         setup_tracing(&data_location)?;
 
-		// let (tmp_tx, tmp_rx) = std::sync::mpsc::channel();
+        let sqlite = db::init_db(&data_location).await?;
+        let settings = ModelSettings::init(&sqlite).await?;
 
-		// let dl = data_location.clone();
-		// tokio::spawn(async  move {
-
-			let sqlite = db::init_db(&data_location).await.unwrap();
-			let settings = ModelSettings::init(&sqlite).await.unwrap();
-			// tmp_tx.send((sqlite, settings)).ok();
-		// });
-
-		// let Ok((sqlite, settings)) = tmp_rx.recv() else {
-			// std::process::exit(1);
-		// };
         Ok(Self {
             cpu_usage: VecDeque::with_capacity(CPU_VECDEQUE_LEN),
             data_location,
@@ -189,7 +179,7 @@ impl ApplicationState {
             settings,
             sqlite,
             sx,
-			system_tray_menu,
+            system_tray_menu,
             timer: Timer::default(),
         })
     }
@@ -403,7 +393,7 @@ impl ApplicationState {
                         if avg >= f32::from(self.settings.auto_resume_threshold) {
                             self.sx.send(InternalMessage::Pause).ok();
                             self.sx
-                                .send(InternalMessage::ToFrontEnd(MsgToFrontend::GetSettings))
+                                .send(InternalMessage::ToFrontEnd(ToFrontEnd::GetSettings))
                                 .ok();
                         }
                     }
@@ -412,16 +402,14 @@ impl ApplicationState {
                         if avg <= f32::from(self.settings.auto_pause_threshold) {
                             self.sx.send(InternalMessage::Pause).ok();
                             self.sx
-                                .send(InternalMessage::ToFrontEnd(MsgToFrontend::GetSettings))
+                                .send(InternalMessage::ToFrontEnd(ToFrontEnd::GetSettings))
                                 .ok();
                         }
                     }
                 }
             }
             self.sx
-                .send(InternalMessage::ToFrontEnd(MsgToFrontend::Cpu(
-                    cpu_mesasure,
-                )))
+                .send(InternalMessage::ToFrontEnd(ToFrontEnd::Cpu(cpu_mesasure)))
                 .ok();
         }
     }
@@ -434,7 +422,7 @@ impl ApplicationState {
             match self.session_status {
                 SessionStatus::Break(_) => {
                     self.sx
-                        .send(InternalMessage::ToFrontEnd(MsgToFrontend::OnBreak))
+                        .send(InternalMessage::ToFrontEnd(ToFrontEnd::OnBreak))
                         .ok();
                     if self.current_timer_left() < 1 {
                         self.sx.send(InternalMessage::Break(BreakMessage::End)).ok();

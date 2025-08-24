@@ -8,6 +8,7 @@
   "permissions": [
     "core:default",
     "shell:allow-open",
-    "shell:default"
+    "shell:default",
+	  "core:window:allow-set-fullscreen"
   ]
 }

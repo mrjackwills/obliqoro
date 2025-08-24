@@ -4,10 +4,11 @@ use crate::backend_message_handler::BuildInfo;
 
 /// Message to send from Backend to Frontend
 #[derive(Debug, Clone)]
-pub enum MsgToFrontend {
+pub enum ToFrontEnd {
     BuildInfo(BuildInfo),
     Cpu(CpuMeasure),
     Error,
+	Fullscreen(bool),
     GetSettings,
     GoToSettings,
     GoToTimer,
@@ -57,11 +58,12 @@ impl ShowTimer {
 }
 
 /// These need to match the frontend types.InvokeMessage const
-impl MsgToFrontend {
+impl ToFrontEnd {
     pub const fn as_str(&self) -> &'static str {
         match self {
             Self::GetSettings => "get::settings",
             Self::GoToSettings => "goto::settings",
+			Self::Fullscreen(_) => "fullscreen",
             Self::GoToTimer => "goto::timer",
             Self::NextBreak => "next-break",
             Self::OnBreak => "on-break",

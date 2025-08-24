@@ -11,10 +11,8 @@ const app = createApp(App);
 
 // Inject router into store
 declare module 'pinia' {
-	export interface Pinia {router: () => Router;
-	}
-	export interface PiniaCustomProperties {router: Router;
-	}
+	export interface Pinia { router: () => Router }
+	export interface PiniaCustomProperties { router: Router }
 }
 
 const pinia = createPinia();

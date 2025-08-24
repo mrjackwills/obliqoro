@@ -11,10 +11,10 @@ pub use messages::*;
 #[allow(clippy::needless_pass_by_value)]
 pub fn init(state: TauriState<'_>) {
     for message in [
-        MsgToFrontend::GetSettings,
-        MsgToFrontend::NextBreak,
-        MsgToFrontend::SessionsBeforeLong,
-        MsgToFrontend::BuildInfo(BuildInfo::default()),
+        ToFrontEnd::GetSettings,
+        ToFrontEnd::NextBreak,
+        ToFrontEnd::SessionsBeforeLong,
+        ToFrontEnd::BuildInfo(BuildInfo::default()),
     ] {
         state
             .lock()
