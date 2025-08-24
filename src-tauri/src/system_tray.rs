@@ -142,14 +142,14 @@ fn gen_menu_all_enabled(app_handle: &AppHandle) -> Result<Menu<Wry>, tauri::Erro
 
 pub fn create_system_tray(
     app_handle: &tauri::AppHandle,
-    sx: &Sender<InternalMessage>,
+    sx: Sender<InternalMessage>,
 ) -> Result<Menu<Wry>, tauri::Error> {
-    let (s1, s2) = (sx.clone(), sx.clone());
+    let s1 = sx.clone();
     let menu = gen_menu_all_enabled(app_handle)?;
     tauri::tray::TrayIconBuilder::with_id(SYSTEM_TRAY_ID)
         .icon(ICON_RUNNING.clone())
         .on_tray_icon_event(move |_, event| {
-            on_tray_event(event, s2.clone());
+            on_tray_event(event, sx.clone());
         })
         .menu(&menu)
         .on_menu_event(move |_, menu_event| on_menu_entry_event(&menu_event, &s1))
@@ -182,3 +182,4 @@ fn on_menu_entry_event(event: &MenuEvent, sx: &Sender<InternalMessage>) {
         _ => (),
     }
 }
+

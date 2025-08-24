@@ -2,9 +2,12 @@ use parking_lot::Mutex;
 use std::sync::Arc;
 use tauri::{AppHandle, Emitter, Manager};
 use tracing::error;
+mod menu;
 mod messages;
 mod st;
+mod application_state;
 
+pub use st::MessageHandler;
 pub use messages::*;
 
 use crate::{
@@ -19,65 +22,65 @@ use crate::{
 };
 use tokio::sync::broadcast::{Receiver, Sender};
 
-// Update the taskbar to display how many sessions before next long break,
-// and send internal message, to send message to front end to update settings in pinia
-fn update_menu_session_number(state: &Arc<Mutex<ApplicationState>>, sx: &Sender<InternalMessage>) {
-    let title = state.lock().get_sessions_before_long_title();
-    state
-        .lock()
-        .system_tray_menu
-        .get(MenuEntry::Session.get_id())
-        .and_then(|i| i.as_menuitem().and_then(|i| i.set_text(title).ok()));
-    sx.send(InternalMessage::ToFrontEnd(ToFrontEnd::SessionsBeforeLong))
-        .ok();
-}
+// // Update the taskbar to display how many sessions before next long break,
+// // and send internal message, to send message to front end to update settings in pinia
+// fn update_menu_session_number(state: &Arc<Mutex<ApplicationState>>, sx: &Sender<InternalMessage>) {
+//     let title = state.lock().get_sessions_before_long_title();
+//     state
+//         .lock()
+//         .system_tray_menu
+//         .get(MenuEntry::Session.get_id())
+//         .and_then(|i| i.as_menuitem().and_then(|i| i.set_text(title).ok()));
+//     sx.send(InternalMessage::ToFrontEnd(ToFrontEnd::SessionsBeforeLong))
+//         .ok();
+// }
 
-/// Update the systemtray next break in text, and emit to frontend to next break timer
-fn update_menu_next_break(state: &Arc<Mutex<ApplicationState>>, sx: &Sender<InternalMessage>) {
-    let title = state.lock().get_next_break_title();
-    state
-        .lock()
-        .system_tray_menu
-        .get(MenuEntry::Next.get_id())
-        .and_then(|i| i.as_menuitem().and_then(|i| i.set_text(title).ok()));
-    sx.send(InternalMessage::ToFrontEnd(ToFrontEnd::NextBreak))
-        .ok();
-}
+// /// Update the systemtray next break in text, and emit to frontend to next break timer
+// fn update_menu_next_break(state: &Arc<Mutex<ApplicationState>>, sx: &Sender<InternalMessage>) {
+//     let title = state.lock().get_next_break_title();
+//     state
+//         .lock()
+//         .system_tray_menu
+//         .get(MenuEntry::Next.get_id())
+//         .and_then(|i| i.as_menuitem().and_then(|i| i.set_text(title).ok()));
+//     sx.send(InternalMessage::ToFrontEnd(ToFrontEnd::NextBreak))
+//         .ok();
+// }
 
-/// Update the systemtray `Puased/Resume` item
-fn update_menu_pause(state: &Arc<Mutex<ApplicationState>>, paused: bool) {
-    let title = if paused {
-        "Resume"
-    } else {
-        MenuEntry::Pause.as_str()
-    };
+// /// Update the systemtray `Puased/Resume` item
+// fn update_menu_pause(state: &Arc<Mutex<ApplicationState>>, paused: bool) {
+//     let title = if paused {
+//         "Resume"
+//     } else {
+//         MenuEntry::Pause.as_str()
+//     };
 
-    // the error is here
-    // let state = app.state::<Arc<Mutex<ApplicationState>>>();
+//     // the error is here
+//     // let state = app.state::<Arc<Mutex<ApplicationState>>>();
 
-    state
-        .lock()
-        .system_tray_menu
-        .get(MenuEntry::Next.get_id())
-        .and_then(|i| i.as_menuitem().and_then(|i| i.set_enabled(!paused).ok()));
-    state
-        .lock()
-        .system_tray_menu
-        .get(MenuEntry::Session.get_id())
-        .and_then(|i| i.as_menuitem().and_then(|i| i.set_enabled(!paused).ok()));
+//     state
+//         .lock()
+//         .system_tray_menu
+//         .get(MenuEntry::Next.get_id())
+//         .and_then(|i| i.as_menuitem().and_then(|i| i.set_enabled(!paused).ok()));
+//     state
+//         .lock()
+//         .system_tray_menu
+//         .get(MenuEntry::Session.get_id())
+//         .and_then(|i| i.as_menuitem().and_then(|i| i.set_enabled(!paused).ok()));
 
-    state
-        .lock()
-        .system_tray_menu
-        .get(MenuEntry::Pause.get_id())
-        .and_then(|i| i.as_menuitem().and_then(|i| i.set_text(title).ok()));
-}
+//     state
+//         .lock()
+//         .system_tray_menu
+//         .get(MenuEntry::Pause.get_id())
+//         .and_then(|i| i.as_menuitem().and_then(|i| i.set_text(title).ok()));
+// }
 
-/// Update all menu items
-fn update_menu(state: &Arc<Mutex<ApplicationState>>, sx: &Sender<InternalMessage>) {
-    update_menu_next_break(state, sx);
-    update_menu_session_number(state, sx);
-}
+// /// Update all menu items
+// fn update_menu(state: &Arc<Mutex<ApplicationState>>, sx: &Sender<InternalMessage>) {
+//     update_menu_next_break(state, sx);
+//     update_menu_session_number(state, sx);
+// }
 
 // fix thie
 /// Stop the tick process, and start a new one

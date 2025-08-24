@@ -3,6 +3,8 @@
     windows_subsystem = "windows"
 )]
 
+#![allow(unused)]
+
 use application_state::ApplicationState;
 use backend_message_handler::{start_message_handler, InternalMessage, WindowVisibility};
 use heartbeat::heartbeat_process;
@@ -11,6 +13,8 @@ use std::sync::Arc;
 use tauri::generate_context;
 
 use tauri::{Builder, Manager};
+
+use crate::backend_message_handler::MessageHandler;
 
 mod app_error;
 mod application_state;
@@ -25,6 +29,18 @@ mod window_action;
 // TODO change to an sx
 pub type TauriState<'a> = tauri::State<'a, tokio::sync::broadcast::Sender<InternalMessage>>;
 
+// TODO MOVE ME
+/// Simple macro to create an empty String, or create String from a &str - to get rid of .to_owned() / String::from() etc
+#[macro_export]
+macro_rules! S {
+    () => {
+        String::new()
+    };
+    ($s:expr) => {
+        String::from($s)
+    };
+}
+
 const SYSTEM_TRAY_ID: &str = "obliqoro_system_tray";
 const MAIN_WINDOW: &str = "main";
 
@@ -33,8 +49,16 @@ async fn main() -> Result<(), ()> {
     let (sx, rx) = tokio::sync::broadcast::channel(128);
     let (sx1, sx2, sx3, sx4) = (sx.clone(), sx.clone(), sx.clone(), sx.clone());
 
-	// Start the message_handler here, use a sx/rx to send the tray mnu & data location to the state?
+    // Start the message_handler here, use a sx/rx to send the tray mnu & data location to the state?
 
+    let (setup_tx, setup_rx) = tokio::sync::oneshot::channel();
+    if MessageHandler::init(rx, sx.clone(), setup_rx)
+        .await
+        .is_err()
+    {
+        println!("Error with MessageHandler init");
+        std::process::exit(1);
+    }
 
     Builder::default()
         .setup(|app| {
@@ -46,30 +70,16 @@ async fn main() -> Result<(), ()> {
             }
 
             let Ok(app_data_dir) = tauri::path::PathResolver::app_data_dir(app.path()) else {
+				// todo printerr
                 std::process::exit(1)
             };
-            let (temp_tx, tmp_rx) = std::sync::mpsc::channel();
-            let system_tray_menu = system_tray::create_system_tray(app.app_handle(), &sx)?;
-
-			let t = system_tray_menu.clone();
-
-			// use  asingel one shot here? to send to the
-			// TODO all of this in the message handler thead
-			// have  msg called SetDBLocation, sent after manae is called
-            tokio::spawn(async move {
-                let Ok(state) = ApplicationState::new(app_data_dir, sx, system_tray_menu).await
-                else {
-                    std::process::exit(1);
-                };
-                temp_tx.send(state).ok();
-            });
-            let Ok(state) = tmp_rx.recv() else {
-                std::process::exit(1);
+            let Ok(system_tray_menu) = system_tray::create_system_tray(app.app_handle(), sx) else {
+				// todo printerr
+                std::process::exit(1)
             };
-
-
-            heartbeat_process(&sx2);
-            start_message_handler(app.app_handle(), state, rx, sx2);
+            setup_tx
+                .send((app.app_handle().to_owned(), app_data_dir, system_tray_menu))
+                .ok();
             app.manage(sx1);
             Ok(())
         })
