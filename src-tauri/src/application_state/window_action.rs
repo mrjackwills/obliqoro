@@ -21,7 +21,7 @@ impl WindowAction {
     /// Show the window
     /// see github issue #1
     #[cfg(not(target_os = "windows"))]
-    fn show(window: &WebviewWindow, _fullscreen: bool) {
+    fn show(window: &WebviewWindow, fullscreen: bool) {
         if fullscreen {
             if window.is_visible().unwrap_or_default() {
                 window.hide().ok();

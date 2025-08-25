@@ -15,7 +15,7 @@
 		"source=/etc/localtime,target=/etc/localtime,type=bind,readonly"
 	],
 
-	"postCreateCommand": "cargo install typos-cli create-tauri-app --locked && npm install -g npm-check-updates",
+	"postCreateCommand": "cargo install typos-cli create-tauri-app --locked tauri-cli --locked && npm install -g npm-check-updates",
 
 	"customizations": {
 		"vscode": {
