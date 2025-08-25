@@ -6,8 +6,6 @@ use std::{
     time::Instant,
 };
 
-/// TODO move this to own folder
-/// Probaly put system tray, windoe actions check version in it as well?
 use auto_launch::AutoLaunch;
 use rand::seq::IndexedRandom;
 use sqlx::SqlitePool;
@@ -16,18 +14,23 @@ use tokio::{sync::broadcast::Sender, task::JoinHandle};
 
 use crate::{
     app_error::AppError,
-    backend_message_handler::{
+    application_state::{
         menu::MenuManipulation,
-        messages::{MsgB, MsgWV},
-        MsgFE, MsgI,
+        system_tray::{change_menu_entry_status, set_icon, MenuEntry},
+        window_action::WindowAction,
     },
     check_version,
     db::ModelSettings,
+    message_handler::{MsgB, MsgFE, MsgI, MsgWV},
     request_handlers::{CpuMeasure, FrontEndState, ShowTimer},
-    system_tray::{change_menu_entry_status, MenuEntry},
-    window_action::WindowAction,
     MAIN_WINDOW,
 };
+
+mod menu;
+mod system_tray;
+mod window_action;
+
+pub use system_tray::create_system_tray;
 
 /// Store a most 15 minutes worth of cpu data in the vecdeque
 const CPU_VECDEQUE_LEN: usize = 60 * 15;
@@ -399,6 +402,7 @@ impl ApplicationState {
         match break_message {
             MsgB::Start => {
                 self.start_break_session();
+                // TODO rename me
                 change_menu_entry_status(&self.system_tray_menu, false);
                 self.sx.send(MsgI::ToFrontEnd(MsgFE::GoToTimer)).ok();
                 WindowAction::show_window(&self.app_handle, fullscreen);
@@ -558,6 +562,18 @@ impl ApplicationState {
             self.sx.send(MsgI::ResetTimer).ok();
         }
         self.settings = ModelSettings::from(frontend_state);
+    }
+
+    pub fn update_icon(&self, paused: bool) {
+        set_icon(&self.app_handle, paused);
+    }
+
+    pub fn update_menu_all(&self) {
+        MenuManipulation::update_all(self);
+    }
+
+    pub fn update_menu_pause(&self, pause: bool) {
+        MenuManipulation::update_pause(self, pause);
     }
 
     /// Save new settings in SQLite, send new settings to the frontend

@@ -3,7 +3,7 @@ use tokio::sync::broadcast::Sender;
 
 use crate::{
     app_error::AppError,
-    backend_message_handler::{PackageInfo, MsgI},
+    message_handler::{MsgI, PackageInfo},
 };
 
 // Get a reqwest client, use application name and version an UserAgent, this should never err
@@ -45,7 +45,7 @@ pub fn fetch_updates(sx: Sender<MsgI>) {
             ..Default::default()
         };
         sx.send(MsgI::ToFrontEnd(
-            crate::backend_message_handler::MsgFE::PackageInfo(info),
+            crate::message_handler::MsgFE::PackageInfo(info),
         ))
         .ok();
     });

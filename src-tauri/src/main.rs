@@ -3,22 +3,21 @@
     windows_subsystem = "windows"
 )]
 
-use backend_message_handler::{MsgI, MsgWV};
 use heartbeat::heartbeat_process;
+use message_handler::{MsgI, MsgWV};
 use tauri::generate_context;
 
 use tauri::{Builder, Manager};
 
-use crate::backend_message_handler::MessageHandler;
+use crate::message_handler::MessageHandler;
 
 mod app_error;
-mod backend_message_handler;
+mod application_state;
 mod check_version;
 mod db;
 mod heartbeat;
+mod message_handler;
 mod request_handlers;
-mod system_tray;
-mod window_action;
 
 // TODO change to an sx
 pub type TauriState<'a> = tauri::State<'a, tokio::sync::broadcast::Sender<MsgI>>;
@@ -60,7 +59,8 @@ async fn main() -> Result<(), ()> {
                 // todo printerr
                 std::process::exit(1)
             };
-            let Ok(system_tray_menu) = system_tray::create_system_tray(app.app_handle(), sx) else {
+            let Ok(system_tray_menu) = application_state::create_system_tray(app.app_handle(), sx)
+            else {
                 // todo printerr
                 std::process::exit(1)
             };

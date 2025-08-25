@@ -1,6 +1,7 @@
 use crate::{
-    backend_message_handler::{PackageInfo, MsgFE, MsgI, MsgWV},
-    check_version, TauriState,
+    check_version,
+    message_handler::{MsgFE, MsgI, MsgWV, PackageInfo},
+    TauriState,
 };
 
 mod messages;

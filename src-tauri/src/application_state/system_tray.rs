@@ -1,7 +1,7 @@
 use std::sync::LazyLock;
 
 use crate::{
-    backend_message_handler::{MsgFE, MsgI, MsgWV},
+    message_handler::{MsgFE, MsgI, MsgWV},
     SYSTEM_TRAY_ID,
 };
 use tauri::{
@@ -66,12 +66,12 @@ pub fn change_menu_entry_status(system_tray_menu: &Menu<Wry>, enable: bool) {
 /// Load the Oblique Stratergies into a Lazylock vec
 #[allow(clippy::unwrap_used)]
 static ICON_PAUSE: LazyLock<Image> =
-    LazyLock::new(|| Image::from_bytes(include_bytes!("../icons/icon_paused.png")).unwrap());
+    LazyLock::new(|| Image::from_bytes(include_bytes!("../../icons/icon_paused.png")).unwrap());
 
 /// Load the Oblique Stratergies into a Lazylock vec
 #[allow(clippy::unwrap_used)]
 static ICON_RUNNING: LazyLock<Image> =
-    LazyLock::new(|| Image::from_bytes(include_bytes!("../icons/icon.png")).unwrap());
+    LazyLock::new(|| Image::from_bytes(include_bytes!("../../icons/icon.png")).unwrap());
 
 /// Change the system tray icon when paused & unpaused
 pub fn set_icon(app: &tauri::AppHandle, paused: bool) {

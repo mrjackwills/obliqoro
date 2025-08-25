@@ -6,12 +6,10 @@ use tracing_subscriber::{fmt as t_fmt, prelude::__tracing_subscriber_SubscriberE
 
 use crate::{
     app_error::AppError,
-    backend_message_handler::{application_state::ApplicationState, menu::MenuManipulation},
+    application_state::ApplicationState,
     db::{self, ModelSettings},
 };
 
-mod application_state;
-mod menu;
 mod messages;
 
 pub use messages::*;
@@ -99,8 +97,9 @@ impl MessageHandler {
 
                 MsgI::Pause => {
                     let paused = state.toggle_pause();
-                    MenuManipulation::update_pause(&state, paused);
-                    crate::system_tray::set_icon(state.get_app_handle(), paused);
+                    state.update_menu_pause(paused);
+                    state.update_icon(paused);
+                    // set_icon(state.get_app_handle(), paused);
                     state.send(MsgI::ToFrontEnd(MsgFE::Paused(paused)));
                 }
 
@@ -109,7 +108,7 @@ impl MessageHandler {
                         tracing::error!("{:#?}", e);
                         state.send(MsgI::ToFrontEnd(MsgFE::Error));
                     }
-                    MenuManipulation::update_all(&state);
+                    state.update_menu_all();
                 }
 
                 MsgI::ResetTimer => {
@@ -121,13 +120,13 @@ impl MessageHandler {
                         tracing::error!("{:#?}", e);
                         state.send(MsgI::ToFrontEnd(MsgFE::Error));
                     }
-                    MenuManipulation::update_all(&state);
+                    state.update_menu_all();
                 }
 
                 MsgI::ToFrontEnd(to_front_end) => {
                     state.emit_to_frontend(to_front_end);
                 }
-                MsgI::UpdateMenuTimer => MenuManipulation::update_all(&state),
+                MsgI::UpdateMenuTimer => state.update_menu_all(),
 
                 MsgI::UpdatePause(pause) => {
                     state.update_pause_after_break(pause);

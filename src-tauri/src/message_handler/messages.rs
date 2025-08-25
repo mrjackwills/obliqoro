@@ -29,7 +29,6 @@ impl Default for PackageInfo {
     }
 }
 
-
 #[derive(Debug, Clone)]
 /// Front End Messages
 pub enum MsgFE {

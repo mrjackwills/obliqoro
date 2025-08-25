@@ -1,6 +1,6 @@
 use crate::{
-    backend_message_handler::{application_state::ApplicationState, MsgFE, MsgI},
-    system_tray::MenuEntry,
+    application_state::{system_tray::MenuEntry, ApplicationState},
+    message_handler::{MsgFE, MsgI},
 };
 
 pub struct MenuManipulation;

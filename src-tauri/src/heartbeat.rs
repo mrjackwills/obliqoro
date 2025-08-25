@@ -1,7 +1,7 @@
 use std::sync::Arc;
 use tokio::sync::broadcast::Sender;
 
-use crate::backend_message_handler::MsgI;
+use crate::message_handler::MsgI;
 
 /// Spawn off a tokio thread, that loops continually, well with a 250ms pause between each loop
 /// The outer tread is saved into ApplicationState, so that it can be cancelled at any time
@@ -22,14 +22,12 @@ pub fn heartbeat_process(sx: &Sender<MsgI>) {
                 None
             };
             thread_sx
-                .send(MsgI::HeartBeat(
-                    crate::backend_message_handler::MsgHB::OnHeartbeat(cpu_usage),
-                ))
+                .send(MsgI::HeartBeat(crate::message_handler::MsgHB::OnHeartbeat(
+                    cpu_usage,
+                )))
                 .ok();
             thread_sx
-                .send(MsgI::HeartBeat(
-                    crate::backend_message_handler::MsgHB::UpdateTimer,
-                ))
+                .send(MsgI::HeartBeat(crate::message_handler::MsgHB::UpdateTimer))
                 .ok();
             tokio::time::sleep(std::time::Duration::from_millis(
                 u64::try_from(250u128.saturating_sub(loop_instant.elapsed().as_millis()))
@@ -39,8 +37,8 @@ pub fn heartbeat_process(sx: &Sender<MsgI>) {
             loop_instant = std::time::Instant::now();
         }
     }));
-    sx.send(MsgI::HeartBeat(
-        crate::backend_message_handler::MsgHB::Update(heartbeat_process),
-    ))
+    sx.send(MsgI::HeartBeat(crate::message_handler::MsgHB::Update(
+        heartbeat_process,
+    )))
     .ok();
 }

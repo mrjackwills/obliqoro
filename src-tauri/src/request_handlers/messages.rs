@@ -38,5 +38,3 @@ impl ShowTimer {
         Self { interval, strategy }
     }
 }
-
-
