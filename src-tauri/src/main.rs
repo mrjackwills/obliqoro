@@ -19,10 +19,8 @@ mod heartbeat;
 mod message_handler;
 mod request_handlers;
 
-// TODO change to an sx
 pub type TauriState<'a> = tauri::State<'a, tokio::sync::broadcast::Sender<MsgI>>;
 
-// TODO MOVE ME
 /// Simple macro to create an empty String, or create String from a &str - to get rid of .to_owned() / String::from() etc
 #[macro_export]
 macro_rules! S {

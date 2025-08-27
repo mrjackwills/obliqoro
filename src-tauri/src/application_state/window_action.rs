@@ -30,11 +30,12 @@ impl WindowAction {
             window.set_fullscreen(fullscreen).ok();
             // This is the linux fix - dirty, but it seems to work
             std::thread::sleep(std::time::Duration::from_millis(50));
+			// maybe try some more sleeps
         } else if window.is_resizable().unwrap_or(false) {
             window.set_resizable(false).ok();
         }
-        window.show().ok();
         window.center().ok();
+        window.show().ok();
     }
 
     /// Change from full screen to the standard window size
@@ -44,20 +45,17 @@ impl WindowAction {
 
     /// Hide window
     fn hide(window: &WebviewWindow, fullscreen: bool) {
-        // if fullscreen {
-        //     Self::_remove_fullscreen(window);
-        // }
-        window.hide().ok();
-        window.center().ok();
-        if fullscreen {
+		 if fullscreen {
             Self::_remove_fullscreen(window);
         }
+        window.hide().ok();
+        window.center().ok();
+       
     }
 
     /// show window
     pub fn show_window(app: &AppHandle, fullscreen: bool) {
         if let Some(window) = app.get_webview_window(MAIN_WINDOW) {
-            // window.sh
             Self::show(&window, fullscreen);
         }
     }

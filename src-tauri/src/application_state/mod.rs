@@ -108,7 +108,7 @@ impl From<&ApplicationState> for FrontEndState {
             paused: state.get_paused(),
             session_as_sec: state.settings.session_as_sec,
             short_break_as_sec: state.settings.short_break_as_sec,
-            start_on_boot: ApplicationState::auto_launch()
+            start_on_boot: ApplicationState::get_auto_launch()
                 .is_some_and(|i| i.is_enabled().unwrap_or_default()),
         }
     }
@@ -124,7 +124,6 @@ fn format_sec_to_min(sec: u16) -> String {
 }
 
 // #[derive(Debug)]
-// TODO rename message_handler?
 pub struct ApplicationState {
     app_handle: AppHandle,
     cpu_usage: VecDeque<f32>,
@@ -165,20 +164,6 @@ impl ApplicationState {
             system_tray_menu,
             timer: Timer::default(),
         }
-    }
-
-    /// TODO rename me
-    /// Attempt to get an AutoLaunch using name and path
-    fn auto_launch() -> Option<AutoLaunch> {
-        tauri::utils::platform::current_exe().map_or(None, |app_exe| {
-            let app_path = dunce::canonicalize(app_exe).unwrap_or_default();
-            let app_name = app_path.file_stem().unwrap_or_default().to_os_string();
-            Some(AutoLaunch::new(
-                app_name.to_str().unwrap_or_default(),
-                app_path.to_str().unwrap_or_default(),
-                &[] as &[&str],
-            ))
-        })
     }
 
     /// Calculate the average cpu usage over the previous `limit` seconds
@@ -263,6 +248,19 @@ impl ApplicationState {
     }
 
     // Various `get_x` methods
+
+    /// Attempt to get an AutoLaunch using name and path
+    fn get_auto_launch() -> Option<AutoLaunch> {
+        tauri::utils::platform::current_exe().map_or(None, |app_exe| {
+            let app_path = dunce::canonicalize(app_exe).unwrap_or_default();
+            let app_name = app_path.file_stem().unwrap_or_default().to_os_string();
+            Some(AutoLaunch::new(
+                app_name.to_str().unwrap_or_default(),
+                app_path.to_str().unwrap_or_default(),
+                &[] as &[&str],
+            ))
+        })
+    }
 
     pub const fn get_app_handle(&self) -> &AppHandle {
         &self.app_handle
@@ -515,7 +513,7 @@ impl ApplicationState {
     /// Store settings, disable auto launch
     pub fn set_settings(&mut self, settings: ModelSettings) {
         self.settings = settings;
-        Self::auto_launch().and_then(|i| i.disable().ok());
+        Self::get_auto_launch().and_then(|i| i.disable().ok());
     }
 
     /// Start the break session
@@ -554,9 +552,9 @@ impl ApplicationState {
     /// Check if session length has changed, and reset timer if so
     pub fn update_all_settings(&mut self, frontend_state: &FrontEndState) {
         if frontend_state.start_on_boot {
-            Self::auto_launch().and_then(|i| i.enable().ok());
+            Self::get_auto_launch().and_then(|i| i.enable().ok());
         } else {
-            Self::auto_launch().and_then(|i| i.disable().ok());
+            Self::get_auto_launch().and_then(|i| i.disable().ok());
         }
         if frontend_state.session_as_sec != self.settings.session_as_sec {
             self.sx.send(MsgI::ResetTimer).ok();
