@@ -55,7 +55,6 @@ import { FrontEndRoutes, InvokeMessage } from '@/types';
 import { sec_to_minutes } from '@/vanillaTS/helpers';
 import { invoke } from '@tauri-apps/api/core';
 import { snackError } from '@/services/snack';
-import { getCurrentWindow } from '@tauri-apps/api/window';
 
 const settingStore = settingModule();
 
@@ -112,10 +111,7 @@ watch(pauseAfterBreak, async (pause) => {
 });
 
 watch(interval, async (i) => {
-	if (i <= 0) {
-		await getCurrentWindow().setFullscreen(false);
-		await router.push(FrontEndRoutes.Settings);
-	}
+	if (i <= 0) await router.push(FrontEndRoutes.Settings);
 });
 
 </script>
