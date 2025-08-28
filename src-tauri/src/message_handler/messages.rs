@@ -69,7 +69,7 @@ pub enum MsgB {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Hash)]
-/// Window Visiblity Messages
+/// Window Visibility Messages
 pub enum MsgWV {
     Close,
     Hide,

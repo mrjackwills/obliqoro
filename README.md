@@ -86,14 +86,19 @@ Requirements for developing on linux:
 
 ```bash
 sudo apt update
-sudo apt install libwebkit2gtk-4.0-dev \
-    build-essential \
+sudo apt install build-essential \
     curl \
-    wget \
-    libssl-dev \
-    libgtk-3-dev \
+    file \
     libayatana-appindicator3-dev \
-    librsvg2-dev
+    libgtk-3-dev \
+    librsvg2-dev \
+    libsoup-3.0-dev \
+    libssl-dev \
+    libssl-dev \
+    libwebkit2gtk-4.1-dev \
+    libxdo-dev \
+    pkg-config \
+    wget
 ```
 ### arm64 cross compilation
 

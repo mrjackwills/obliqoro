@@ -448,7 +448,7 @@ impl ApplicationState {
         }
     }
 
-    // Heatbeat methods
+    // Heartbeat methods
 
     /// Abort heartbeat process, and update with new handle
     pub fn heartbeat_update(&mut self, handle: Arc<JoinHandle<()>>) {

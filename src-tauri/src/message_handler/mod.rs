@@ -80,7 +80,7 @@ impl MessageHandler {
             }
         }
     }
-    /// Start the message handling loop in it's own tokio theread
+    /// Start the message handling loop in it's own tokio thread
     pub async fn start_message_loop(mut state: ApplicationState, mut rx: Receiver<MsgI>) {
         while let Ok(msg) = rx.recv().await {
             match msg {
