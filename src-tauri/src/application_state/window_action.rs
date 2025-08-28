@@ -35,8 +35,8 @@ impl WindowAction {
         }
         window.show().ok();
         if let Ok(Some(monitor)) = window.current_monitor() {
-            let window_size = monitor.size();
             if let Ok(inner_size) = window.inner_size() {
+                let window_size = monitor.size();
                 let x = window_size
                     .width
                     .saturating_sub(inner_size.width)
