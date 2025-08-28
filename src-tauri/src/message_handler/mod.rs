@@ -1,5 +1,6 @@
 use std::path::PathBuf;
 use tauri::{AppHandle, Wry, menu::Menu};
+use tauri_plugin_opener::OpenerExt;
 use tokio::sync::broadcast::{Receiver, Sender};
 use tracing::Level;
 use tracing_subscriber::{fmt as t_fmt, prelude::__tracing_subscriber_SubscriberExt};
@@ -91,7 +92,13 @@ impl MessageHandler {
                 MsgI::HeartBeat(msg_hb) => Self::handle_heartbeat(msg_hb, &mut state),
 
                 MsgI::OpenLocation => {
-                    open::that(state.get_data_location()).ok();
+                    let opener = state.get_app_handle().opener();
+                    opener
+                        .open_path(
+                            state.get_data_location().display().to_string(),
+                            None::<&str>,
+                        )
+                        .ok();
                 }
 
                 MsgI::Pause => {
