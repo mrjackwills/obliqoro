@@ -42,7 +42,6 @@
 				<SessionBreakSliders />
 				<AutoPause :rotation />
 				<AutoResume :rotation />
-				<VersionAlert />
 				<v-expand-transition>
 					<VersionAlert v-if='show_update' />
 				</v-expand-transition>
