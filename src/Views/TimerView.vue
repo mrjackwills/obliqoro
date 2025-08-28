@@ -51,11 +51,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
 import { FrontEndRoutes, InvokeMessage } from '@/types';
 import { sec_to_minutes } from '@/vanillaTS/helpers';
-import { invoke } from '@tauri-apps/api/tauri';
+import { invoke } from '@tauri-apps/api/core';
 import { snackError } from '@/services/snack';
+
 const settingStore = settingModule();
 
 const store = intervalModule();
@@ -111,7 +111,7 @@ watch(pauseAfterBreak, async (pause) => {
 });
 
 watch(interval, async (i) => {
-	if (i <= 0) router.push(FrontEndRoutes.Settings);
+	if (i <= 0) await router.push(FrontEndRoutes.Settings);
 });
 
 </script>

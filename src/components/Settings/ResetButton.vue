@@ -11,7 +11,7 @@
 <script setup lang="ts">
 import { mdiCogRefresh } from '@mdi/js';
 import { InvokeMessage } from '@/types';
-import { invoke } from '@tauri-apps/api';
+import { invoke } from '@tauri-apps/api/core';
 
 const reset_settings = async (): Promise<void> => {
 	clearInterval(props.saveTimeout);

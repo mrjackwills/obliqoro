@@ -53,15 +53,14 @@
 </template>
 
 <script setup lang="ts">
-import { invoke } from '@tauri-apps/api/tauri';
+import { invoke } from '@tauri-apps/api/core';
 import { InvokeMessage } from '@/types';
 import { snackError } from '@/services/snack';
-import SessionBreakSliders from '@/components/Settings/SessionBreakSliders.vue';
 const settingStore = settingModule();
 
 const show_update = computed(() => packageinfoModule().github_version.length > 1 && packageinfoModule().version !== packageinfoModule().github_version);
 
-// / Pass is rotation as a prop, so that both spinners have the same animation
+// Pass is rotation as a prop, so that both spinners have the same animation
 const rotation = ref(0);
 const rotation_interval = ref(0);
 
@@ -87,7 +86,7 @@ onUnmounted(() => {
 	stop_rotation_interval();
 });
 
-// / Only run rotation interval if needed
+// Only run rotation interval if needed
 watch(run_rotation, (i) => {
 	if (i) {
 		start_rotation_interval();

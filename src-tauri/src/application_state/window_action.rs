@@ -1,24 +1,27 @@
+use tauri::WebviewWindow;
 use tauri::{AppHandle, Manager};
 
-use crate::ObliqoroWindow;
+use crate::MAIN_WINDOW;
 
 pub struct WindowAction;
 
 impl WindowAction {
     /// Show the window
-    /// Linux v Windows, need to handle fullscreen & resize on each platform differently
+    // / Linux v Windows, need to handle fullscreen & resize on each platform differently
     #[cfg(target_os = "windows")]
-    fn show(window: &tauri::Window, fullscreen: bool) {
-        window.set_fullscreen(fullscreen).ok();
-        window.set_resizable(false).ok();
+    fn show(window: &WebviewWindow, fullscreen: bool) {
+        if fullscreen {
+            window.set_fullscreen(true).ok();
+        } else {
+            window.center().ok();
+        }
         window.show().ok();
-        window.center().ok();
     }
 
     /// Show the window
     /// see github issue #1
     #[cfg(not(target_os = "windows"))]
-    fn show(window: &tauri::Window, fullscreen: bool) {
+    fn show(window: &WebviewWindow, fullscreen: bool) {
         if fullscreen {
             if window.is_visible().unwrap_or_default() {
                 window.hide().ok();
@@ -31,41 +34,54 @@ impl WindowAction {
             window.set_resizable(false).ok();
         }
         window.show().ok();
-        window.center().ok();
+        if let Ok(Some(monitor)) = window.current_monitor()
+            && let Ok(inner_size) = window.inner_size()
+        {
+            let window_size = monitor.size();
+            let x = window_size
+                .width
+                .saturating_sub(inner_size.width)
+                .saturating_div(2);
+            let y = window_size
+                .height
+                .saturating_sub(inner_size.height)
+                .saturating_div(2);
+            window.set_position(tauri::PhysicalPosition { x, y }).ok();
+        } else {
+            window.center().ok();
+        }
     }
 
     /// Change from full screen to the standard window size
-    fn _remove_fullscreen(window: &tauri::Window) {
-        window.set_resizable(true).ok();
+    fn _remove_fullscreen(window: &WebviewWindow) {
         window.set_fullscreen(false).ok();
     }
 
     /// Hide window
-    fn hide(window: &tauri::Window, fullscreen: bool) {
+    fn hide(window: &WebviewWindow, fullscreen: bool) {
         if fullscreen {
             Self::_remove_fullscreen(window);
         }
         window.hide().ok();
-        window.center().ok();
     }
 
     /// show window
     pub fn show_window(app: &AppHandle, fullscreen: bool) {
-        if let Some(window) = app.get_window(ObliqoroWindow::Main.as_str()) {
+        if let Some(window) = app.get_webview_window(MAIN_WINDOW) {
             Self::show(&window, fullscreen);
         }
     }
 
     /// hide window
     pub fn hide_window(app: &AppHandle, fullscreen: bool) {
-        if let Some(window) = app.get_window(ObliqoroWindow::Main.as_str()) {
+        if let Some(window) = app.get_webview_window(MAIN_WINDOW) {
             Self::hide(&window, fullscreen);
         }
     }
 
     /// Toggle the visible of the main window based on current visibility
     pub fn toggle_visibility(app: &AppHandle, fullscreen: bool) {
-        if let Some(window) = app.get_window(ObliqoroWindow::Main.as_str()) {
+        if let Some(window) = app.get_webview_window(MAIN_WINDOW) {
             match window.is_visible() {
                 Ok(true) => Self::hide(&window, fullscreen),
                 Ok(false) => Self::show(&window, fullscreen),
@@ -76,7 +92,7 @@ impl WindowAction {
 
     /// Change from full screen to the standard window size
     pub fn remove_fullscreen(app: &AppHandle) {
-        if let Some(window) = app.get_window(ObliqoroWindow::Main.as_str()) {
+        if let Some(window) = app.get_webview_window(MAIN_WINDOW) {
             match window.is_visible() {
                 Ok(_) => {
                     Self::_remove_fullscreen(&window);
@@ -88,7 +104,7 @@ impl WindowAction {
 
     // unminimize the main window
     // pub fn unminimize(app: &AppHandle) {
-    //     if let Some(window) = app.get_window(ObliqoroWindow::Main.as_str()) {
+    //     if let Some(window) = app.get_webview_window(MAIN_WINDOW) {
     //         window.unminimize().unwrap_or_default();
     //     }
     // }

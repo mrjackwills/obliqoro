@@ -42,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { invoke } from '@tauri-apps/api/tauri';
+import { invoke } from '@tauri-apps/api/core';
 import { InvokeMessage } from '@/types';
 import { mdiCoffeeOutline, mdiPlay, mdiPause, mdiWeatherNight } from '@mdi/js';
 import { snackError } from '@/services/snack';

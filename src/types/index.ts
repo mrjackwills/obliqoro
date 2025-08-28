@@ -39,6 +39,7 @@ export type ModuleName = ConstT<typeof ModuleName>;
 export const ListenMessage = {
 	Cpu: 'cpu',
 	Error: 'error',
+	Fullscreen: 'fullscreen',
 	GetSettings: 'get::settings',
 	GoToSettings: 'goto::settings',
 	GoToTimer: 'goto::timer',

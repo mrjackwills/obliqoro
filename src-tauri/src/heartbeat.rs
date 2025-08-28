@@ -1,17 +1,13 @@
-use parking_lot::Mutex;
 use std::sync::Arc;
+use tokio::sync::broadcast::Sender;
 
-use crate::{application_state::ApplicationState, backend_message_handler::InternalMessage};
+use crate::message_handler::MsgI;
 
 /// Spawn off a tokio thread, that loops continually, well with a 250ms pause between each loop
 /// The outer tread is saved into ApplicationState, so that it can be cancelled at any time
-pub fn heartbeat_process(state: &Arc<Mutex<ApplicationState>>) {
-    if let Some(x) = &state.lock().heartbeat_process {
-        x.abort();
-    }
-    let spawn_state = Arc::clone(state);
-    state.lock().sx.send(InternalMessage::UpdateMenuTimer).ok();
-    state.lock().heartbeat_process = Some(tokio::task::spawn(async move {
+pub fn heartbeat_process(sx: &Sender<MsgI>) {
+    let (sx, thread_sx) = (sx.clone(), sx.clone());
+    let heartbeat_process = Arc::new(tokio::task::spawn(async move {
         let mut sys = sysinfo::System::new();
         let mut loop_instant = std::time::Instant::now();
         let mut cpu_instant = std::time::Instant::now();
@@ -25,11 +21,14 @@ pub fn heartbeat_process(state: &Arc<Mutex<ApplicationState>>) {
             } else {
                 None
             };
-
-            spawn_state.lock().on_heartbeat(cpu_usage);
-
-            spawn_state.lock().update_timer_check();
-
+            thread_sx
+                .send(MsgI::HeartBeat(crate::message_handler::MsgHB::OnHeartbeat(
+                    cpu_usage,
+                )))
+                .ok();
+            thread_sx
+                .send(MsgI::HeartBeat(crate::message_handler::MsgHB::UpdateTimer))
+                .ok();
             tokio::time::sleep(std::time::Duration::from_millis(
                 u64::try_from(250u128.saturating_sub(loop_instant.elapsed().as_millis()))
                     .unwrap_or(250),
@@ -38,4 +37,8 @@ pub fn heartbeat_process(state: &Arc<Mutex<ApplicationState>>) {
             loop_instant = std::time::Instant::now();
         }
     }));
+    sx.send(MsgI::HeartBeat(crate::message_handler::MsgHB::Update(
+        heartbeat_process,
+    )))
+    .ok();
 }
