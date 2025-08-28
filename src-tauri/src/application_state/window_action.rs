@@ -7,7 +7,7 @@ pub struct WindowAction;
 
 impl WindowAction {
     /// Show the window
-    // / Linux v Windows, need to handle fullscreen & resize on each platform differently
+    /// Linux v Windows, need to handle fullscreen & resize on each platform differently
     #[cfg(target_os = "windows")]
     fn show(window: &WebviewWindow, fullscreen: bool) {
         if fullscreen {

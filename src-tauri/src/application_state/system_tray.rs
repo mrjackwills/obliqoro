@@ -12,6 +12,16 @@ use tauri::{
 };
 use tokio::sync::broadcast::Sender;
 
+/// Load the Oblique Stratergies into a Lazylock vec
+#[allow(clippy::unwrap_used)]
+static ICON_PAUSE: LazyLock<Image> =
+    LazyLock::new(|| Image::from_bytes(include_bytes!("../../icons/icon_paused.png")).unwrap());
+
+/// Load the Oblique Stratergies into a Lazylock vec
+#[allow(clippy::unwrap_used)]
+static ICON_RUNNING: LazyLock<Image> =
+    LazyLock::new(|| Image::from_bytes(include_bytes!("../../icons/icon.png")).unwrap());
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum MenuEntry {
     Session,
@@ -62,16 +72,6 @@ pub fn change_menu_entry_status(system_tray_menu: &Menu<Wry>, enable: bool) {
             .and_then(|i| i.as_menuitem().and_then(|i| i.set_enabled(enable).ok()));
     }
 }
-
-/// Load the Oblique Stratergies into a Lazylock vec
-#[allow(clippy::unwrap_used)]
-static ICON_PAUSE: LazyLock<Image> =
-    LazyLock::new(|| Image::from_bytes(include_bytes!("../../icons/icon_paused.png")).unwrap());
-
-/// Load the Oblique Stratergies into a Lazylock vec
-#[allow(clippy::unwrap_used)]
-static ICON_RUNNING: LazyLock<Image> =
-    LazyLock::new(|| Image::from_bytes(include_bytes!("../../icons/icon.png")).unwrap());
 
 /// Change the system tray icon when paused & unpaused
 pub fn set_icon(app: &tauri::AppHandle, paused: bool) {

@@ -113,6 +113,7 @@ impl From<&ApplicationState> for FrontEndState {
         }
     }
 }
+
 /// fuzzy second to minutes conversion
 fn format_sec_to_min(sec: u16) -> String {
     if sec <= 60 {
@@ -123,7 +124,6 @@ fn format_sec_to_min(sec: u16) -> String {
     }
 }
 
-// #[derive(Debug)]
 pub struct ApplicationState {
     app_handle: AppHandle,
     cpu_usage: VecDeque<f32>,
@@ -249,6 +249,10 @@ impl ApplicationState {
 
     // Various `get_x` methods
 
+    pub const fn get_app_handle(&self) -> &AppHandle {
+        &self.app_handle
+    }
+
     /// Attempt to get an AutoLaunch using name and path
     fn get_auto_launch() -> Option<AutoLaunch> {
         tauri::utils::platform::current_exe().map_or(None, |app_exe| {
@@ -260,10 +264,6 @@ impl ApplicationState {
                 &[] as &[&str],
             ))
         })
-    }
-
-    pub const fn get_app_handle(&self) -> &AppHandle {
-        &self.app_handle
     }
 
     /// Get the settings for starting a break
@@ -589,6 +589,4 @@ impl ApplicationState {
             check_version::fetch_updates(self.sx.clone());
         }
     }
-
-    // HERE
 }

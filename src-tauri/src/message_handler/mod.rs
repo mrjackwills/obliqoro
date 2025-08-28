@@ -98,7 +98,6 @@ impl MessageHandler {
                     let paused = state.toggle_pause();
                     state.update_menu_pause(paused);
                     state.update_icon(paused);
-                    // set_icon(state.get_app_handle(), paused);
                     state.send(MsgI::ToFrontEnd(MsgFE::Paused(paused)));
                 }
 
