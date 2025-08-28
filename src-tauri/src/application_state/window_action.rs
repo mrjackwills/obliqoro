@@ -7,7 +7,7 @@ pub struct WindowAction;
 
 impl WindowAction {
     /// Show the window
-    /// Linux v Windows, need to handle fullscreen & resize on each platform differently
+    // / Linux v Windows, need to handle fullscreen & resize on each platform differently
     #[cfg(target_os = "windows")]
     fn show(window: &WebviewWindow, fullscreen: bool) {
         if fullscreen {
@@ -30,13 +30,24 @@ impl WindowAction {
             window.set_fullscreen(fullscreen).ok();
             // This is the linux fix - dirty, but it seems to work
             std::thread::sleep(std::time::Duration::from_millis(50));
-        // maybe try some more sleeps
         } else if window.is_resizable().unwrap_or(false) {
             window.set_resizable(false).ok();
         }
         window.show().ok();
-        std::thread::sleep(std::time::Duration::from_millis(50));
-        window.center().ok();
+        if let Ok(Some(monitor)) = window.current_monitor() {
+            let window_size = monitor.size();
+            if let Ok(inner_size) = window.inner_size() {
+                let x = window_size
+                    .width
+                    .saturating_sub(inner_size.width)
+                    .saturating_div(2);
+                let y = window_size
+                    .height
+                    .saturating_sub(inner_size.height)
+                    .saturating_div(2);
+                window.set_position(tauri::PhysicalPosition { x, y }).ok();
+            }
+        }
     }
 
     /// Change from full screen to the standard window size
