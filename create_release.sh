@@ -211,7 +211,7 @@ check_typos() {
 # Make sure the unused lint isn't used
 check_allow_unused() {
 	matches_any=$(find . -type d \( -name .git -o -name target \) -prune -o -type f -exec grep -lE '^#!\[allow\(unused\)\]$' {} +)
-	matches_cargo=$(grep "^unused = \"allow\"" ./Cargo.toml)
+	matches_cargo=$(grep "^unused = \"allow\"" ./src-tauri/Cargo.toml)
 	if [ -n "$matches_any" ]; then
 		echo "\"#[allow(unused)]\" in ${matches_any}"
 		ask_continue
