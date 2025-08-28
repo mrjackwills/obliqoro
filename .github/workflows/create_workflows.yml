@@ -98,8 +98,8 @@ jobs:
 
       - name: Rename artifacts
         run: |
-          mv "artifacts/linux/deb/obliqoro_${{ env.CURRENT_SEMVER }}_amd64.deb" "artifacts/Obliqoro_linux_x86_64.deb"
-          mv "artifacts/linux/appimage/obliqoro_${{ env.CURRENT_SEMVER }}_amd64.AppImage" "artifacts/Obliqoro_linux_x86_64.AppImage"
+          mv "artifacts/linux/deb/Obliqoro_${{ env.CURRENT_SEMVER }}_amd64.deb" "artifacts/Obliqoro_linux_x86_64.deb"
+          mv "artifacts/linux/appimage/Obliqoro_${{ env.CURRENT_SEMVER }}_amd64.AppImage" "artifacts/Obliqoro_linux_x86_64.AppImage"
           mv "artifacts/windows/Obliqoro_${{ env.CURRENT_SEMVER }}_x64_en-US.msi" "artifacts/Obliqoro_windows_x86_64.msi"
 
       - name: Update Release
