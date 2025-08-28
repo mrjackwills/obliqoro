@@ -54,12 +54,12 @@ async fn main() -> Result<(), ()> {
             }
 
             let Ok(app_data_dir) = tauri::path::PathResolver::app_data_dir(app.path()) else {
-                // todo printerr
+                println!("tauri::path::PathResolver::app_data_dir err");
                 std::process::exit(1)
             };
             let Ok(system_tray_menu) = application_state::create_system_tray(app.app_handle(), sx)
             else {
-                // todo printerr
+                println!("create_system_tray err");
                 std::process::exit(1)
             };
             setup_tx

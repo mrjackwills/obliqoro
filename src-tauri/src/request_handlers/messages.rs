@@ -1,6 +1,5 @@
 use serde::{Deserialize, Serialize};
 
-// TODO put these somehwere more useful?
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct CpuMeasure {
     pub current: f32,

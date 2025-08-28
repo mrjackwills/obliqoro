@@ -6,7 +6,6 @@ use crate::request_handlers::{CpuMeasure, FrontEndState};
 
 /// Get information about self for the Footer component
 /// BUILD_DATE is injected via the build.rs file
-// TODO where is this used, why is it here?
 #[derive(Debug, Clone, Hash, Serialize, Deserialize)]
 pub struct PackageInfo {
     pub build_date: String,

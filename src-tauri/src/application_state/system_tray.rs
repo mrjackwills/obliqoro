@@ -15,7 +15,6 @@ use tokio::sync::broadcast::Sender;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum MenuEntry {
     Session,
-	// TODO Combine next and session
     Next,
     Pause,
     Quit,

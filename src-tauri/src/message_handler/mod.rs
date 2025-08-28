@@ -146,26 +146,26 @@ impl MessageHandler {
     ) {
         tokio::spawn(async move {
             let Ok((app_handle, data_location, system_tray_menu)) = tmp_rx.await else {
-                // todo print err
+                println!("tmp_rx err");
                 std::process::exit(1)
             };
             if !std::fs::exists(&data_location).unwrap_or_default()
                 && std::fs::create_dir(&data_location).is_err()
             {
-                // todo print err
+                println!("data_location err");
                 std::process::exit(1)
             }
             if setup_tracing(&data_location).is_err() {
-                // todo print err
+                println!("setup_tracing err");
                 std::process::exit(1)
             }
 
             let Ok(sqlite) = db::init_db(&data_location).await else {
-                // todo print err
+                println!("init_db err");
                 std::process::exit(1)
             };
             let Ok(settings) = ModelSettings::init(&sqlite).await else {
-                // todo print err
+                println!("ModelSettings::init err");
                 std::process::exit(1)
             };
 

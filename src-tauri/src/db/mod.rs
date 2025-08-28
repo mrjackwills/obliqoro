@@ -25,7 +25,6 @@ async fn run_migrations(db: &SqlitePool) {
     let migrations = include_str!("migrations.sql");
     if let Err(e) = sqlx::query(migrations).execute(db).await {
         println!("{e:?}");
-        // TODO - handle this better?
         std::process::exit(1);
     }
 }
@@ -35,7 +34,6 @@ async fn create_tables(db: &SqlitePool) {
     let init_db = include_str!("init_db.sql");
     if let Err(e) = sqlx::query(init_db).execute(db).await {
         println!("{e:?}");
-        // TODO - handle this better?
         std::process::exit(1);
     }
 }

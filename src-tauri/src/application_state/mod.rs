@@ -400,7 +400,6 @@ impl ApplicationState {
         match break_message {
             MsgB::Start => {
                 self.start_break_session();
-                // TODO rename me
                 change_menu_entry_status(&self.system_tray_menu, false);
                 self.sx.send(MsgI::ToFrontEnd(MsgFE::GoToTimer)).ok();
                 WindowAction::show_window(&self.app_handle, fullscreen);
@@ -548,7 +547,6 @@ impl ApplicationState {
     }
 
     /// Update all the settings
-    /// TODO rename me
     /// Check if session length has changed, and reset timer if so
     pub fn update_all_settings(&mut self, frontend_state: &FrontEndState) {
         if frontend_state.start_on_boot {
