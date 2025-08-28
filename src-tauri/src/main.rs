@@ -93,7 +93,8 @@ async fn main() -> Result<(), ()> {
             move |_app, _argv, _cwd| {
                 sx3.send(MsgI::Window(MsgWV::Show)).ok();
             },
-        )).plugin(tauri_plugin_opener::init())
+        ))
+        .plugin(tauri_plugin_opener::init())
         .run(generate_context!())
         .ok();
     Ok(())
