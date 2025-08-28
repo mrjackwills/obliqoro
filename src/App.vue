@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
 import { listen, Event } from '@tauri-apps/api/event';
-import { invoke } from '@tauri-apps/api/tauri';
+import { invoke } from '@tauri-apps/api/core';
 import { ListenMessage, ShowTimer, FrontEndRoutes, FrontEndState, BuildInfo, InvokeMessage, CpuMeasure } from '@/types';
 import { useRouter } from 'vue-router';
 import { snackError } from '@/services/snack';
@@ -25,8 +25,10 @@ const packageinfoStore = packageinfoModule();
 
 const on_settings = computed(() => route.fullPath === FrontEndRoutes.Settings);
 
-/// Disable webview hotkeys, reloading, searching, etc
-/// Also disable context menu
+/*
+ * Disable webview hotkeys, reloading, searching, etc
+ * also disable context menu
+ */
 const disable_hotkeys = (): void => {
 	window.addEventListener('contextmenu', (event) => event.preventDefault());
 

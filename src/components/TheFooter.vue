@@ -49,7 +49,7 @@
 <script setup lang='ts'>
 
 import { mdiGithub, mdiOpenInNew } from '@mdi/js';
-import { invoke } from '@tauri-apps/api';
+import { invoke } from '@tauri-apps/api/core';
 import { InvokeMessage } from '@/types';
 
 const buildTimeout = ref(0);

@@ -8,7 +8,7 @@
 				A new version is available
 			</v-col>
 			<v-col cols='auto' class=' text-black ma-0 pa-0 mr-1'>
-				- 
+				-
 			</v-col>
 			<v-col cols='auto' class=' text-black ma-0 pa-0'>
 				<a :href='href' target='_blank' rel='noopener noreferrer' class='text-black'>visit download page

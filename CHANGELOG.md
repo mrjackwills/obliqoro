@@ -1,3 +1,16 @@
+# <a href='https://github.com/mrjackwills/obliqoro/releases/tag/v0.3.0'>v0.3.0</a>
+### 2025-08-28
+
+### Chores
++ formatting, [ca629149](https://github.com/mrjackwills/obliqoro/commit/ca629149ee2755c901c625bd76d9aa086e4332c6)
++ dependencies updated, [a664ec9d](https://github.com/mrjackwills/obliqoro/commit/a664ec9d6234938393417aee44ecf4197b74ec09), [27fea0ee](https://github.com/mrjackwills/obliqoro/commit/27fea0ee1abc1381f5c4d71fdd921684695c106a)
+
+### Features
++ Tauri v2, along with Rust 1.89 & Rust edition 2024, and change to a message bus backend architecture [ce18067a](https://github.com/mrjackwills/obliqoro/commit/ce18067ad102484bd0e13c70f628be6efdc009af)
+
+### Fixes
++ application_state start time, [8825ef23](https://github.com/mrjackwills/obliqoro/commit/8825ef2312e8e4ac76c732af7180607627f22d79)
+
 # <a href='https://github.com/mrjackwills/obliqoro/releases/tag/v0.2.2'>v0.2.2</a>
 ### 2025-05-14
 

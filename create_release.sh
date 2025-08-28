@@ -211,7 +211,7 @@ check_typos() {
 # Make sure the unused lint isn't used
 check_allow_unused() {
 	matches_any=$(find . -type d \( -name .git -o -name target \) -prune -o -type f -exec grep -lE '^#!\[allow\(unused\)\]$' {} +)
-	matches_cargo=$(grep "^unused = \"allow\"" ./Cargo.toml)
+	matches_cargo=$(grep "^unused = \"allow\"" ./src-tauri/Cargo.toml)
 	if [ -n "$matches_any" ]; then
 		echo "\"#[allow(unused)]\" in ${matches_any}"
 		ask_continue
@@ -297,7 +297,7 @@ release_flow() {
 }
 
 main() {
-	cmd=(dialog --backtitle "Choose option" --radiolist "choose" 14 80 16)
+	cmd=(dialog --backtitle "Choose option" --keep-tite --radiolist "choose" 14 80 16)
 	options=(
 		1 "test" off
 		2 "release" off

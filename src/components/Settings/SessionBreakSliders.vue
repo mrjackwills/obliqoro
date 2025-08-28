@@ -16,7 +16,7 @@
 			<v-row class='ma-0 pa-0'>
 				<v-col cols='12' class='ma-0 pa-0'>
 					<v-slider v-model='item.model.value' color='primary' :disabled='paused' :min='item.min'
-						:max='item.max' :step='item.step' rounded  :thumb-size='10' :track-size='2' 
+						:max='item.max' :step='item.step' rounded  :thumb-size='10' :track-size='2'
 						class='ma-0 pa-0' />
 					<ResumeTooltip :paused='paused' />
 				</v-col>
@@ -65,7 +65,7 @@ const sliders_settings = computed(() => [
 		max: 60 * 30,
 		label_value: secondsToText(long_break_as_sec.value, false)
 	}
-	
+
 ]);
 
 const paused = computed(() => settingStore.paused);

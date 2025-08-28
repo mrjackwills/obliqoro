@@ -42,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { invoke } from '@tauri-apps/api/tauri';
+import { invoke } from '@tauri-apps/api/core';
 import { InvokeMessage } from '@/types';
 import { mdiCoffeeOutline, mdiPlay, mdiPause, mdiWeatherNight } from '@mdi/js';
 import { snackError } from '@/services/snack';
@@ -66,7 +66,7 @@ const toggle_pause = async (): Promise<void> => {
 	paused.value = !paused.value;
 	try {
 		await invoke(InvokeMessage.TogglePause);
-	} catch (e)  {
+	} catch (e) {
 		snackError({ message: `Unable to pause: ${e}` });
 	}
 };

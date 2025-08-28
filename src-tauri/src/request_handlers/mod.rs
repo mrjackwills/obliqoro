@@ -1,6 +1,6 @@
 use crate::{
-    backend_message_handler::{BuildInfo, InternalMessage, WindowVisibility},
-    check_version, TauriState,
+    TauriState, check_version,
+    message_handler::{MsgFE, MsgI, MsgWV, PackageInfo},
 };
 
 mod messages;
@@ -8,74 +8,59 @@ pub use messages::*;
 
 /// Initialise the fontend store & settings
 #[tauri::command]
+// Change state to just use sx
 #[allow(clippy::needless_pass_by_value)]
-pub fn init(state: TauriState<'_>) {
+pub fn init(sx: TauriState<'_>) {
     for message in [
-        MsgToFrontend::GetSettings,
-        MsgToFrontend::NextBreak,
-        MsgToFrontend::SessionsBeforeLong,
-        MsgToFrontend::BuildInfo(BuildInfo::default()),
+        MsgFE::GetSettings,
+        MsgFE::NextBreak,
+        MsgFE::SessionsBeforeLong,
+        MsgFE::PackageInfo(PackageInfo::default()),
     ] {
-        state
-            .lock()
-            .sx
-            .send(InternalMessage::ToFrontEnd(message))
-            .ok();
+        sx.send(MsgI::ToFrontEnd(message)).ok();
     }
-    check_version::fetch_updates(state.lock().sx.clone());
+    check_version::fetch_updates(sx.inner().clone());
 }
 
 /// Request to reset settings to default
 #[tauri::command]
 #[expect(clippy::needless_pass_by_value)]
-pub fn reset_settings(state: TauriState<'_>) {
-    state.lock().sx.send(InternalMessage::ResetSettings).ok();
+pub fn reset_settings(sx: TauriState<'_>) {
+    sx.send(MsgI::ResetSettings).ok();
 }
 
 /// Toggle the pause option
 #[tauri::command]
 #[expect(clippy::needless_pass_by_value)]
-pub fn toggle_pause(state: TauriState<'_>) {
-    state.lock().sx.send(InternalMessage::Pause).ok();
+pub fn toggle_pause(sx: TauriState<'_>) {
+    sx.send(MsgI::Pause).ok();
 }
 
 /// Set the pause after break setting
 #[tauri::command]
 #[expect(clippy::needless_pass_by_value)]
-pub fn pause_after_break(state: TauriState<'_>, pause: bool) {
-    state.lock().pause_after_break = pause;
+pub fn pause_after_break(sx: TauriState<'_>, pause: bool) {
+    sx.send(MsgI::UpdatePause(pause)).ok();
 }
 
 /// Request to set the full screen setting to the given boolean value
 #[tauri::command]
 #[expect(clippy::needless_pass_by_value)]
-pub fn open_database_location(state: TauriState<'_>) {
-    open::that(state.lock().get_data_location()).ok();
-    state
-        .lock()
-        .sx
-        .send(InternalMessage::Window(WindowVisibility::Hide))
-        .ok();
+pub fn open_database_location(sx: TauriState<'_>) {
+    sx.send(MsgI::OpenLocation).ok();
+    sx.send(MsgI::Window(MsgWV::Hide)).ok();
 }
 
 /// Set all settings
 #[tauri::command]
 #[expect(clippy::needless_pass_by_value)]
-pub fn set_settings(state: TauriState<'_>, value: FrontEndState) {
-    state
-        .lock()
-        .sx
-        .send(InternalMessage::SetSetting(value))
-        .ok();
+pub fn set_settings(sx: TauriState<'_>, value: FrontEndState) {
+    sx.send(MsgI::SetSetting(value)).ok();
 }
 
 /// Request to minimize the application window
 #[tauri::command]
 #[expect(clippy::needless_pass_by_value)]
-pub fn minimize(state: TauriState<'_>) {
-    state
-        .lock()
-        .sx
-        .send(InternalMessage::Window(WindowVisibility::Toggle))
-        .ok();
+pub fn minimize(sx: TauriState<'_>) {
+    sx.send(MsgI::Window(MsgWV::Toggle)).ok();
 }

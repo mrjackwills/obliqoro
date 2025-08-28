@@ -35,10 +35,11 @@ export const ModuleName = {
 } as const;
 export type ModuleName = ConstT<typeof ModuleName>;
 
-/// These need to match the enum FrontEnd as_str()
+// / These need to match the enum FrontEnd as_str()
 export const ListenMessage = {
 	Cpu: 'cpu',
 	Error: 'error',
+	Fullscreen: 'fullscreen',
 	GetSettings: 'get::settings',
 	GoToSettings: 'goto::settings',
 	GoToTimer: 'goto::timer',
@@ -74,14 +75,14 @@ export type CpuMeasure = {
 	resume?: number;
 };
 export type BuildInfo = Record<'homepage' | 'version' | 'build_date', string> & { github_version?: string };
-export type FrontEndState = Record<'fullscreen' | 'auto_pause' | 'paused' | 'start_on_boot' | 'auto_resume', boolean>
-	& Record<
-		'auto_pause_threshold' |
-		'auto_pause_timespan_sec' |
-		'auto_resume_threshold' |
-		'auto_resume_timespan_sec' |
-		'long_break_as_sec' |
-		'number_session_before_break' |
-		'session_as_sec' |
-		'short_break_as_sec', number>;
+export type FrontEndState = Record<'fullscreen' | 'auto_pause' | 'paused' | 'start_on_boot' | 'auto_resume', boolean> &
+  Record<
+    'auto_pause_threshold' |
+    'auto_pause_timespan_sec' |
+    'auto_resume_threshold' |
+    'auto_resume_timespan_sec' |
+    'long_break_as_sec' |
+    'number_session_before_break' |
+    'session_as_sec' |
+    'short_break_as_sec', number>;
 
