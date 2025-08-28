@@ -94,6 +94,7 @@ async fn main() -> Result<(), ()> {
                 sx3.send(MsgI::Window(MsgWV::Show)).ok();
             },
         ))
+        .plugin(tauri_plugin_opener::init())
         .run(generate_context!())
         .ok();
     Ok(())

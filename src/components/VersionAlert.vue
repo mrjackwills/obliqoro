@@ -10,10 +10,9 @@
 			<v-col cols='auto' class=' text-black ma-0 pa-0 mr-1'>
 				-
 			</v-col>
-			<v-col cols='auto' class=' text-black ma-0 pa-0'>
-				<a :href='href' target='_blank' rel='noopener noreferrer' class='text-black'>visit download page
-					<v-icon :icon='mdiLinkVariant ' color='black' size='x-small' />
-				</a>
+			<v-col cols='auto' class=' text-black ma-0 pa-0 cl'>
+				<span @click='openHref'>visit download page</span>
+				<v-icon :icon='mdiLinkVariant ' color='black' size='x-small' />
 			</v-col>
 		</v-chip>
 	</v-row>
@@ -22,6 +21,11 @@
 
 <script setup lang="ts">
 import { mdiLinkVariant, mdiStarShooting } from '@mdi/js';
+import { openUrl } from '@tauri-apps/plugin-opener';
+
+const openHref = async (): Promise<void> => {
+	await openUrl(href.value);
+};
 
 const href = computed(() => `${packageinfoModule().homepage}obliqoro/releases/latest`);
 </script>
