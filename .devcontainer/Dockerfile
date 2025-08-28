@@ -5,20 +5,21 @@ RUN printf "alias cls='clear'\nalias ll='ls -l --human-readable --color=auto --g
 ENV PATH="/home/vscode/.cargo/bin:${PATH}"
 
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get -y install --no-install-recommends build-essential \
-    pkg-config \
-    libssl-dev \
-	libwebkit2gtk-4.1-dev \
+    && apt-get -y install --no-install-recommends \
+    build-essential \
     build-essential \
     curl \
     file \
-    wget \
-	libsoup-3.0-dev \
-    libxdo-dev \
-    libssl-dev \
-    libgtk-3-dev \
     libayatana-appindicator3-dev \
-    librsvg2-dev
+    libgtk-3-dev \
+    librsvg2-dev \
+    libsoup-3.0-dev \
+    libssl-dev \
+    libssl-dev \
+    libwebkit2gtk-4.1-dev \
+    libxdo-dev \
+    pkg-config \
+    wget
 
 USER vscode
 
