@@ -52,7 +52,7 @@
 	},
 	"productName": "Obliqoro",
 	"mainBinaryName": "Obliqoro",
-	"version": "0.2.2",
+	"version": "0.3.0",
 	"identifier": "mrjackwills.obliqoro",
 	"plugins": {},
 	"app": {
