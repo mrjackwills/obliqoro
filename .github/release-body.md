@@ -1,13 +1,13 @@
-### 2025-05-14
+### 2025-08-28
 
 ### Chores
-+ dependencies updated, [9b5f9bf07fac6e75885e6992766fc0dfdfa4c19d]
++ formatting, [ca629149ee2755c901c625bd76d9aa086e4332c6]
++ dependencies updated, [a664ec9d6234938393417aee44ecf4197b74ec09], [27fea0ee1abc1381f5c4d71fdd921684695c106a]
 
 ### Features
-+ auto_resume when break timer visible, [7d3b0a39f2e25d85e6c13eb1c745e1e084deb85e]
-+ check for update every 7 days, [7d205d6f918daa74d236896b24e668e10a760339]
++ Tauri v2, along with Rust 1.89 & Rust edition 2024, and change to a message bus backend architecture [ce18067ad102484bd0e13c70f628be6efdc009af]
 
 ### Fixes
-+ resume/pause animation spinner [d4edf4055ce8d2e90805171a7850a00be555ca82]
++ application_state start time, [8825ef2312e8e4ac76c732af7180607627f22d79]
 
 see <a href='https://github.com/mrjackwills/obliqoro/blob/main/CHANGELOG.md'>CHANGELOG.md</a> for more details
