@@ -297,7 +297,7 @@ release_flow() {
 }
 
 main() {
-	cmd=(dialog --backtitle "Choose option" --radiolist "choose" 14 80 16)
+	cmd=(dialog --backtitle "Choose option" --keep-tite --radiolist "choose" 14 80 16)
 	options=(
 		1 "test" off
 		2 "release" off
