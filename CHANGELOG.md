@@ -1,3 +1,6 @@
+### Fixes
++ use tauri plugin for release page url & db location, [6db5f88b62c971c41050bd54120878809bb359ae]
+
 # <a href='https://github.com/mrjackwills/obliqoro/releases/tag/v0.3.0'>v0.3.0</a>
 ### 2025-08-28
 
