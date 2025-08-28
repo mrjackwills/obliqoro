@@ -66,6 +66,7 @@
 				"height": 850,
 				"label": "main",
 				"resizable": false,
+				"shadow": false,
 				"skipTaskbar": true,
 				"title": "Obliqoro",
 				"useHttpsScheme": true,
