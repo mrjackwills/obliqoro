@@ -1,7 +1,6 @@
 use crate::{
-    check_version,
+    TauriState, check_version,
     message_handler::{MsgFE, MsgI, MsgWV, PackageInfo},
-    TauriState,
 };
 
 mod messages;

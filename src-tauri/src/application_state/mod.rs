@@ -9,21 +9,21 @@ use std::{
 use auto_launch::AutoLaunch;
 use rand::seq::IndexedRandom;
 use sqlx::SqlitePool;
-use tauri::{menu::MenuItemKind, AppHandle, Emitter, Wry};
+use tauri::{AppHandle, Emitter, Wry, menu::MenuItemKind};
 use tokio::{sync::broadcast::Sender, task::JoinHandle};
 
 use crate::{
+    MAIN_WINDOW,
     app_error::AppError,
     application_state::{
         menu::MenuManipulation,
-        system_tray::{change_menu_entry_status, set_icon, MenuEntry},
+        system_tray::{MenuEntry, change_menu_entry_status, set_icon},
         window_action::WindowAction,
     },
     check_version,
     db::ModelSettings,
     message_handler::{MsgB, MsgFE, MsgI, MsgWV},
     request_handlers::{CpuMeasure, FrontEndState, ShowTimer},
-    MAIN_WINDOW,
 };
 
 mod menu;
@@ -373,19 +373,19 @@ impl ApplicationState {
 
             if self.session_status == SessionStatus::Work {
                 if is_paused && self.settings.auto_resume {
-                    if let Some(avg) = cpu_mesasure.resume {
-                        if avg >= f32::from(self.settings.auto_resume_threshold) {
-                            self.sx.send(MsgI::Pause).ok();
-                            self.sx.send(MsgI::ToFrontEnd(MsgFE::GetSettings)).ok();
-                        }
+                    if let Some(avg) = cpu_mesasure.resume
+                        && avg >= f32::from(self.settings.auto_resume_threshold)
+                    {
+                        self.sx.send(MsgI::Pause).ok();
+                        self.sx.send(MsgI::ToFrontEnd(MsgFE::GetSettings)).ok();
                     }
-                } else if !is_paused && self.settings.auto_pause {
-                    if let Some(avg) = cpu_mesasure.pause {
-                        if avg <= f32::from(self.settings.auto_pause_threshold) {
-                            self.sx.send(MsgI::Pause).ok();
-                            self.sx.send(MsgI::ToFrontEnd(MsgFE::GetSettings)).ok();
-                        }
-                    }
+                } else if !is_paused
+                    && self.settings.auto_pause
+                    && let Some(avg) = cpu_mesasure.pause
+                    && avg <= f32::from(self.settings.auto_pause_threshold)
+                {
+                    self.sx.send(MsgI::Pause).ok();
+                    self.sx.send(MsgI::ToFrontEnd(MsgFE::GetSettings)).ok();
                 }
             }
             self.sx
@@ -542,7 +542,7 @@ impl ApplicationState {
     }
 
     /// Update the pause_after_break value
-    pub fn update_pause_after_break(&mut self, pause: bool) {
+    pub const fn update_pause_after_break(&mut self, pause: bool) {
         self.pause_after_break = pause;
     }
 

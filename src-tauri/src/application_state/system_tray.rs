@@ -1,14 +1,14 @@
 use std::sync::LazyLock;
 
 use crate::{
-    message_handler::{MsgFE, MsgI, MsgWV},
     SYSTEM_TRAY_ID,
+    message_handler::{MsgFE, MsgI, MsgWV},
 };
 use tauri::{
+    AppHandle, Wry,
     image::Image,
     menu::{Menu, MenuEvent, MenuItem},
     tray::TrayIconEvent,
-    AppHandle, Wry,
 };
 use tokio::sync::broadcast::Sender;
 

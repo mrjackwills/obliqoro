@@ -8,7 +8,7 @@ pub struct WindowAction;
 impl WindowAction {
     /// Show the window
     // / Linux v Windows, need to handle fullscreen & resize on each platform differently
-    #[cfg(target_os = "windows")]
+    // #[cfg(target_os = "windows")]
     fn show(window: &WebviewWindow, fullscreen: bool) {
         if fullscreen {
             window.set_fullscreen(true).ok();
@@ -34,19 +34,21 @@ impl WindowAction {
             window.set_resizable(false).ok();
         }
         window.show().ok();
-        if let Ok(Some(monitor)) = window.current_monitor() {
-            if let Ok(inner_size) = window.inner_size() {
-                let window_size = monitor.size();
-                let x = window_size
-                    .width
-                    .saturating_sub(inner_size.width)
-                    .saturating_div(2);
-                let y = window_size
-                    .height
-                    .saturating_sub(inner_size.height)
-                    .saturating_div(2);
-                window.set_position(tauri::PhysicalPosition { x, y }).ok();
-            }
+        if let Ok(Some(monitor)) = window.current_monitor()
+            && let Ok(inner_size) = window.inner_size()
+        {
+            let window_size = monitor.size();
+            let x = window_size
+                .width
+                .saturating_sub(inner_size.width)
+                .saturating_div(2);
+            let y = window_size
+                .height
+                .saturating_sub(inner_size.height)
+                .saturating_div(2);
+            window.set_position(tauri::PhysicalPosition { x, y }).ok();
+        } else {
+            window.center().ok();
         }
     }
 

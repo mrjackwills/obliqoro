@@ -1,4 +1,4 @@
-use sqlx::{sqlite::SqliteJournalMode, ConnectOptions, SqlitePool};
+use sqlx::{ConnectOptions, SqlitePool, sqlite::SqliteJournalMode};
 use std::path::{Path, PathBuf};
 
 mod models;

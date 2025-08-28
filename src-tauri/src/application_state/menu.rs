@@ -1,5 +1,5 @@
 use crate::{
-    application_state::{system_tray::MenuEntry, ApplicationState},
+    application_state::{ApplicationState, system_tray::MenuEntry},
     message_handler::{MsgFE, MsgI},
 };
 

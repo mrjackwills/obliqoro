@@ -1,5 +1,5 @@
 use std::path::PathBuf;
-use tauri::{menu::Menu, AppHandle, Wry};
+use tauri::{AppHandle, Wry, menu::Menu};
 use tokio::sync::broadcast::{Receiver, Sender};
 use tracing::Level;
 use tracing_subscriber::{fmt as t_fmt, prelude::__tracing_subscriber_SubscriberExt};

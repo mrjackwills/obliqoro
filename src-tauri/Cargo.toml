@@ -6,8 +6,8 @@ authors = ["Jack Wills <email@mrjackwills.com>"]
 license = "MIT"
 homepage = "https://www.github.com/mrjackwills/obliqoro"
 repository = "https://www.github.com/mrjackwills/obliqoro"
-edition = "2021"
-rust-version = "1.81"
+edition = "2024"
+rust-version = "1.89"
 keywords = ["pomodoro", "timer", "tauri", "gui", "oblique"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
