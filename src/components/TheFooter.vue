@@ -18,7 +18,7 @@
 					</section>
 
 					<section v-else>
-						<a :href='href' target='_blank' rel='noopener noreferrer' class='text-caption'>
+						<a :href target='_blank' rel='noopener noreferrer' class='text-caption'>
 							<v-icon color='black' class='mr-2 mt-n1' :icon='mdiGithub' />
 						</a>
 						<span @click='buildInfo' class=''>
