@@ -43,14 +43,11 @@ pub fn pause_after_break(sx: TauriState<'_>, pause: bool) {
     sx.send(MsgI::UpdatePause(pause)).ok();
 }
 
-// TODO rename me open_locattion, and takes in a location as string, e.g. url or location on system
 /// Request to set the full screen setting to the given boolean value
 #[tauri::command]
 #[expect(clippy::needless_pass_by_value)]
 pub fn open_location(sx: TauriState<'_>, location: Option<String>) {
     sx.send(MsgI::OpenLocation(location)).ok();
-
-	// hide?
     sx.send(MsgI::Window(MsgWV::Hide)).ok();
 }
 

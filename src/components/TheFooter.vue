@@ -66,7 +66,6 @@ const openHref = async (): Promise<void> => {
 	await invoke(InvokeMessage.OpenLocation, { location: href.value });
 };
 
-
 const href = computed(() => packageinfoModule().homepage);
 
 onUnmounted(() => {
