@@ -44,7 +44,7 @@ sysinfo = { version = "0.37", default-features = false, features = ["system"] }
 tauri = { version = "2.8", features = [ "native-tls-vendored", "image-png", "tray-icon"] }
 tauri-plugin-opener = "2"
 tauri-plugin-shell = "2.3"
-tauri-plugin-single-instance = { version = "2.3.3" }
+tauri-plugin-single-instance = { version = "2.3" }
 thiserror = "2.0"
 tokio = { version = "1.47", features = ["full"] }
 tracing = "0.1"

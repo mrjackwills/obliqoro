@@ -18,7 +18,7 @@
 					<v-slider v-model='item.model.value' color='primary' :disabled='paused' :min='item.min'
 						:max='item.max' :step='item.step' rounded  :thumb-size='10' :track-size='2'
 						class='ma-0 pa-0' />
-					<ResumeTooltip :paused='paused' />
+					<ResumeTooltip :paused />
 				</v-col>
 			</v-row>
 		</v-col>
