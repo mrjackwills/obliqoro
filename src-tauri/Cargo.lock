@@ -2829,6 +2829,7 @@ version = "0.3.1"
 dependencies = [
  "auto-launch",
  "dunce",
+ "open",
  "rand 0.9.2",
  "reqwest",
  "serde",

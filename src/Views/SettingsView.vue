@@ -43,6 +43,7 @@
 				<AutoPause :rotation />
 				<AutoResume :rotation />
 				<v-expand-transition>
+					<VersionAlert  />
 					<VersionAlert v-if='show_update' />
 				</v-expand-transition>
 				<ResetButton :saveTimeout />

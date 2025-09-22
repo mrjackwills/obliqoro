@@ -6,16 +6,6 @@
     "main"
   ],
   "permissions": [
-    "core:default",
-    "shell:allow-open",
-    "shell:default",
-    {
-      "identifier": "opener:allow-open-url",
-      "allow": [
-        {
-          "url": "https://www.github.com/mrjackwills/*"
-        }
-      ]
-    }
+    "core:default"
   ]
 }

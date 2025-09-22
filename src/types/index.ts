@@ -4,7 +4,7 @@ export const InvokeMessage = {
 	GetPackageInfo: 'get_package_info',
 	Init: 'init',
 	Minimize: 'minimize',
-	OpenDatabaseLocation: 'open_database_location',
+	OpenLocation: 'open_location',
 	PauseAfterBreak: 'pause_after_break',
 	ResetSettings: 'reset_settings',
 	SetSettings: 'set_settings',
