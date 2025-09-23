@@ -15,7 +15,8 @@
 			"msi",
 			"app",
 			"dmg",
-			"rpm"
+			"rpm",
+			"appimage"
 		],
 		"externalBin": [],
 		"icon": [
