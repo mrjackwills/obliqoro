@@ -18,9 +18,7 @@
 					</section>
 
 					<section v-else>
-						<a :href target='_blank' rel='noopener noreferrer' class='text-caption'>
-							<v-icon color='black' class='mr-2 mt-n1' :icon='mdiGithub' />
-						</a>
+						<v-icon @click='openHref' color='black' class='mr-2 mt-n1' :icon='mdiGithub' />
 						<span @click='buildInfo' class=''>
 							mrjackwills 2022 -
 						</span>
@@ -61,7 +59,11 @@ const GitHubVersion = computed(() => packageinfoModule().github_version);
 const buildDate = computed(() => new Date(Number(packageinfoModule().build_date) * 1000).toISOString());
 
 const opendb = async (): Promise<void> => {
-	await invoke(InvokeMessage.OpenDatabaseLocation);
+	await invoke(InvokeMessage.OpenLocation);
+};
+
+const openHref = async (): Promise<void> => {
+	await invoke(InvokeMessage.OpenLocation, { location: href.value });
 };
 
 const href = computed(() => packageinfoModule().homepage);

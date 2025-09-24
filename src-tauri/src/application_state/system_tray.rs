@@ -141,8 +141,8 @@ pub fn create_system_tray(
     let menu = gen_menu_all_enabled(app_handle)?;
     tauri::tray::TrayIconBuilder::with_id(SYSTEM_TRAY_ID)
         .icon(ICON_RUNNING.clone())
-		.show_menu_on_left_click(false)
-        .on_tray_icon_event(move |_, event|on_tray_event(event, sx.clone()))
+        .show_menu_on_left_click(false)
+        .on_tray_icon_event(move |_, event| on_tray_event(event, sx.clone()))
         .menu(&menu)
         .on_menu_event(move |_, menu_event| on_menu_entry_event(&menu_event, &s1))
         .build(app_handle)?;

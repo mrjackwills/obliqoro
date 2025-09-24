@@ -14,8 +14,9 @@
 			"deb",
 			"msi",
 			"app",
-			"appimage",
-			"dmg"
+			"dmg",
+			"rpm",
+			"appimage"
 		],
 		"externalBin": [],
 		"icon": [

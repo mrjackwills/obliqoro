@@ -83,7 +83,7 @@ async fn main() -> Result<(), ()> {
         .invoke_handler(tauri::generate_handler![
             request_handlers::init,
             request_handlers::minimize,
-            request_handlers::open_database_location,
+            request_handlers::open_location,
             request_handlers::pause_after_break,
             request_handlers::reset_settings,
             request_handlers::set_settings,
@@ -94,7 +94,6 @@ async fn main() -> Result<(), ()> {
                 sx3.send(MsgI::Window(MsgWV::Show)).ok();
             },
         ))
-        .plugin(tauri_plugin_opener::init())
         .run(generate_context!())
         .ok();
     Ok(())

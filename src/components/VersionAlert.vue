@@ -20,11 +20,12 @@
 
 
 <script setup lang="ts">
+import { InvokeMessage } from '@/types';
 import { mdiLinkVariant, mdiStarShooting } from '@mdi/js';
-import { openUrl } from '@tauri-apps/plugin-opener';
+import { invoke } from '@tauri-apps/api/core';
 
 const openHref = async (): Promise<void> => {
-	await openUrl(href.value);
+	await invoke(InvokeMessage.OpenLocation, { location: href.value });
 };
 
 const href = computed(() => `${packageinfoModule().homepage}obliqoro/releases/latest`);
