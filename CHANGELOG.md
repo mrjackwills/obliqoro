@@ -1,3 +1,17 @@
+# <a href='https://github.com/mrjackwills/obliqoro/releases/tag/v0.3.2'>v0.3.2</a>
+### 2025-09-24
+
+
+### Chores
++ dependencies updated, [249fee38](https://github.com/mrjackwills/obliqoro/commit/249fee384721457d14806de66e0220bf654cad99), [7cfdfac3](https://github.com/mrjackwills/obliqoro/commit/7cfdfac35b1bbe06453873ea34ee02faa451339d)
++ GitHub workflow updated, [7a4aefca](https://github.com/mrjackwills/obliqoro/commit/7a4aefca476374c0b3460b74c33b1836c8e85a43)
+
+### Features
++ use `open` crate, [39cae190](https://github.com/mrjackwills/obliqoro/commit/39cae190e1015d4c8603d280bddd5dac71431175)
+
+### Fixes
++ don't show tray menu on left click, [a28c5e07](https://github.com/mrjackwills/obliqoro/commit/a28c5e07b40c62aeb36ed6f5642d60072a32c4f9)
+
 # <a href='https://github.com/mrjackwills/obliqoro/releases/tag/v0.3.1'>v0.3.1</a>
 ### 2025-08-28
 

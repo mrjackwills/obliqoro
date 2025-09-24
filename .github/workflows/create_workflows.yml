@@ -1,4 +1,8 @@
 name: Release CI
+
+permissions:
+  contents: write
+
 on:
   push:
     tags:
@@ -60,6 +64,7 @@ jobs:
           path: |
             ./src-tauri/target/release/bundle/appimage/**.AppImage
             ./src-tauri/target/release/bundle/deb/**.deb
+            ./src-tauri/target/release/bundle/rpm/**.rpm
 
       - uses: actions/upload-artifact@v4
         if: matrix.os == 'windows-latest'
@@ -98,9 +103,18 @@ jobs:
 
       - name: Rename artifacts
         run: |
-          mv "artifacts/linux/deb/Obliqoro_${{ env.CURRENT_SEMVER }}_amd64.deb" "artifacts/Obliqoro_linux_x86_64.deb"
-          mv "artifacts/linux/appimage/Obliqoro_${{ env.CURRENT_SEMVER }}_amd64.AppImage" "artifacts/Obliqoro_linux_x86_64.AppImage"
-          mv "artifacts/windows/Obliqoro_${{ env.CURRENT_SEMVER }}_x64_en-US.msi" "artifacts/Obliqoro_windows_x86_64.msi"
+          if [ -f "artifacts/linux/deb/Obliqoro_${{ env.CURRENT_SEMVER }}_amd64.deb" ]; then
+            mv "artifacts/linux/deb/Obliqoro_${{ env.CURRENT_SEMVER }}_amd64.deb" "artifacts/Obliqoro_linux_x86_64.deb"
+          fi
+          if [ -f "artifacts/linux/rpm/Obliqoro-${{ env.CURRENT_SEMVER }}-1.x86_64.rpm" ]; then
+            mv "artifacts/linux/rpm/Obliqoro-${{ env.CURRENT_SEMVER }}-1.x86_64.rpm" "artifacts/Obliqoro_linux_x86_64.rpm"
+          fi
+          if [ -f "artifacts/linux/appimage/Obliqoro_${{ env.CURRENT_SEMVER }}_amd64.AppImage" ]; then
+            mv "artifacts/linux/appimage/Obliqoro_${{ env.CURRENT_SEMVER }}_amd64.AppImage" "artifacts/Obliqoro_linux_x86_64.AppImage"
+          fi
+          if [ -f "artifacts/windows/Obliqoro_${{ env.CURRENT_SEMVER }}_x64_en-US.msi" ]; then
+            mv "artifacts/windows/Obliqoro_${{ env.CURRENT_SEMVER }}_x64_en-US.msi" "artifacts/Obliqoro_windows_x86_64.msi"
+          fi
 
       - name: Update Release
         uses: ncipollo/release-action@v1
@@ -114,3 +128,4 @@ jobs:
             **/Obliqoro_*.msi
             **/Obliqoro_*.deb
             **/Obliqoro_*.AppImage
+            **/Obliqoro_*.rpm

@@ -45,7 +45,7 @@
 				<v-expand-transition>
 					<VersionAlert v-if='show_update' />
 				</v-expand-transition>
-				<ResetButton :saveTimeout='saveTimeout' />
+				<ResetButton :saveTimeout />
 			</v-col>
 		</v-row>
 

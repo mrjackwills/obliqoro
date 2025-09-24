@@ -14,8 +14,9 @@
 			"deb",
 			"msi",
 			"app",
-			"appimage",
-			"dmg"
+			"dmg",
+			"rpm",
+			"appimage"
 		],
 		"externalBin": [],
 		"icon": [
@@ -52,7 +53,7 @@
 	},
 	"productName": "Obliqoro",
 	"mainBinaryName": "Obliqoro",
-	"version": "0.3.1",
+	"version": "0.3.2",
 	"identifier": "mrjackwills.obliqoro",
 	"plugins": {},
 	"app": {

@@ -1,7 +1,7 @@
 {
   "name": "obliqoro",
   "private": true,
-  "version": "0.3.1",
+  "version": "0.3.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -16,30 +16,30 @@
     "@tauri-apps/plugin-shell": "^2.3.1",
     "@vuelidate/core": "^2.0.3",
     "@vuelidate/validators": "^2.0.4",
-    "@vueuse/core": "^13.8.0",
+    "@vueuse/core": "^13.9.0",
     "@vueuse/head": "^2.0.0",
-    "eslint-plugin-vue": "^10.4.0",
+    "eslint-plugin-vue": "^10.5.0",
     "pinia": "^3.0.3",
-    "vue": "^3.5.20",
+    "vue": "^3.5.21",
     "vue-router": "^4.5.1",
-    "vuetify": "^3.9.6"
+    "vuetify": "^3.10.3"
   },
   "devDependencies": {
     "@mdi/js": "^7.4.47",
-    "@stylistic/eslint-plugin": "^5.2.3",
-    "@tauri-apps/cli": "^2.8.3",
-    "@types/node": "^24.3.0",
+    "@stylistic/eslint-plugin": "^5.4.0",
+    "@tauri-apps/cli": "^2.8.4",
+    "@types/node": "^24.5.2",
     "@vitejs/plugin-vue": "^6.0.1",
     "@vue/eslint-config-typescript": "^14.6.0",
     "@vue/tsconfig": "^0.8.1",
-    "eslint": "9.34.0",
-    "sass": "^1.91.0",
+    "eslint": "9.36.0",
+    "sass": "^1.93.2",
     "typescript": "^5.9.2",
-    "typescript-eslint": "^8.41.0",
-    "unplugin-auto-import": "^20.1.0",
-    "unplugin-vue-components": "^29.0.0",
-    "vite": "^7.1.3",
+    "typescript-eslint": "^8.44.1",
+    "unplugin-auto-import": "^20.2.0",
+    "unplugin-vue-components": "^29.1.0",
+    "vite": "^7.1.7",
     "vite-plugin-vuetify": "^2.1.2",
-    "vue-tsc": "^3.0.6"
+    "vue-tsc": "^3.0.8"
   }
 }

@@ -92,7 +92,7 @@ pub enum MsgHB {
 pub enum MsgI {
     Break(MsgB),
     HeartBeat(MsgHB),
-    OpenLocation,
+    OpenLocation(Option<String>),
     Pause,
     ResetSettings,
     ResetTimer,

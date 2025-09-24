@@ -15,46 +15,40 @@ export default defineConfig({
 		port: 9000
 	},
 	plugins: [
-		vue({
-			template: { transformAssetUrls }
-		}),
-		vuetify({
-			autoImport: true,
-		}),
+		vue({ template: { transformAssetUrls } }),
+		vuetify({ autoImport: true }),
 		Components(),
 		AutoImport({
 			include: [
 				/\.[tj]sx?$/,
-				/\.vue$/, /\.vue\?vue/,
-				/\.md$/,
+				/\.vue$/,
+				/\.vue\?vue/,
+				/\.md$/
 			],
 			imports: [
 				'vue',
-				'vue-router',
+				'vue-router'
 			],
 			dts: 'src/auto-imports.d.ts',
-			eslintrc: {
-				enabled: true,
-			},
-			dirs: [
-				'src/store',
-			],
-			vueTemplate: false,
+			eslintrc: { enabled: true },
+			dirs: ['src/store'],
+			vueTemplate: false
 		})
 	],
 	define: {
 		'process.env': {},
-		'import.meta.env.BUILD_DATE': Date.now(),
+		'import.meta.env.BUILD_DATE': Date.now()
 	},
 	resolve: {
-		alias: {
-			'@': fileURLToPath(new URL('./src', import.meta.url)),
-		},
+		alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
 		extensions: ['.js', '.json', '.jsx', '.mjs', '.ts', '.tsx', '.vue']
 	},
-	// to make use of `TAURI_PLATFORM`, `TAURI_ARCH`, `TAURI_FAMILY`,
-	// `TAURI_PLATFORM_VERSION`, `TAURI_PLATFORM_TYPE` and `TAURI_DEBUG`
-	// env variables
+
+	/*
+	 * to make use of `TAURI_PLATFORM`, `TAURI_ARCH`, `TAURI_FAMILY`,
+	 * `TAURI_PLATFORM_VERSION`, `TAURI_PLATFORM_TYPE` and `TAURI_DEBUG`
+	 * env variables
+	 */
 	envPrefix: ['VITE_', 'TAURI_'],
 	build: {
 		// Tauri supports es2021
@@ -62,6 +56,6 @@ export default defineConfig({
 		// don't minify for debug builds
 		minify: !process.env.TAURI_DEBUG ? 'esbuild' : false,
 		// produce sourcemaps for debug builds
-		sourcemap: !!process.env.TAURI_DEBUG,
-	},
+		sourcemap: !!process.env.TAURI_DEBUG
+	}
 });

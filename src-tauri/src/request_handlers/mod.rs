@@ -46,8 +46,8 @@ pub fn pause_after_break(sx: TauriState<'_>, pause: bool) {
 /// Request to set the full screen setting to the given boolean value
 #[tauri::command]
 #[expect(clippy::needless_pass_by_value)]
-pub fn open_database_location(sx: TauriState<'_>) {
-    sx.send(MsgI::OpenLocation).ok();
+pub fn open_location(sx: TauriState<'_>, location: Option<String>) {
+    sx.send(MsgI::OpenLocation(location)).ok();
     sx.send(MsgI::Window(MsgWV::Hide)).ok();
 }
 
