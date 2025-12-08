@@ -84,7 +84,7 @@ function stop_rotation_interval (): void {
 	clearInterval(rotation_interval.value)
 }
 
-const run_rotation = computed(() => settingStore.auto_pause && cpuUsageModule().average_pause === 0 || settingStore.auto_resume && cpuUsageModule().average_resume === 0)
+const run_rotation = computed(() => (settingStore.auto_pause && cpuUsageModule().average_pause === 0) || (settingStore.auto_resume && cpuUsageModule().average_resume === 0))
 
 onMounted(() => {
 	start_rotation_interval()

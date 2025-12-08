@@ -25,6 +25,7 @@ export const intervalModule = defineStore(ModuleName.Interval, {
 			this.original_interval = x
 		},
 		set_break_type (x: string): void {
+			// TODO typeguard
 			this.break_type = x === 'short' ? BreakTypes.Short : BreakTypes.Long
 		},
 	},

@@ -57,7 +57,7 @@ const settingStore = settingModule()
 
 const next_in = computed(() => nextbreakModule().nextbreak)
 
-const sessions_before_long = computed(() =>	settingStore.session_before_next_long_break)
+const sessions_before_long = computed(() => settingStore.session_before_next_long_break)
 
 const paused = computed({
 	get (): boolean {
