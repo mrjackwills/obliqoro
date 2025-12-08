@@ -1,39 +1,45 @@
 <template>
-	<v-row align='center' justify='space-between' class='ma-0 pa-0'>
+	<v-row align='center' class='ma-0 pa-0' justify='space-between'>
 
-		<v-col cols='5' class='ma-0 pa-0 text-primary text-left'>
-			<v-row align='center' justify='start' class='ma-0 pa-0'>
+		<v-col class='ma-0 pa-0 text-primary text-left' cols='5'>
+			<v-row align='center' class='ma-0 pa-0' justify='start'>
 				<template v-if='!paused'>
-					<v-col cols='auto' class='ma-0 pa-0 mr-2'>
-						<v-icon :icon='mdiCoffeeOutline' class='' />
+					<v-col class='ma-0 pa-0 mr-2' cols='auto'>
+						<v-icon class='' :icon='mdiCoffeeOutline' />
 					</v-col>
-					<v-col cols='auto' class='ma-0 pa-0'>
+					<v-col class='ma-0 pa-0' cols='auto'>
 						{{ next_in }}
 					</v-col>
 				</template>
 			</v-row>
 		</v-col>
 
-		<v-col cols='2' class='ma-0 pa-0'>
-			<v-btn @click='toggle_pause' color='primary' block rounded='sm' class='ma-0 pa-0' >
-				<v-row align='center' justify='start' class='ma-0 pa-0'>
-					<v-col cols='auto' class='ma-0 pa-0 mr-1'>
-						<v-icon :icon='pauseIcon' class='' />
+		<v-col class='ma-0 pa-0' cols='2'>
+			<v-btn
+				block
+				class='ma-0 pa-0'
+				color='primary'
+				rounded='sm'
+				@click='toggle_pause'
+			>
+				<v-row align='center' class='ma-0 pa-0' justify='start'>
+					<v-col class='ma-0 pa-0 mr-1' cols='auto'>
+						<v-icon class='' :icon='pauseIcon' />
 					</v-col>
-					<v-col cols='auto' class='ma-0 pa-0'>
+					<v-col class='ma-0 pa-0' cols='auto'>
 						{{ pauseText }}
 					</v-col>
 				</v-row>
 			</v-btn>
 		</v-col>
 
-		<v-col cols='5' class='ma-0 pa-0 text-primary'>
-			<v-row align='center' justify='end' class='ma-0 pa-0' v-if='!paused'>
-				<v-col cols='auto' class='ma-0 pa-0'>
+		<v-col class='ma-0 pa-0 text-primary' cols='5'>
+			<v-row v-if='!paused' align='center' class='ma-0 pa-0' justify='end'>
+				<v-col class='ma-0 pa-0' cols='auto'>
 					{{ sessions_before_long }}
 				</v-col>
-				<v-col cols='auto' class='ma-0 pa-0 ml-2'>
-					<v-icon :icon='mdiWeatherNight' class='' />
+				<v-col class='ma-0 pa-0 ml-2' cols='auto'>
+					<v-icon class='' :icon='mdiWeatherNight' />
 				</v-col>
 			</v-row>
 
@@ -42,35 +48,35 @@
 </template>
 
 <script setup lang="ts">
-import { invoke } from '@tauri-apps/api/core';
-import { InvokeMessage } from '@/types';
-import { mdiCoffeeOutline, mdiPlay, mdiPause, mdiWeatherNight } from '@mdi/js';
-import { snackError } from '@/services/snack';
+import { mdiCoffeeOutline, mdiPause, mdiPlay, mdiWeatherNight } from '@mdi/js'
+import { invoke } from '@tauri-apps/api/core'
+import { snackError } from '@/services/snack'
+import { InvokeMessage } from '@/types'
 
-const settingStore = settingModule();
+const settingStore = settingModule()
 
-const next_in = computed(() => nextbreakModule().nextbreak);
+const next_in = computed(() => nextbreakModule().nextbreak)
 
-const sessions_before_long = computed(() =>	settingStore.session_before_next_long_break);
+const sessions_before_long = computed(() =>	settingStore.session_before_next_long_break)
 
 const paused = computed({
 	get (): boolean {
-		return settingStore.paused;
+		return settingStore.paused
 	},
 	set (b: boolean) {
-		settingStore.set_paused(b);
-	}
-});
+		settingStore.set_paused(b)
+	},
+})
 
-const toggle_pause = async (): Promise<void> => {
-	paused.value = !paused.value;
+async function toggle_pause (): Promise<void> {
+	paused.value = !paused.value
 	try {
-		await invoke(InvokeMessage.TogglePause);
-	} catch (e) {
-		snackError({ message: `Unable to pause: ${e}` });
+		await invoke(InvokeMessage.TogglePause)
+	} catch (error) {
+		snackError({ message: `Unable to pause: ${error}` })
 	}
-};
+}
 
-const pauseIcon = computed(() => paused.value ? mdiPlay : mdiPause);
-const pauseText = computed(() => paused.value ? 'resume' : 'pause');
+const pauseIcon = computed(() => paused.value ? mdiPlay : mdiPause)
+const pauseText = computed(() => paused.value ? 'resume' : 'pause')
 </script>

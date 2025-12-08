@@ -1,5 +1,5 @@
 <template>
-	<hr class='my-4 hr' />
+	<hr class='my-4 hr'>
 </template>
 <style>
 

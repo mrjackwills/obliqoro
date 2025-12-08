@@ -1,13 +1,19 @@
 <template>
-	<v-snackbar v-model='visible' timeout='-1' class='' color='red' location='bottom right'>
-		<v-row justify='center' align='center' no-gutters class='ma-0 pa-0'>
-			<v-col v-if='icon && !loading' cols='auto' class=''>
+	<v-snackbar
+		v-model='visible'
+		class=''
+		color='red'
+		location='bottom right'
+		timeout='-1'
+	>
+		<v-row align='center' class='ma-0 pa-0' justify='center' no-gutters>
+			<v-col v-if='icon && !loading' class='' cols='auto'>
 				<v-icon color='black' :icon />
 			</v-col>
-			<v-col v-if='loading' cols='auto' class=''>
-				<v-progress-circular :size='18' :width='3' color='black' indeterminate />
+			<v-col v-if='loading' class='' cols='auto'>
+				<v-progress-circular color='black' indeterminate :size='18' :width='3' />
 			</v-col>
-			<v-col cols='auto' class='mx-3 ma-0 pa-0 text-black'>
+			<v-col class='mx-3 ma-0 pa-0 text-black' cols='auto'>
 				{{ message }}
 			</v-col>
 		</v-row>
@@ -15,59 +21,59 @@
 </template>
 
 <script setup lang="ts">
-const snackStore = snackModule();
+const snackStore = snackModule()
 const loading = computed({
 	get (): boolean {
-		return snackStore.loading;
+		return snackStore.loading
 	},
 	set (b: boolean) {
-		snackStore.set_loading(b);
-	}
-});
+		snackStore.set_loading(b)
+	},
+})
 
 const message = computed({
 	get (): string {
-		return snackStore.message;
+		return snackStore.message
 	},
 	set (b: string) {
-		snackStore.set_message(b);
-	}
-});
+		snackStore.set_message(b)
+	},
+})
 
 const snackTimeout = computed({
 	get (): number {
-		return snackStore.timeout;
+		return snackStore.timeout
 	},
 	set (n: number) {
-		snackStore.set_timeout(n);
-	}
-});
+		snackStore.set_timeout(n)
+	},
+})
 
 const visible = computed({
 	get (): boolean {
-		return snackStore.visible;
+		return snackStore.visible
 	},
 	set (b: boolean) {
-		snackStore.set_visible(b);
-	}
-});
+		snackStore.set_visible(b)
+	},
+})
 
-const timeout = ref(0);
+const timeout = ref(0)
 
-const icon = computed(() => snackStore.icon);
+const icon = computed(() => snackStore.icon)
 
-const closeSnackbar = (): void => {
-	visible.value = false;
-	snackStore.$reset();
-	clearTimeout(timeout.value);
-	timeout.value = 0;
-};
+function closeSnackbar (): void {
+	visible.value = false
+	snackStore.$reset()
+	clearTimeout(timeout.value)
+	timeout.value = 0
+}
 
-watch(visible, (i) => {
+watch(visible, i => {
 	if (i && snackTimeout) {
 		timeout.value = window.setTimeout(() => {
-			closeSnackbar();
-		}, snackTimeout.value);
+			closeSnackbar()
+		}, snackTimeout.value)
 	}
-});
+})
 </script>
