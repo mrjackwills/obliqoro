@@ -1,5 +1,5 @@
+use async_channel::Sender;
 use serde::Deserialize;
-use tokio::sync::broadcast::Sender;
 
 use crate::{
     app_error::AppError,
@@ -46,7 +46,7 @@ pub fn fetch_updates(sx: Sender<MsgI>) {
         };
         sx.send(MsgI::ToFrontEnd(
             crate::message_handler::MsgFE::PackageInfo(info),
-        ))
+        )).await
         .ok();
     });
 }

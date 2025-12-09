@@ -40,8 +40,8 @@ export const settingModule = defineStore(ModuleName.Setting, {
 			}
 		},
 	},
-	actions: {
 
+	actions: {
 		set_start_on_boot (x: boolean): void {
 			this.start_on_boot = x
 		},

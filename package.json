@@ -4,7 +4,7 @@
 	"version": "0.3.2",
 	"type": "module",
 	"scripts": {
-		"check": "vue-tsc --build --force",
+		"check": "vue-tsc",
 		"build": "vue-tsc && vite build",
 		"dev": "vite",
 		"lint": "eslint ./src",

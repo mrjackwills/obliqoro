@@ -1,6 +1,6 @@
 use std::path::PathBuf;
+use async_channel::{Receiver, Sender};
 use tauri::{AppHandle, Wry, menu::Menu};
-use tokio::sync::broadcast::{Receiver, Sender};
 use tracing::Level;
 use tracing_subscriber::{fmt as t_fmt, prelude::__tracing_subscriber_SubscriberExt};
 
@@ -66,14 +66,14 @@ pub struct MessageHandler;
 
 impl MessageHandler {
     /// Handle HeartBeat messages
-    fn handle_heartbeat(msg: MsgHB, state: &mut ApplicationState) {
+    async fn handle_heartbeat(msg: MsgHB, state: &mut ApplicationState) {
         match msg {
             MsgHB::Abort => state.heartbeat_abort(),
             MsgHB::Update(handle) => {
                 state.heartbeat_update(handle);
             }
             MsgHB::OnHeartbeat(cpu_usage) => {
-                state.on_heartbeat(cpu_usage);
+                state.on_heartbeat(cpu_usage).await;
             }
             MsgHB::UpdateTimer => {
                 state.update_timer_check();
@@ -81,14 +81,14 @@ impl MessageHandler {
         }
     }
     /// Start the message handling loop in it's own tokio thread
-    pub async fn start_message_loop(mut state: ApplicationState, mut rx: Receiver<MsgI>) {
+    pub async fn start_message_loop(mut state: ApplicationState, rx: Receiver<MsgI>) {
         while let Ok(msg) = rx.recv().await {
             match msg {
                 MsgI::Break(break_message) => {
-                    state.handle_break(break_message);
+                    state.handle_break(break_message).await;
                 }
 
-                MsgI::HeartBeat(msg_hb) => Self::handle_heartbeat(msg_hb, &mut state),
+                MsgI::HeartBeat(msg_hb) => Self::handle_heartbeat(msg_hb, &mut state).await,
 
                 MsgI::OpenLocation(location) => {
                     if let Some(location) = location {
@@ -102,15 +102,15 @@ impl MessageHandler {
                     let paused = state.toggle_pause();
                     state.update_menu_pause(paused);
                     state.update_icon(paused);
-                    state.send(MsgI::ToFrontEnd(MsgFE::Paused(paused)));
+                    state.send(MsgI::ToFrontEnd(MsgFE::Paused(paused))).await;
                 }
 
                 MsgI::ResetSettings => {
                     if let Err(e) = state.reset_settings().await {
                         tracing::error!("{:#?}", e);
-                        state.send(MsgI::ToFrontEnd(MsgFE::Error));
+                        state.send(MsgI::ToFrontEnd(MsgFE::Error)).await;
                     }
-                    state.update_menu_all();
+                    state.update_menu_all().await;
                 }
 
                 MsgI::ResetTimer => {
@@ -120,15 +120,15 @@ impl MessageHandler {
                 MsgI::SetSetting(frontend_state) => {
                     if let Err(e) = state.update_settings(frontend_state).await {
                         tracing::error!("{:#?}", e);
-                        state.send(MsgI::ToFrontEnd(MsgFE::Error));
+                        state.send(MsgI::ToFrontEnd(MsgFE::Error)).await;
                     }
-                    state.update_menu_all();
+                    state.update_menu_all().await;
                 }
 
                 MsgI::ToFrontEnd(to_front_end) => {
                     state.emit_to_frontend(to_front_end);
                 }
-                MsgI::UpdateMenuTimer => state.update_menu_all(),
+                MsgI::UpdateMenuTimer => state.update_menu_all().await,
 
                 MsgI::UpdatePause(pause) => {
                     state.update_pause_after_break(pause);

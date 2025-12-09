@@ -12,7 +12,6 @@ export const packageinfoModule = defineStore(ModuleName.PackageInfo, {
 	}),
 
 	actions: {
-
 		set_all (x: BuildInfo): void {
 			this.build_date = x.build_date
 			this.homepage = x.homepage

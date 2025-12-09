@@ -6,11 +6,12 @@ use std::{
     time::Instant,
 };
 
+use async_channel::Sender;
 use auto_launch::AutoLaunch;
 use rand::seq::IndexedRandom;
 use sqlx::SqlitePool;
 use tauri::{AppHandle, Emitter, Wry, menu::MenuItemKind};
-use tokio::{sync::broadcast::Sender, task::JoinHandle};
+use tokio::task::JoinHandle;
 
 use crate::{
     MAIN_WINDOW,
@@ -356,7 +357,7 @@ impl ApplicationState {
     // Situation handlers
 
     /// Calculate the current pause & resume averages, apply pause or resume, send details to frontend
-    fn handle_auto_pause_resume(&mut self, current_usage: Option<f32>) {
+    async fn handle_auto_pause_resume(&mut self, current_usage: Option<f32>) {
         if let Some(cpu_usage) = current_usage {
             if self.cpu_usage.len() >= CPU_VECDEQUE_LEN {
                 self.cpu_usage.pop_back();
@@ -376,44 +377,50 @@ impl ApplicationState {
                     if let Some(avg) = cpu_mesasure.resume
                         && avg >= f32::from(self.settings.auto_resume_threshold)
                     {
-                        self.sx.send(MsgI::Pause).ok();
-                        self.sx.send(MsgI::ToFrontEnd(MsgFE::GetSettings)).ok();
+                        self.sx.send(MsgI::Pause).await.ok();
+                        self.sx
+                            .send(MsgI::ToFrontEnd(MsgFE::GetSettings))
+                            .await
+                            .ok();
                     }
                 } else if !is_paused
                     && self.settings.auto_pause
                     && let Some(avg) = cpu_mesasure.pause
                     && avg <= f32::from(self.settings.auto_pause_threshold)
                 {
-                    self.sx.send(MsgI::Pause).ok();
-                    self.sx.send(MsgI::ToFrontEnd(MsgFE::GetSettings)).ok();
+                    self.sx.send(MsgI::Pause).await.ok();
+                    self.sx
+                        .send(MsgI::ToFrontEnd(MsgFE::GetSettings))
+                        .await
+                        .ok();
                 }
             }
             self.sx
                 .send(MsgI::ToFrontEnd(MsgFE::Cpu(cpu_mesasure)))
-                .ok();
+                .await.ok();
         }
     }
 
     /// Handle all internal messages about the Break/Session stats
-    pub fn handle_break(&mut self, break_message: MsgB) {
+    pub async fn handle_break(&mut self, break_message: MsgB) {
         let fullscreen = self.get_fullscreen();
         match break_message {
             MsgB::Start => {
                 self.start_break_session();
                 change_menu_entry_status(&self.system_tray_menu, false);
-                self.sx.send(MsgI::ToFrontEnd(MsgFE::GoToTimer)).ok();
+                self.sx.send(MsgI::ToFrontEnd(MsgFE::GoToTimer)).await.ok();
                 WindowAction::show_window(&self.app_handle, fullscreen);
             }
             MsgB::End => {
                 self.start_work_session();
                 change_menu_entry_status(&self.system_tray_menu, true);
                 if self.pause_after_break {
-                    self.sx.send(MsgI::Pause).ok();
+                    self.sx.send(MsgI::Pause).await.ok();
                     // if the app is in fullscreen mode, need to remove the fullscreen, normally this is handled by the hide_window function, but it's not being called here
                     WindowAction::remove_fullscreen(&self.app_handle);
                 } else {
                     WindowAction::hide_window(&self.app_handle, fullscreen);
-                    MenuManipulation::update_all(self);
+                    MenuManipulation::update_all(self).await;
                 }
                 self.pause_after_break = false;
             }
@@ -464,21 +471,21 @@ impl ApplicationState {
     }
 
     /// Auto Pause/Resume, send timer stats
-    pub fn on_heartbeat(&mut self, cpu_usage: Option<f32>) {
-        self.handle_auto_pause_resume(cpu_usage);
+    pub async fn on_heartbeat(&mut self, cpu_usage: Option<f32>) {
+        self.handle_auto_pause_resume(cpu_usage).await;
 
         if !self.get_paused() {
             match self.session_status {
                 SessionStatus::Break(_) => {
-                    self.sx.send(MsgI::ToFrontEnd(MsgFE::OnBreak)).ok();
+                    self.sx.send(MsgI::ToFrontEnd(MsgFE::OnBreak)).await.ok();
                     if self.get_current_timer_left() < 1 {
-                        self.sx.send(MsgI::Break(MsgB::End)).ok();
+                        self.sx.send(MsgI::Break(MsgB::End)).await.ok();
                     }
                 }
                 SessionStatus::Work => {
-                    self.sx.send(MsgI::UpdateMenuTimer).ok();
+                    self.sx.send(MsgI::UpdateMenuTimer).await.ok();
                     if self.get_current_timer_left() < 1 {
-                        self.sx.send(MsgI::Break(MsgB::Start)).ok();
+                        self.sx.send(MsgI::Break(MsgB::Start)).await.ok();
                     }
                 }
             }
@@ -493,9 +500,13 @@ impl ApplicationState {
         let settings = ModelSettings::reset_settings(&sqlite).await?;
         self.set_settings(settings);
         self.reset_timer();
-        self.sx.send(MsgI::ToFrontEnd(MsgFE::GetSettings)).ok();
+        self.sx
+            .send(MsgI::ToFrontEnd(MsgFE::GetSettings))
+            .await
+            .ok();
         self.sx
             .send(MsgI::ToFrontEnd(MsgFE::Paused(self.get_paused())))
+            .await
             .ok();
         Ok(())
     }
@@ -505,8 +516,8 @@ impl ApplicationState {
     }
 
     /// Send an internal message
-    pub fn send(&self, msg: MsgI) {
-        self.sx.send(msg).ok();
+    pub async fn send(&self, msg: MsgI) {
+        self.sx.send(msg).await.ok();
     }
 
     /// Store settings, disable auto launch
@@ -548,14 +559,14 @@ impl ApplicationState {
 
     /// Update all the settings
     /// Check if session length has changed, and reset timer if so
-    pub fn update_all_settings(&mut self, frontend_state: &FrontEndState) {
+    pub async fn update_all_settings(&mut self, frontend_state: &FrontEndState) {
         if frontend_state.start_on_boot {
             Self::get_auto_launch().and_then(|i| i.enable().ok());
         } else {
             Self::get_auto_launch().and_then(|i| i.disable().ok());
         }
         if frontend_state.session_as_sec != self.settings.session_as_sec {
-            self.sx.send(MsgI::ResetTimer).ok();
+            self.sx.send(MsgI::ResetTimer).await.ok();
         }
         self.settings = ModelSettings::from(frontend_state);
     }
@@ -564,8 +575,8 @@ impl ApplicationState {
         set_icon(&self.app_handle, paused);
     }
 
-    pub fn update_menu_all(&self) {
-        MenuManipulation::update_all(self);
+    pub async fn update_menu_all(&self) {
+        MenuManipulation::update_all(self).await;
     }
 
     pub fn update_menu_pause(&self, pause: bool) {
@@ -577,7 +588,7 @@ impl ApplicationState {
         let sqlite = self.sqlite.clone();
         let new_settings = ModelSettings::from(&frontend_state);
         ModelSettings::update(&sqlite, &new_settings).await?;
-        self.update_all_settings(&frontend_state);
+        self.update_all_settings(&frontend_state).await;
         Ok(())
     }
 

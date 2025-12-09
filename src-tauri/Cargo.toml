@@ -28,6 +28,7 @@ doc_markdown = "allow"
 tauri-build = { version = "2", features = [] }
 
 [dependencies]
+async-channel = "2.5.0"
 auto-launch = "0.5"
 dunce = "1.0"
 open = "5.3"
