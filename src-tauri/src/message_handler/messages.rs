@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use serde::{Deserialize, Serialize};
 
 use crate::request_handlers::{CpuMeasure, FrontEndState};
@@ -79,19 +77,10 @@ pub enum MsgWV {
 }
 
 #[derive(Debug, Clone)]
-/// Heartbeat Message
-pub enum MsgHB {
-    Abort,
-    OnHeartbeat(Option<f32>),
-    Update(Arc<tokio::task::JoinHandle<()>>),
-    UpdateTimer,
-}
-
-#[derive(Debug, Clone)]
 /// InternalMessage
 pub enum MsgI {
     Break(MsgB),
-    HeartBeat(MsgHB),
+    OnHeartbeat(Option<f32>),
     OpenLocation(Option<String>),
     Pause,
     ResetSettings,

@@ -1,10 +1,10 @@
 <template>
-	<v-tooltip activator='parent' v-if='paused' location='top center' content-class='tooltip'>
+	<v-tooltip v-if='paused' activator='parent' content-class='tooltip' location='top center'>
 		resume to alter
 	</v-tooltip>
 </template>
 
 <script setup lang="ts">
-defineProps<{ paused: boolean }>();
+defineProps<{ paused: boolean }>()
 
 </script>

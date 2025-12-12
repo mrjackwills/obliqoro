@@ -1,7 +1,7 @@
-import { createRouter, createWebHistory } from 'vue-router';
-import { FrontEndNames, FrontEndRoutes } from '../types';
-import Settings from '../Views/SettingsView.vue';
-import Timer from '../Views/TimerView.vue';
+import { createRouter, createWebHistory } from 'vue-router'
+import { FrontEndNames, FrontEndRoutes } from '../types'
+import Settings from '../Views/SettingsView.vue'
+import Timer from '../Views/TimerView.vue'
 
 const router = createRouter({
 	history: createWebHistory('/'),
@@ -9,15 +9,15 @@ const router = createRouter({
 		{
 			path: FrontEndRoutes.Settings,
 			name: FrontEndNames.Settings,
-			component: Settings
+			component: Settings,
 		},
 		{
 			path: FrontEndRoutes.Timer,
 			name: FrontEndNames.Timer,
-			component: Timer
-		}
-	]
+			component: Timer,
+		},
+	],
 
-});
+})
 
-export default router;
+export default router
