@@ -3,6 +3,7 @@
     windows_subsystem = "windows"
 )]
 
+use async_channel::Sender;
 use heartbeat::heartbeat_process;
 use message_handler::{MsgI, MsgWV};
 use tauri::generate_context;
@@ -19,7 +20,7 @@ mod heartbeat;
 mod message_handler;
 mod request_handlers;
 
-pub type TauriState<'a> = tauri::State<'a, tokio::sync::broadcast::Sender<MsgI>>;
+pub type TauriState<'a> = tauri::State<'a, Sender<MsgI>>;
 
 /// Simple macro to create an empty String, or create String from a &str - to get rid of .to_owned() / String::from() etc
 #[macro_export]
@@ -37,12 +38,12 @@ const MAIN_WINDOW: &str = "main";
 
 #[tokio::main]
 async fn main() -> Result<(), ()> {
-    let (sx, rx) = tokio::sync::broadcast::channel(128);
+    let (sx, rx) = async_channel::bounded(1024);
     let (sx1, sx2, sx3) = (sx.clone(), sx.clone(), sx.clone());
 
     let (setup_tx, setup_rx) = tokio::sync::oneshot::channel();
     MessageHandler::init(rx, sx.clone(), setup_rx);
-    heartbeat_process(&sx);
+    heartbeat_process(&sx).await;
 
     Builder::default()
         .setup(|app| {
@@ -71,11 +72,11 @@ async fn main() -> Result<(), ()> {
         .on_window_event(move |_window, event| match event {
             tauri::WindowEvent::CloseRequested { api, .. } => {
                 api.prevent_close();
-                sx2.send(MsgI::Window(MsgWV::Hide)).ok();
+                sx2.send_blocking(MsgI::Window(MsgWV::Hide)).ok();
             }
             tauri::WindowEvent::Moved(val) => {
                 if val.x <= -32000 && val.y <= -32000 {
-                    sx2.send(MsgI::Window(MsgWV::Minimize)).ok();
+                    sx2.send_blocking(MsgI::Window(MsgWV::Minimize)).ok();
                 }
             }
             _ => (),
@@ -91,7 +92,7 @@ async fn main() -> Result<(), ()> {
         ])
         .plugin(tauri_plugin_single_instance::init(
             move |_app, _argv, _cwd| {
-                sx3.send(MsgI::Window(MsgWV::Show)).ok();
+                sx3.send_blocking(MsgI::Window(MsgWV::Show)).ok();
             },
         ))
         .run(generate_context!())

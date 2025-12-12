@@ -8,21 +8,23 @@ pub struct MenuManipulation;
 impl MenuManipulation {
     // Update the taskbar to display how many sessions before next long break,
     // and send internal message, to send message to front end to update settings in pinia
-    fn update_session_number(state: &ApplicationState) {
+    async fn update_session_number(state: &ApplicationState) {
         let title = state.get_sessions_before_long_title();
         state
             .get_menu_entry(MenuEntry::Session)
             .and_then(|i| i.as_menuitem().and_then(|i| i.set_text(title).ok()));
-        state.send(MsgI::ToFrontEnd(MsgFE::SessionsBeforeLong));
+        state
+            .send(MsgI::ToFrontEnd(MsgFE::SessionsBeforeLong))
+            .await;
     }
 
     /// Update the systemtray next break in text, and emit to frontend to next break timer
-    fn update_next_break(state: &ApplicationState) {
+    async fn update_next_break(state: &ApplicationState) {
         let title = state.get_next_break_title();
         state
             .get_menu_entry(MenuEntry::Next)
             .and_then(|i| i.as_menuitem().and_then(|i| i.set_text(title).ok()));
-        state.send(MsgI::ToFrontEnd(MsgFE::NextBreak));
+        state.send(MsgI::ToFrontEnd(MsgFE::NextBreak)).await;
     }
 
     /// Update the systemtray `Puased/Resume` item
@@ -46,8 +48,10 @@ impl MenuManipulation {
     }
 
     /// Update all menu items
-    pub fn update_all(state: &ApplicationState) {
-        Self::update_next_break(state);
-        Self::update_session_number(state);
+    pub async fn update_all(state: &ApplicationState) {
+        tokio::join!(
+            Self::update_next_break(state),
+            Self::update_session_number(state)
+        );
     }
 }

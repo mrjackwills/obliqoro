@@ -4,13 +4,13 @@ use crate::{
     SYSTEM_TRAY_ID,
     message_handler::{MsgFE, MsgI, MsgWV},
 };
+use async_channel::Sender;
 use tauri::{
     AppHandle, Wry,
     image::Image,
     menu::{Menu, MenuEvent, MenuItem},
     tray::TrayIconEvent,
 };
-use tokio::sync::broadcast::Sender;
 
 /// Load the Oblique Stratergies into a Lazylock vec
 #[allow(clippy::unwrap_used)]
@@ -137,36 +137,39 @@ pub fn create_system_tray(
     app_handle: &tauri::AppHandle,
     sx: Sender<MsgI>,
 ) -> Result<Menu<Wry>, tauri::Error> {
-    let s1 = sx.clone();
+    let (s1, s2) = (sx.clone(), sx);
     let menu = gen_menu_all_enabled(app_handle)?;
     tauri::tray::TrayIconBuilder::with_id(SYSTEM_TRAY_ID)
         .icon(ICON_RUNNING.clone())
         .show_menu_on_left_click(false)
-        .on_tray_icon_event(move |_, event| on_tray_event(event, sx.clone()))
+        .on_tray_icon_event(move |_, event| {
+            tokio::spawn(on_tray_event(event, s1.clone()));
+        })
         .menu(&menu)
-        .on_menu_event(move |_, menu_event| on_menu_entry_event(&menu_event, &s1))
+        .on_menu_event(move |_, menu_event| {
+            tokio::spawn(on_menu_entry_event(menu_event, s2.clone()));
+        })
         .build(app_handle)?;
     Ok(menu)
 }
 
-#[allow(clippy::needless_pass_by_value)]
-fn on_tray_event(event: TrayIconEvent, sx: Sender<MsgI>) {
+async fn on_tray_event(event: TrayIconEvent, sx: Sender<MsgI>) {
     if let TrayIconEvent::DoubleClick { .. } = event {
-        sx.send(MsgI::Window(MsgWV::Toggle)).ok();
+        sx.send(MsgI::Window(MsgWV::Toggle)).await.ok();
     }
 }
 
 /// Handle interaction events on the systemtray icon/menu
-fn on_menu_entry_event(event: &MenuEvent, sx: &Sender<MsgI>) {
+async fn on_menu_entry_event(event: MenuEvent, sx: Sender<MsgI>) {
     match event.id.as_ref() {
         val if val == MenuEntry::Settings.get_id() => {
-            sx.send(MsgI::ToFrontEnd(MsgFE::GoToSettings)).ok();
+            sx.send(MsgI::ToFrontEnd(MsgFE::GoToSettings)).await.ok();
         }
         val if val == MenuEntry::Quit.get_id() => {
-            sx.send(MsgI::Window(MsgWV::Close)).ok();
+            sx.send(MsgI::Window(MsgWV::Close)).await.ok();
         }
         val if val == MenuEntry::Pause.get_id() => {
-            sx.send(MsgI::Pause).ok();
+            sx.send(MsgI::Pause).await.ok();
         }
         _ => (),
     }

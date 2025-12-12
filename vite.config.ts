@@ -1,10 +1,10 @@
-import { defineConfig } from 'vite';
-import vue from '@vitejs/plugin-vue';
-import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
-import AutoImport from 'unplugin-auto-import/vite';
-import Components from 'unplugin-vue-components/vite';
+import { fileURLToPath, URL } from 'node:url'
+import vue from '@vitejs/plugin-vue'
+import AutoImport from 'unplugin-auto-import/vite'
+import Components from 'unplugin-vue-components/vite'
+import { defineConfig } from 'vite'
 
-import { fileURLToPath, URL } from 'node:url';
+import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 
 export default defineConfig({
 	// prevent vite from obscuring rust errors
@@ -12,7 +12,7 @@ export default defineConfig({
 	// Tauri expects a fixed port, fail if that port is not available
 	server: {
 		strictPort: true,
-		port: 9000
+		port: 9000,
 	},
 	plugins: [
 		vue({ template: { transformAssetUrls } }),
@@ -23,25 +23,25 @@ export default defineConfig({
 				/\.[tj]sx?$/,
 				/\.vue$/,
 				/\.vue\?vue/,
-				/\.md$/
+				/\.md$/,
 			],
 			imports: [
 				'vue',
-				'vue-router'
+				'vue-router',
 			],
 			dts: 'src/auto-imports.d.ts',
 			eslintrc: { enabled: true },
 			dirs: ['src/store'],
-			vueTemplate: false
-		})
+			vueTemplate: false,
+		}),
 	],
 	define: {
 		'process.env': {},
-		'import.meta.env.BUILD_DATE': Date.now()
+		'import.meta.env.BUILD_DATE': Date.now(),
 	},
 	resolve: {
-		alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
-		extensions: ['.js', '.json', '.jsx', '.mjs', '.ts', '.tsx', '.vue']
+		alias: { '@': fileURLToPath(new URL('src', import.meta.url)) },
+		extensions: ['.js', '.json', '.jsx', '.mjs', '.ts', '.tsx', '.vue'],
 	},
 
 	/*
@@ -54,8 +54,8 @@ export default defineConfig({
 		// Tauri supports es2021
 		target: ['es2021', 'chrome100', 'safari13'],
 		// don't minify for debug builds
-		minify: !process.env.TAURI_DEBUG ? 'esbuild' : false,
+		minify: process.env.TAURI_DEBUG ? false : 'esbuild',
 		// produce sourcemaps for debug builds
-		sourcemap: !!process.env.TAURI_DEBUG
-	}
-});
+		sourcemap: !!process.env.TAURI_DEBUG,
+	},
+})
