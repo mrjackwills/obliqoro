@@ -22,14 +22,13 @@ pub async fn heartbeat_process(sx: &Sender<MsgI>) {
             } else {
                 None
             };
-            thread_sx
-                .send(MsgI::HeartBeat(crate::message_handler::MsgHB::OnHeartbeat(
+
+            _ = tokio::try_join!(
+                thread_sx.send(MsgI::HeartBeat(crate::message_handler::MsgHB::OnHeartbeat(
                     cpu_usage,
-                ))).await
-                .ok();
-            thread_sx
-                .send(MsgI::HeartBeat(crate::message_handler::MsgHB::UpdateTimer))
-                .await.ok();
+                ))),
+                thread_sx.send(MsgI::HeartBeat(crate::message_handler::MsgHB::UpdateTimer))
+            );
             tokio::time::sleep(std::time::Duration::from_millis(
                 u64::try_from(250u128.saturating_sub(loop_instant.elapsed().as_millis()))
                     .unwrap_or(250),
@@ -41,5 +40,6 @@ pub async fn heartbeat_process(sx: &Sender<MsgI>) {
     sx.send(MsgI::HeartBeat(crate::message_handler::MsgHB::Update(
         heartbeat_process,
     )))
-    .await.ok();
+    .await
+    .ok();
 }

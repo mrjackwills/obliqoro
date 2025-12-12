@@ -377,27 +377,26 @@ impl ApplicationState {
                     if let Some(avg) = cpu_mesasure.resume
                         && avg >= f32::from(self.settings.auto_resume_threshold)
                     {
-                        self.sx.send(MsgI::Pause).await.ok();
-                        self.sx
-                            .send(MsgI::ToFrontEnd(MsgFE::GetSettings))
-                            .await
-                            .ok();
+                        _ = tokio::try_join!(
+                            self.sx.send(MsgI::Pause),
+                            self.sx.send(MsgI::ToFrontEnd(MsgFE::GetSettings))
+                        );
                     }
                 } else if !is_paused
                     && self.settings.auto_pause
                     && let Some(avg) = cpu_mesasure.pause
                     && avg <= f32::from(self.settings.auto_pause_threshold)
                 {
-                    self.sx.send(MsgI::Pause).await.ok();
-                    self.sx
-                        .send(MsgI::ToFrontEnd(MsgFE::GetSettings))
-                        .await
-                        .ok();
+                    _ = tokio::try_join!(
+                        self.sx.send(MsgI::Pause),
+                        self.sx.send(MsgI::ToFrontEnd(MsgFE::GetSettings))
+                    );
                 }
             }
             self.sx
                 .send(MsgI::ToFrontEnd(MsgFE::Cpu(cpu_mesasure)))
-                .await.ok();
+                .await
+                .ok();
         }
     }
 
@@ -459,6 +458,7 @@ impl ApplicationState {
 
     /// Abort heartbeat process, and update with new handle
     pub fn heartbeat_update(&mut self, handle: Arc<JoinHandle<()>>) {
+		// TODO change this to a cancelation token!
         self.heartbeat_abort();
         self.heartbeat_process = Some(handle);
     }
@@ -500,14 +500,12 @@ impl ApplicationState {
         let settings = ModelSettings::reset_settings(&sqlite).await?;
         self.set_settings(settings);
         self.reset_timer();
-        self.sx
-            .send(MsgI::ToFrontEnd(MsgFE::GetSettings))
-            .await
-            .ok();
-        self.sx
-            .send(MsgI::ToFrontEnd(MsgFE::Paused(self.get_paused())))
-            .await
-            .ok();
+
+        _ = tokio::try_join!(
+            self.sx.send(MsgI::ToFrontEnd(MsgFE::GetSettings)),
+            self.sx
+                .send(MsgI::ToFrontEnd(MsgFE::Paused(self.get_paused())))
+        );
         Ok(())
     }
 
