@@ -6,7 +6,7 @@ use crate::{
 mod messages;
 pub use messages::*;
 
-/// Initialise the fontend store & settings
+/// Initialise the frontend store & settings
 #[tauri::command]
 // Change state to just use sx
 #[allow(clippy::needless_pass_by_value)]
