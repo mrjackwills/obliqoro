@@ -1,6 +1,5 @@
-use std::sync::Arc;
-
 use serde::{Deserialize, Serialize};
+use tokio_util::sync::CancellationToken;
 
 use crate::request_handlers::{CpuMeasure, FrontEndState};
 
@@ -83,7 +82,7 @@ pub enum MsgWV {
 pub enum MsgHB {
     Abort,
     OnHeartbeat(Option<f32>),
-    Update(Arc<tokio::task::JoinHandle<()>>),
+    Update(CancellationToken),
     UpdateTimer,
 }
 
