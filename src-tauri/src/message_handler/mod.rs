@@ -1,5 +1,5 @@
-use std::path::PathBuf;
 use async_channel::{Receiver, Sender};
+use std::path::PathBuf;
 use tauri::{AppHandle, Wry, menu::Menu};
 use tracing::Level;
 use tracing_subscriber::{fmt as t_fmt, prelude::__tracing_subscriber_SubscriberExt};
@@ -66,19 +66,9 @@ pub struct MessageHandler;
 
 impl MessageHandler {
     /// Handle HeartBeat messages
-    async fn handle_heartbeat(msg: MsgHB, state: &mut ApplicationState) {
-        match msg {
-            MsgHB::Abort => state.heartbeat_abort(),
-            MsgHB::Update(handle) => {
-                state.heartbeat_update(handle);
-            }
-            MsgHB::OnHeartbeat(cpu_usage) => {
-                state.on_heartbeat(cpu_usage).await;
-            }
-            MsgHB::UpdateTimer => {
-                state.update_timer_check();
-            }
-        }
+    async fn handle_heartbeat(cpu_usage: Option<f32>, state: &mut ApplicationState) {
+        state.on_heartbeat(cpu_usage).await;
+        state.update_timer_check();
     }
     /// Start the message handling loop in it's own tokio thread
     pub async fn start_message_loop(mut state: ApplicationState, rx: Receiver<MsgI>) {
@@ -88,7 +78,7 @@ impl MessageHandler {
                     state.handle_break(break_message).await;
                 }
 
-                MsgI::HeartBeat(msg_hb) => Self::handle_heartbeat(msg_hb, &mut state).await,
+                MsgI::OnHeartbeat(cpu_usage) => Self::handle_heartbeat(cpu_usage, &mut state).await,
 
                 MsgI::OpenLocation(location) => {
                     if let Some(location) = location {

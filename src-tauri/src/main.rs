@@ -38,7 +38,7 @@ const MAIN_WINDOW: &str = "main";
 
 #[tokio::main]
 async fn main() -> Result<(), ()> {
-	let (sx,rx) = async_channel::bounded(1024);
+    let (sx, rx) = async_channel::bounded(1024);
     let (sx1, sx2, sx3) = (sx.clone(), sx.clone(), sx.clone());
 
     let (setup_tx, setup_rx) = tokio::sync::oneshot::channel();

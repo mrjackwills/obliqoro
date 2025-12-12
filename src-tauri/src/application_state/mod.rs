@@ -1,17 +1,10 @@
-use std::{
-    collections::VecDeque,
-    fmt::Write,
-    path::PathBuf,
-    sync::LazyLock,
-    time::Instant,
-};
+use std::{collections::VecDeque, fmt::Write, path::PathBuf, sync::LazyLock, time::Instant};
 
 use async_channel::Sender;
 use auto_launch::AutoLaunch;
 use rand::seq::IndexedRandom;
 use sqlx::SqlitePool;
 use tauri::{AppHandle, Emitter, Wry, menu::MenuItemKind};
-use tokio_util::sync::CancellationToken;
 
 use crate::{
     MAIN_WINDOW,
@@ -129,8 +122,6 @@ pub struct ApplicationState {
     app_handle: AppHandle,
     cpu_usage: VecDeque<f32>,
     data_location: PathBuf,
-    // heartbeat_process: Option<Arc<JoinHandle<()>>>,
-    heartbeat_token: Option<CancellationToken>,
     pause_after_break: bool,
     session_count: u8,
     session_status: SessionStatus,
@@ -155,8 +146,6 @@ impl ApplicationState {
             app_handle,
             cpu_usage: VecDeque::with_capacity(CPU_VECDEQUE_LEN),
             data_location,
-            // heartbeat_process: None,
-            heartbeat_token: None,
             pause_after_break: false,
             session_count: 0,
             session_status: SessionStatus::Work,
@@ -457,20 +446,6 @@ impl ApplicationState {
     }
 
     // Heartbeat methods
-
-    /// Abort heartbeat process, and update with new handle
-    pub fn heartbeat_update(&mut self, token: CancellationToken) {
-        // TODO change this to a cancelation token!
-        self.heartbeat_abort();
-        self.heartbeat_token = Some(token);
-    }
-
-    /// Abort heartbeat process
-    pub fn heartbeat_abort(&self) {
-        if let Some(token) = &self.heartbeat_token {
-            token.cancel();
-        }
-    }
 
     /// Auto Pause/Resume, send timer stats
     pub async fn on_heartbeat(&mut self, cpu_usage: Option<f32>) {

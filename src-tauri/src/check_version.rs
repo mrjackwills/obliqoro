@@ -46,7 +46,8 @@ pub fn fetch_updates(sx: Sender<MsgI>) {
         };
         sx.send(MsgI::ToFrontEnd(
             crate::message_handler::MsgFE::PackageInfo(info),
-        )).await
+        ))
+        .await
         .ok();
     });
 }

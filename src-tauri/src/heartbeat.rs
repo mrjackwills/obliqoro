@@ -1,5 +1,4 @@
 use async_channel::Sender;
-use tokio_util::sync::CancellationToken;
 
 use crate::message_handler::MsgI;
 
@@ -18,12 +17,7 @@ async fn heartbeat_loop(sx: Sender<MsgI>) {
             None
         };
 
-        _ = tokio::try_join!(
-            sx.send(MsgI::HeartBeat(crate::message_handler::MsgHB::OnHeartbeat(
-                cpu_usage,
-            ))),
-            sx.send(MsgI::HeartBeat(crate::message_handler::MsgHB::UpdateTimer))
-        );
+        sx.send(MsgI::OnHeartbeat(cpu_usage)).await.ok();
         tokio::time::sleep(std::time::Duration::from_millis(
             u64::try_from(250u128.saturating_sub(loop_instant.elapsed().as_millis()))
                 .unwrap_or(250),
@@ -34,19 +28,6 @@ async fn heartbeat_loop(sx: Sender<MsgI>) {
 }
 
 /// Spawn off a tokio thread, that loops continually, well with a 250ms pause between each loop
-/// The outer tread is saved into ApplicationState, so that it can be cancelled at any time
 pub async fn heartbeat_process(sx: &Sender<MsgI>) {
-    let token = CancellationToken::new();
-    let (sx, thread_sx, thread_token) = (sx.clone(), sx.clone(), token.clone());
-
-    tokio::task::spawn(async move {
-        thread_token
-            .run_until_cancelled(heartbeat_loop(thread_sx))
-            .await;
-    });
-    sx.send(MsgI::HeartBeat(crate::message_handler::MsgHB::Update(
-        token,
-    )))
-    .await
-    .ok();
+    tokio::task::spawn(heartbeat_loop(sx.clone()));
 }
